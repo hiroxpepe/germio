@@ -36,7 +36,7 @@ namespace Germio {
         public const string ITEM_TYPE = "Item";
         //public const string BALLOON_TYPE = "Balloon";
         //public const string COIN_TYPE = "Coin";
-        public const string PLAYER_TYPE = "Pete"; // FIXME:
+        public const string PLAYER_TYPE = "Orange"; // FIXME:
         public const string HOME_TYPE = "Home";
         public const string LEVEL_TYPE = "Level";
         public const string DESPAWN_TYPE = "Despawn";
