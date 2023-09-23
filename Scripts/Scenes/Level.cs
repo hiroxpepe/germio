@@ -86,7 +86,8 @@ namespace Germio {
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
-                    (_start_button.wasPressedThisFrame || _a_button.wasPressedThisFrame) && _game_system.home)
+                    (_start_button.wasPressedThisFrame || _a_button.wasPressedThisFrame) && 
+                    _game_system.home)
                 .Subscribe(onNext: _ => {
                     switch (GetActiveScene().name) {
                         case SCENE_LEVEL_1:
