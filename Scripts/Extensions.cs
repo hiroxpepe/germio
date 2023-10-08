@@ -18,28 +18,28 @@ namespace Germio {
         /// whether the GameObject's name contains the argument string.
         /// </summary>
         public static bool Like(this GameObject self, string type) {
-            return self.name.Contains(type);
+            return self.name.Contains(value: type);
         }
 
         /// <summary>
         /// whether the Transform's name contains the argument string.
         /// </summary>
         public static bool Like(this Transform self, string type) {
-            return self.name.Contains(type);
+            return self.name.Contains(value: type);
         }
 
         /// <summary>
         /// whether the Collider's name contains the argument string.
         /// </summary>
         public static bool Like(this Collider self, string type) {
-            return self.name.Contains(type);
+            return self.name.Contains(value: type);
         }
 
         /// <summary>
         /// whether the Collision's name contains the argument string.
         /// </summary>
         public static bool Like(this Collision self, string type) {
-            return self.gameObject.name.Contains(type);
+            return self.gameObject.name.Contains(value: type);
         }
 
         #endregion
