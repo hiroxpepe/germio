@@ -33,19 +33,25 @@ namespace Germio {
         public const string BLOCK_TYPE = "Block";
         public const string GROUND_TYPE = "Ground";
         public const string WALL_TYPE = "Wall";
+        
         public const string ITEM_TYPE = "Item";
-        //public const string BALLOON_TYPE = "Balloon";
-        //public const string COIN_TYPE = "Coin";
-        public const string PLAYER_TYPE = "Human"; // FIXME:
+        public const string COIN_TYPE = "Coin";
+        public const string BALLOON_TYPE = "Balloon";
+        
+        public const string TARGETS_OBJECT = "Balloons"; // name of target objects holder.
+
+        public const string PLAYER_TYPE = "Human";
+        public const string VEHICLE_TYPE = "Vehicle";
         public const string HOME_TYPE = "Home";
         public const string LEVEL_TYPE = "Level";
         public const string DESPAWN_TYPE = "Despawn";
 
-        //public const string MESSAGE_LEVEL_START = "Get items!";
         public const string MESSAGE_LEVEL_CLEAR = "Level Clear!";
         public const string MESSAGE_LEVEL_START = "Start!";
-        //public const string MESSAGE_GAME_OVER = "Game Over!";
+        public const string MESSAGE_GAME_OVER = "Game Over!";
         public const string MESSAGE_GAME_PAUSE = "Pause";
+
+        public const string MESSAGE_STALL = "Stall"; // for a vehicle.
 
         /// https://www.color-sample.com/colorschemes/rule/dominant/
         public const string COLOR_RED = "#FF0000";
