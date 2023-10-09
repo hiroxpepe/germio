@@ -83,7 +83,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
-                    x.Like(WALL_TYPE))
+                    x.Like(type: WALL_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToTransparent(); });
@@ -94,7 +94,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
-                    x.Like(WALL_TYPE))
+                    x.Like(type: WALL_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToOpaque(); });
@@ -105,7 +105,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
-                    x.Like(GROUND_TYPE))
+                    x.Like(type: GROUND_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToTransparent(); });
@@ -116,7 +116,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
-                    x.Like(GROUND_TYPE))
+                    x.Like(type: GROUND_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToOpaque(); });
@@ -127,7 +127,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
-                    x.Like(BLOCK_TYPE))
+                    x.Like(type: BLOCK_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToTransparent(); });
@@ -138,7 +138,7 @@ namespace Germio {
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
-                    x.Like(BLOCK_TYPE))
+                    x.Like(type: BLOCK_TYPE))
                 .Subscribe(onNext: x => {
                     List<Material> material_list = x.gameObject.Get<MeshRenderer>().materials.ToList();
                     material_list.ForEach(action: x => { x.ToOpaque(); });
