@@ -73,6 +73,3 @@ crashlytics-build.properties
 
 # VS Code
 .code-workspace
-
-# FIXME:
-*.meta
