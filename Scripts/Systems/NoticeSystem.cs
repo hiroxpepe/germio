@@ -23,17 +23,17 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
-        [SerializeField] Text _message_text, _targets_text, _points_text, _mode_text;
+        [SerializeField] protected Text _message_text, _targets_text, _points_text, _mode_text;
 
         /// <remarks>
         /// for development.
         /// </remarks>
-        [SerializeField] Text _energy_text, _power_text, _fps_text;
+        [SerializeField] protected Text _energy_text, _power_text, _fps_text;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives] 
 
-        GameSystem _game_system;
+        protected GameSystem _game_system;
 
         int _frame_count;
 
@@ -85,6 +85,11 @@ namespace Germio {
                         _message_text.text = string.Empty;
                     }).AddTo(gameObjectComponent: this);
             };
+
+            /// <summary>
+            /// set load Methods handler.
+            /// </summary>
+            abilities_OnAwake();
         }
 
         // Start is called before the first frame update
@@ -96,7 +101,25 @@ namespace Germio {
                     updateVehicleStatus();
                     updateFpsStatus();
                 }).AddTo(gameObjectComponent: this);
+
+            /// <summary>
+            /// set update methods handler.
+            /// </summary>
+            abilities_OnStart();
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // update Methods handler.
+
+        /// <summary>
+        /// load methods handler.
+        /// </summary>
+        protected virtual void abilities_OnAwake() { }
+
+        /// <summary>
+        /// update methods handler.
+        /// </summary>
+        protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -105,8 +128,6 @@ namespace Germio {
         /// update game status
         /// </summary>
         void updateGameStatus() {
-            //_targets_text.text = string.Format("TGT {0}/{1}", _game_system.targetTotal - _game_system.targetRemain, _game_system.targetTotal);
-            //_points_text.text = string.Format("POINT {0}", _game_system.pointTotal);
             _mode_text.text = string.Format("Mode: {0}", _game_system.mode);
             switch (_game_system.mode) {
                 case MODE_EASY: _mode_text.color = yellow; break;
