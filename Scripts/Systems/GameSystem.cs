@@ -29,6 +29,11 @@ namespace Germio {
         /// </summary>
         public bool home { get; set; }
 
+        /// <summary>
+        /// whether beat the level.
+        /// </summary>
+        public bool beat { get; set; }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
 
@@ -83,7 +88,33 @@ namespace Germio {
                     OnCameBackHome?.Invoke(); 
                 };
             }
+
+            /// <summary>
+            /// set load Methods handler.
+            /// </summary>
+            abilities_OnAwake();
         }
+
+        // Start is called before the first frame update.
+        void Start() {
+            /// <summary>
+            /// set update methods handler.
+            /// </summary>
+            abilities_OnStart();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // update Methods handler.
+
+        /// <summary>
+        /// load methods handler.
+        /// </summary>
+        protected virtual void abilities_OnAwake() { }
+
+        /// <summary>
+        /// update methods handler.
+        /// </summary>
+        protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
