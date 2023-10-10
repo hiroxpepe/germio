@@ -75,6 +75,17 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
                 }).AddTo(gameObjectComponent: this);
+
+            /// <summary>
+            /// when being touched vehicle.
+            /// </summary>
+            this.OnCollisionEnterAsObservable()
+                .Where(predicate: x => 
+                    x.Like(type: VEHICLE_TYPE) && 
+                    _game_system.beat)
+                .Subscribe(onNext: _ => {
+                    OnCameBack?.Invoke();
+                }).AddTo(gameObjectComponent: this);
         }
     }
 }

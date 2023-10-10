@@ -21,11 +21,11 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
-        GameSystem _game_system;
+        protected GameSystem _game_system;
 
-        SoundSystem _sound_system;
+        protected SoundSystem _sound_system;
 
-        bool _is_pausing = false;
+        protected bool _is_pausing = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
@@ -52,6 +52,16 @@ namespace Germio {
                 Time.timeScale = 0f;
                 _sound_system.Play(type: BGMClip.BeatLevel);
             };
+
+            /// <summary>
+            /// set the default beat flag.
+            /// </summary>
+            _game_system.beat = true;
+
+            /// <summary>
+            /// set load Methods handler.
+            /// </summary>
+            abilities_OnAwake();
         }
 
         // Start is called before the first frame update
@@ -75,19 +85,13 @@ namespace Germio {
                     _is_pausing = !_is_pausing;
                 }).AddTo(gameObjectComponent: this);
 
-            // check game status.
-            this.UpdateAsObservable()
-                .Subscribe(onNext: _ => {
-                    checkGameStatus();
-                }).AddTo(gameObjectComponent: this);
-
             /// <summary>
             /// next level.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
                     (_start_button.wasPressedThisFrame || _a_button.wasPressedThisFrame) && 
-                    _game_system.home)
+                    _game_system.home && _game_system.beat)
                 .Subscribe(onNext: _ => {
                     switch (GetActiveScene().name) {
                         case SCENE_LEVEL_1:
@@ -116,19 +120,27 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
+            /// set update methods handler.
+            /// </summary>
+            abilities_OnStart();
+
+            /// <summary>
             /// start event.
             /// </summary>
             OnStart?.Invoke();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // update Methods handler.
 
         /// <summary>
-        /// check game status
+        /// load methods handler.
         /// </summary>
-        void checkGameStatus() {
-            // TBA
-        }
+        protected virtual void abilities_OnAwake() { }
+
+        /// <summary>
+        /// update methods handler.
+        /// </summary>
+        protected virtual void abilities_OnStart() { }
     }
 }
