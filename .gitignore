@@ -72,4 +72,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # VS Code
-.code-workspace
+*.code-workspace
+
+# Germio
+LICENSE.meta
+README.md.meta
+vs.code-workspace.meta
