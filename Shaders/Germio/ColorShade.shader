@@ -27,14 +27,12 @@ Shader "Germio/ColorShade"
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;
             };
 
             struct v2f
             {
                 float4 pos : SV_POSITION;
                 float3 worldNormal : TEXCOORD0;
-                float2 uv : TEXCOORD1;
             };
 
             v2f vert(appdata v)
@@ -42,7 +40,6 @@ Shader "Germio/ColorShade"
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
-                o.uv = v.uv;
                 return o;
             }
 
