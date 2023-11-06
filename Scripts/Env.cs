@@ -16,9 +16,9 @@ namespace Germio {
 
         public const string SCENE_TITLE = "Title";
         public const string SCENE_SELECT = "Select";
-        public const string SCENE_LEVEL_1 = "Level1";
-        public const string SCENE_LEVEL_2 = "Level2";
-        public const string SCENE_LEVEL_3 = "Level3";
+        public const string SCENE_LEVEL_1 = "Level 1";
+        public const string SCENE_LEVEL_2 = "Level 2";
+        public const string SCENE_LEVEL_3 = "Level 3";
         public const string SCENE_ENDING = "Ending";
 
         public const string MODE_EASY = "easy";
