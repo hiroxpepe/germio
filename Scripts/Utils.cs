@@ -132,8 +132,8 @@ namespace Germio {
         /// <summary>
         /// swap only the localPosition Y coordinate.
         /// </summary>
-        public static Vector3 ReplaceLocalPositionY(Transform t, float value) {
-            return new Vector3(t.localPosition.x, value, t.localPosition.z);
+        public static Vector3 SwapLocalPositionY(Transform transform, float value) {
+            return new Vector3(transform.localPosition.x, value, transform.localPosition.z);
         }
 
         /// <summary>
