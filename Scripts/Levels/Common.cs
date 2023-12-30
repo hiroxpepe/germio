@@ -63,8 +63,8 @@ namespace Germio {
             /// be holded.
             /// </summary>
             if (_CAN_HOLD) {
-                _is_grounded = true; // false; MEMO: 初期設定の位置そのまま？
-                // 持たれる時の手の位置オブジェクト初期化
+                _is_grounded = true;
+                // initializes the hand position object when being held by its parent.
                 GameObject left_hand_game_object = new(name: "LeftHand");
                 GameObject right_hand_game_object = new(name: "RightHand");
                 _left_hand_transform = left_hand_game_object.transform;
@@ -76,7 +76,7 @@ namespace Germio {
             }
 
             /// <summary>
-            /// 持たれる実装用: 親が Player になった時
+            /// sets the grounded flag off when the player becomes the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -84,12 +84,11 @@ namespace Germio {
                     transform.parent != null && transform.parent.gameObject.Like(type: PLAYER_TYPE) &&
                     _is_grounded)
                 .Subscribe(onNext: x => {
-                    Debug.Log("hold step 8: 親が Player になった時");
-                    _is_grounded = false; // 接地フラグOFF
+                    _is_grounded = false;
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// 持たれる実装用: 親が Player 継続なら
+            /// be lifted when the player keeps the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -97,19 +96,15 @@ namespace Germio {
                     transform.parent != null && transform.parent.gameObject.Like(type: PLAYER_TYPE) &&
                     !_is_grounded)
                 .Subscribe(onNext: x => {
-                    Debug.Log("hold step 9: 親が Player 継続なら");
-                    //if (!transform.parent.Get<Player>().Faceing) { // プレイヤーの移動・回転を待つ
-                        Debug.Log("hold step 10: 親 Player Faceing 完了");
-                        if (transform.parent.transform.position.y > transform.position.y + 0.2f) { // 0.2fは調整値
-                            beHolded(speed: 8.0f); // 上から持ち上げられる
-                        } else {
-                            beHolded(); // 横から持ち上げられる
-                        }
-                    //}
+                    if (transform.parent.transform.position.y > transform.position.y + 0.2f) { // 0.2f: adjustment value
+                        beHolded(speed: 8.0f); // lifted from above.
+                    } else {
+                        beHolded(); // lifted from the side.
+                    }
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// 持たれる実装用: 親が Player でなくなれば落下する
+            /// falls when the player is no longer a parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x =>
@@ -117,22 +112,24 @@ namespace Germio {
                     (transform.parent == null || !transform.parent.gameObject.Like(type: PLAYER_TYPE)) &&
                     !_is_grounded)
                 .Subscribe(onNext: x => {
-                    Debug.Log("hold step 11: 親が Player でなくなれば落下する");
-                    Ray ray = new(transform.position, new(x: 0, y: -1f, z: 0)); // 下方サーチするレイ作成
-                    if (Physics.Raycast(ray: ray, hitInfo: out RaycastHit hit, maxDistance: 20f)) { // 下方にレイを投げて反応があった場合
+                    Ray ray = new(transform.position, new(x: 0, y: -1f, z: 0)); // creates a ray to search downwards.
+                    // when throwing a ray down and getting a reaction.
+                    if (Physics.Raycast(ray: ray, hitInfo: out RaycastHit raycast_hit, maxDistance: 20f)) { // 20f: adjustment value
 #if DEBUG
-                        Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 3, false);
+                        Debug.DrawRay(start: ray.origin, dir: ray.direction, color: Color.yellow, duration: 3, depthTest: false);
 #endif
-                        float distance = (float) Round(value: hit.distance, digits: 3, mode: MidpointRounding.AwayFromZero);
-                        if (distance < 0.2f) { // ある程度距離が近くなら
-                            _is_grounded = true; // 接地とする
-                            float top = getHitTop(hit: hit.transform.gameObject); // その後、接地したとするオブジェクトのTOPを調べて
-                            transform.localPosition = ReplaceLocalPositionY(t: transform, value: top); // その位置に置く
-                            alignAfterHold(); // 位置調整
+                        float distance = (float) Round(value: raycast_hit.distance, digits: 3, mode: MidpointRounding.AwayFromZero);
+                        if (distance < 0.2f) { // the distance is close.
+                            _is_grounded = true;
+                            // gets the top position of being hit object.
+                            float top = getTopOf(target: raycast_hit.transform.gameObject);
+                            transform.localPosition = SwapLocalPositionY(transform: transform, value: top); // put it in that position.
+                            alignAfterHold(); // adjusts position.
                         }
                     }
-                    if (!_is_grounded) { // まだ接地してなければ落下する
-                        transform.localPosition -= new Vector3(x: 0f, y: 5.0f * Time.deltaTime, z: 0f); // 5.0f は調整値
+                    // falls when not touched the ground yet.
+                    if (!_is_grounded) {
+                        transform.localPosition -= new Vector3(x: 0f, y: 5.0f * Time.deltaTime, z: 0f); // 5.0f: adjustment value
                     }
                 }).AddTo(gameObjectComponent: this);
         }
@@ -168,22 +165,16 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// プレイヤーに持ち上げられる。
+        /// moves to a position where being lifted by its parent.
         /// </summary>
-        void beHolded(float speed = 2.0f/*, float hold_adjust_y = 0.6f, float hold_adjust_x_or_z = 0.8f, float hold_adjust_degree = 15.0f*/) {
-
-            //Vector3 size = gameObject.Get<BoxCollider>().size;
-            //Debug.Log($"size: x:{size.x} y:{size.y} z:{size.z}");
-            //hold_adjust_y = hold_adjust_y * size.x;
-            //hold_adjust_x_or_z = hold_adjust_x_or_z * 0.75f;// size.x;
-
-            if (transform.localPosition.y < _HOLD_ADJUST_Y) { // 親に持ち上げられた位置に移動する: 0.6fは調整値
+        void beHolded(float speed = 2.0f) {
+            if (transform.localPosition.y < _HOLD_ADJUST_Y) {
                 Direction direction = getPushedDirection(transform.parent.forward);
                 // z-axis positive.
                 if (direction == Direction.PositiveZ) {
                     transform.position = new(
                         x: transform.parent.transform.position.x,
-                        y: transform.position.y + speed * Time.deltaTime, // 調整値
+                        y: transform.position.y + speed * Time.deltaTime,
                         z: transform.parent.transform.position.z + _HOLD_ADJUST_X_OR_Z
                     );
                     transform.rotation = Euler(x: -_HOLD_ADJUST_DEGREE, y: 0f, z: 0f);
@@ -204,7 +195,7 @@ namespace Germio {
                     );
                     transform.rotation = Euler(x: 0f, y: 0f, z: _HOLD_ADJUST_DEGREE);
                 // x-axis negative.
-                } else if (direction == Direction.NegativeX) { // X軸負方向
+                } else if (direction == Direction.NegativeX) {
                     transform.position = new(
                         x: transform.parent.transform.position.x - _HOLD_ADJUST_X_OR_Z,
                         y: transform.position.y + speed * Time.deltaTime,
@@ -215,12 +206,12 @@ namespace Germio {
             }
         }
 
-        // 衝突したオブジェクトの側面に当たったか判定する
-        float getHitTop(GameObject hit) {
-            float height = hit.Get<Renderer>().bounds.size.y; // 対象オブジェクトの高さ取得 
-            float position_y = hit.transform.position.y; // 対象オブジェクトのy座標取得(※0基点)
-            float top = height + position_y; // 対象オブジェクトのTOP取得
-            return top;
+        /// <summary>
+        /// gets the top position of the target object.
+        float getTopOf(GameObject target) {
+            float height = target.Get<Renderer>().bounds.size.y;
+            float position_y = target.transform.position.y;
+            return height + position_y;
         }
 
         /// <summary>
