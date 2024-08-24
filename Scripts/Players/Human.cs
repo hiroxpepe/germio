@@ -449,7 +449,7 @@ namespace Germio {
         /// saves position value for the previous n frame.
         /// </summary>
         void cashPreviousPosition() {
-            for (int i = _previous_position.Length - 1 ; i > -1; i--) {
+            for (int i = _previous_position.Length - 1; i > -1; i--) {
                 if (i > 0) {
                     _previous_position[i] = _previous_position[i - 1];
                 } else if (i == 0) {
