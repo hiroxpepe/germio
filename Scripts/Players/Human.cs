@@ -122,7 +122,7 @@ namespace Germio {
             this.FixedUpdateAsObservable()
                 .Subscribe(onNext: _ => {
                     _acceleration.previousSpeed = _acceleration.currentSpeed;// hold previous speed.
-                    _acceleration.currentSpeed = rb.velocity.magnitude; // get speed.
+                    _acceleration.currentSpeed = rb.linearVelocity.magnitude; // get speed.
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -231,7 +231,7 @@ namespace Germio {
                 .Where(predicate: _ => 
                     _do_fixed_update.stop)
                 .Subscribe(onNext: _ => {
-                    rb.velocity = new(x: 0f, y: 0f, z: 0f);
+                    rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
                     _do_fixed_update.Cancel(type: FixedUpdate.Stop);
                 }).AddTo(gameObjectComponent: this);
 
@@ -294,8 +294,8 @@ namespace Germio {
                         .Subscribe(onNext: _ => {
                             if (!isDown()) {
                                 rb.useGravity = true;
-                                Vector3 velocity = rb.velocity;
-                                rb.velocity = new(x: velocity.x, y: 0, z: velocity.z);
+                                Vector3 velocity = rb.linearVelocity;
+                                rb.linearVelocity = new(x: velocity.x, y: 0, z: velocity.z);
                             }
                             _do_fixed_update.Cancel(type: FixedUpdate.AbortJump);
                         }).AddTo(gameObjectComponent: this);
@@ -339,7 +339,7 @@ namespace Germio {
                     _sound_system.Play(type: SEClip.Grounded);
                     _do_update.grounded = true;
                     rb.useGravity = true;
-                    rb.velocity = new(x: 0f, y: 0f, z: 0f);
+                    rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -365,7 +365,7 @@ namespace Germio {
                     if (isUpOrDown()) {
                         _sound_system.Play(type: SEClip.Grounded);
                         rb.useGravity = true;
-                        rb.velocity = new(x: 0f, y: 0f, z: 0f);
+                        rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
                         // reset rotate.
                         Vector3 angle = transform.eulerAngles;
                         angle.x = angle.z = 0f;
