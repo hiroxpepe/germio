@@ -3,7 +3,7 @@
 
 namespace Germio {
     /// <summary>
-    /// an enumeration that represents the direction.
+    /// Defines the direction.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public enum Direction {
@@ -17,7 +17,7 @@ namespace Germio {
     #region RenderingMode
 
     /// <summary>
-    /// enum representing the render mode of the material.
+    /// Defines the render mode of the material.
     /// </summary>
     public enum RenderingMode {
         Opaque,

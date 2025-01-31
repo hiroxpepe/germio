@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Germio {
     /// <summary>
-    /// generic extension method
+    /// The generic extension method
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Extensions {
@@ -15,28 +15,28 @@ namespace Germio {
         #region type of object.
 
         /// <summary>
-        /// whether the GameObject's name contains the argument string.
+        /// Checks if the GameObject's name has the given string.
         /// </summary>
         public static bool Like(this GameObject self, string type) {
             return self.name.Contains(value: type);
         }
 
         /// <summary>
-        /// whether the Transform's name contains the argument string.
+        /// Checks if the Transform's name has the given string.
         /// </summary>
         public static bool Like(this Transform self, string type) {
             return self.name.Contains(value: type);
         }
 
         /// <summary>
-        /// whether the Collider's name contains the argument string.
+        /// Checks if the Collider's name has the given string.
         /// </summary>
         public static bool Like(this Collider self, string type) {
             return self.name.Contains(value: type);
         }
 
         /// <summary>
-        /// whether the Collision's name contains the argument string.
+        /// Checks if the Collision's gameObject name has the given string.
         /// </summary>
         public static bool Like(this Collision self, string type) {
             return self.gameObject.name.Contains(value: type);
@@ -47,35 +47,35 @@ namespace Germio {
         #region get the component.
 
         /// <summary>
-        /// gets T component from children.
+        /// Gets T component from children.
         /// </summary>
         public static IEnumerable<T> GetInChildren<T>(this GameObject self) {
             return self.GetComponentsInChildren<T>();
         }
 
         /// <summary>
-        /// gets T component.
+        /// Gets T component.
         /// </summary>
         public static T Get<T>(this GameObject self) {
             return self.GetComponent<T>();
         }
 
         /// <summary>
-        /// gets T component.
+        /// Gets T component.
         /// </summary>
         public static T Get<T>(this Transform self) {
             return self.GetComponent<T>();
         }
 
         /// <summary>
-        /// adds T component.
+        /// Adds T component.
         /// </summary>
         public static T Add<T>(this GameObject self) where T : Component {
             return self.AddComponent<T>();
         }
 
         /// <summary>
-        /// adds T component.
+        /// Adds T component.
         /// </summary>
         public static T Add<T>(this Transform self) where T : Component {
             return self.gameObject.AddComponent<T>();
@@ -86,7 +86,7 @@ namespace Germio {
         #region for Material.
 
         /// <summary>
-        /// sets Material color to opaque.
+        /// Sets Material color to opaque.
         /// </summary>
         public static Material ToOpaque(this Material self, float time = 0) {
             Color color = self.color;
@@ -96,7 +96,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// sets Material color to transparent.
+        /// Sets Material color to transparent.
         /// </summary>
         public static Material ToTransparent(this Material self, float time = 0) {
             Color color = self.color;

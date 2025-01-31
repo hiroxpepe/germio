@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Germio {
     /// <summary>
-    /// sound system
+    /// The sound system
     /// <author>h.adachi (STUDIO MeowToon)</author>
     /// </summary>
     public class SoundSystem : MonoBehaviour {
@@ -39,7 +39,7 @@ namespace Germio {
         AudioSource _audio_source_bgm;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // Public Methods [verb]
 
         public void Play(SEClip type) {
             switch (type) {
@@ -118,9 +118,9 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         void Start() {
             _audio_source_se1 = GetComponents<AudioSource>()[0]; // SE
             _audio_source_bgm = GetComponents<AudioSource>()[1]; // BGM

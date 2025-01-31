@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// human controller
+    /// A Human controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
@@ -44,17 +44,17 @@ namespace Germio {
 
         protected Acceleration _acceleration;
 
-        protected Vector3[] _previous_position = new Vector3[60]; // saves position 30 frames ago.
+        protected Vector3[] _previous_position = new Vector3[60]; // Saves position 30 frames ago.
 
         protected GameSystem _game_system;
 
         protected SoundSystem _sound_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, adjectives]
+        // Public Properties [noun, adjectives]
 
         /// <summary>
-        /// transform position.
+        /// Transform position.
         /// </summary>
         public Vector3 position { 
             get => transform.position; 
@@ -65,7 +65,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// transform rotation.
+        /// Transform rotation.
         /// </summary>
         public Quaternion rotation { 
             get => transform.rotation; 
@@ -78,20 +78,20 @@ namespace Germio {
         public bool Faceing { get => _do_update.faceing; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // Public Events [verb, verb phrase]
 
         /// <summary>
-        /// on grounded event handler.
+        /// On grounded event handler.
         /// </summary>
         public event Action? OnGrounded;
 
         /// <summary>
-        /// changed event handler.
+        /// Changed event handler.
         /// </summary>
         public event Changed? Updated;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -102,12 +102,12 @@ namespace Germio {
             _sound_system = Find(name: SOUND_SYSTEM).Get<SoundSystem>();
 
             /// <summary>
-            /// set load Methods handler.
+            /// Sets load Methods handler.
             /// </summary>
             abilities_OnAwake();
         }
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         new void Start() {
             base.Start();
 
@@ -126,7 +126,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// idol.
+            /// Idol
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -146,7 +146,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// walk.
+            /// Walk
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -170,7 +170,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// run.
+            /// Run
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -194,7 +194,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// backward.
+            /// Backward
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ =>  
@@ -216,7 +216,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// stop. TODO: stop anime fbx.
+            /// Stop TODO: stop anime fbx.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -236,7 +236,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// virtual controller mode.
+            /// On virtual controller mode.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -250,7 +250,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// jump.
+            /// Jump
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -274,7 +274,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// abort jump.
+            /// Abort jump.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -302,7 +302,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// rotate(yaw).
+            /// Rotate(yaw).
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -317,7 +317,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// freeze anime.
+            /// Freeze anime.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -327,7 +327,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when touching blocks.
+            /// When touching blocks.
             /// TODO: to Block ?
             /// </summary>
             this.OnCollisionEnterAsObservable()
@@ -343,7 +343,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when leaving blocks.
+            /// When leaving blocks.
             /// TODO: to Block ?
             /// </summary>
             this.OnCollisionExitAsObservable()
@@ -355,7 +355,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when touching grounds.
+            /// When touching grounds.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x => 
@@ -366,17 +366,17 @@ namespace Germio {
                         _sound_system.Play(type: SEClip.Grounded);
                         rb.useGravity = true;
                         rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
-                        // reset rotate.
+                        // Resets rotate.
                         Vector3 angle = transform.eulerAngles;
                         angle.x = angle.z = 0f;
                         transform.eulerAngles = angle;
-                        // call event handler.
+                        // Calls event handler.
                         OnGrounded?.Invoke();
                     }
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// freeze.
+            /// Freeze
             /// </summary>
             this.OnCollisionStayAsObservable()
                 .Where(predicate: x => 
@@ -385,20 +385,20 @@ namespace Germio {
                     (_up_button.isPressed || _down_button.isPressed) && 
                     !_do_update.climbing && !_do_update.faceing && !_do_update.pushing && _acceleration.freeze)
                 .Subscribe(onNext: x => {
-                    double reach = gameObject.getReach(target: x.gameObject); // FIXME: case the block size is other than 1.
-                    // move left or right.
+                    double reach = gameObject.getReach(target: x.gameObject); // FIXME: Case the block size is other than 1.
+                    // Moves left or right.
                     if (_do_update.grounded && (reach < 0.5d || reach >= 0.99d)) {
                         gameObject.moveLetfOrRight(direction: GetDirection(forward_vector: transform.forward));
                         rb.useGravity = true;
                     }
-                    // forcibly move up.
+                    // Forcibly moves up.
                     else if (reach >= 0.5d && reach < 0.99d) {
                         rb.useGravity = false;
                         gameObject.moveUp();
                         _do_update.grounded = true;
                         rb.useGravity = true;
                     }
-                    // forcibly move down.
+                    // Forcibly moves down.
                     else {
                         gameObject.moveDown();
                         _do_update.grounded = true;
@@ -407,7 +407,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// set update methods handler.
+            /// Sets update methods handler.
             /// </summary>
             abilities_OnStart();
 
@@ -421,20 +421,20 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods handler.
+        // Update Methods handler.
 
         /// <summary>
-        /// load methods handler.
+        /// Load methods handler.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// update methods handler.
+        /// Update methods handler.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Properties [noun, adjectives]
+        // Protected Properties [noun, adjectives]
 
         protected bool continueUpdate {
             get {
@@ -443,10 +443,10 @@ namespace Germio {
         } 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
 
         /// <summary>
-        /// saves position value for the previous n frame.
+        /// Saves position value for the previous n frame.
         /// </summary>
         void cashPreviousPosition() {
             for (int i = _previous_position.Length - 1; i > -1; i--) {
@@ -463,7 +463,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// whether there was an up or down movement.
+        /// Whether there was an up or down movement.
         /// </summary>
         bool isUpOrDown() {
             int fps = Application.targetFrameRate;
@@ -482,7 +482,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// whether there was a down movement.
+        /// Whether there was a down movement.
         /// </summary>
         bool isDown() {
             int fps = Application.targetFrameRate;
@@ -499,25 +499,25 @@ namespace Germio {
         }
 
         /// <summary>
-        /// 面に正対する。
+        /// Faces the surface directly.
         /// </summary>
         void faceToFace(float speed = 20.0f) {
-            float SPEED = speed; // 回転スピード
+            float SPEED = speed; // Rotation speed.
             float forward_x = (float) Round(transform.forward.x);
             float forward_z = (float) Round(transform.forward.z);
-            if (forward_x == 0 && forward_z == 1) { // Z軸正方向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), SPEED * Time.deltaTime); // 徐々に回転
-            } else if (forward_x == 0 && forward_z == -1) { // Z軸負方向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 180, 0), SPEED * Time.deltaTime); // 徐々に回転
-            } else if (forward_x == 1 && forward_z == 0) { // X軸正方向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 90, 0), SPEED * Time.deltaTime); // 徐々に回転
-            } else if (forward_x == -1 && forward_z == 0) { // X軸負方向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 270, 0), SPEED * Time.deltaTime); // 徐々に回転
+            if (forward_x == 0 && forward_z == 1) { // Positive Z-axis.
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), SPEED * Time.deltaTime); // Gradually rotate.
+            } else if (forward_x == 0 && forward_z == -1) { // Negative Z-axis.
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 180, 0), SPEED * Time.deltaTime); // Gradually rotate.
+            } else if (forward_x == 1 && forward_z == 0) { // Positive X-axis.
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 90, 0), SPEED * Time.deltaTime); // Gradually rotate.
+            } else if (forward_x == -1 && forward_z == 0) { // Negative X-axis.
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 270, 0), SPEED * Time.deltaTime); // Gradually rotate.
             }
         }
 
         /// <summary>
-        /// changed event handler from energy.
+        /// Changed event handler from energy.
         /// </summary>
         void onChanged(object sender, EvtArgs  e) {
         }

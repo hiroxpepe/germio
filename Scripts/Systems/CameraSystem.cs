@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// camera controller
+    /// The camera controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class CameraSystem : InputMaper {
@@ -31,20 +31,20 @@ namespace Germio {
         Quaternion _default_local_rotation;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         new void Start() {
             base.Start();
 
             /// <summary>
-            /// hold the default position and rotation of the camera.
+            /// Saves the camera's default position and rotation.
             /// </summary>
             _default_local_position = transform.localPosition;
             _default_local_rotation = transform.localRotation;
 
             /// <summary>
-            /// look around camera.
+            /// Enables or resets the look-around camera.
             /// </summary>
             this.UpdateAsObservable()
                 .Subscribe(_ => {
@@ -61,7 +61,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// rotate the camera view.
+            /// Rotates the camera view.
             /// </summary>
             this.UpdateAsObservable()
                 .Subscribe(onNext: _ => {
@@ -69,7 +69,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// reset the camera view.
+            /// Resets the camera view.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -79,7 +79,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when touching the back wall.
+            /// Makes the wall transparent when touched.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -90,7 +90,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when leaving the back wall.
+            /// Restores the wall to normal when leaving.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
@@ -101,7 +101,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when touching the ground.
+            /// Makes the ground transparent when touched.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -112,7 +112,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when leaving the ground.
+            /// Restores the ground to normal when leaving.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
@@ -123,7 +123,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when touching the block.
+            /// Makes the block transparent when touched.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -134,7 +134,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when leaving the block.
+            /// Restores the block to normal when leaving.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
@@ -149,23 +149,23 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// rotate the camera view.
+        /// Rotates the camera view based on the input.
         /// </summary>
         void rotateView() {
             const float ADJUST = 120.0f;
             Vector3 player_position = transform.parent.gameObject.transform.position;
-            // left.
+            // Rotate left.
             if (_right_stick_left_button.isPressed) {
                 transform.RotateAround(point: player_position, axis: up, angle: 1.0f * ADJUST * Time.deltaTime);
             }
-            // right
+            // Rotate right.
             else if (_right_stick_right_button.isPressed) {
                 transform.RotateAround(point: player_position, axis: up, angle: -1.0f * ADJUST * Time.deltaTime);
             }
         }
 
         /// <summary>
-        /// reset the camera view.
+        /// Resets the camera view to its default position and rotation.
         /// </summary>
         void resetRotateView() {
             transform.localPosition = _default_local_position;
@@ -173,7 +173,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// reset look around.
+        /// Resets the camera and the look-around state to its initial values.
         /// </summary>
         void resetLookAround() {
             transform.localPosition = _default_local_position;
@@ -183,21 +183,28 @@ namespace Germio {
         }
 
         /// <summary>
-        /// look around.
+        /// Allows the player to look around using the up, down, left, and right buttons.
         /// </summary>
         void lookAround() {
             const float ADJUST = 80.0f;
-            transform.localEulerAngles = new(x: 0f, y: 0f, z: 0f); // hold the camera system horizontally.
+            transform.localEulerAngles = new(x: 0f, y: 0f, z: 0f); // Keep the camera system horizontally fixed.
+            // Look up.
             if (_up_button.isPressed) {
                 _vertical_axis.transform.Rotate(xAngle: 1.0f * Time.deltaTime * ADJUST, yAngle: 0f, zAngle: 0f);
-            } else if (_down_button.isPressed) {
+            }
+            // Look down.
+            else if (_down_button.isPressed) {
                 _vertical_axis.transform.Rotate(xAngle: -1.0f * Time.deltaTime * ADJUST, yAngle: 0f, zAngle: 0f);
-            } else if (_left_button.isPressed) {
+            }
+            // Look left.
+            else if (_left_button.isPressed) {
                 _horizontal_axis.transform.Rotate(xAngle: 0f, yAngle: -1.0f * Time.deltaTime * ADJUST, zAngle: 0f);
-            } else if (_right_button.isPressed) {
+            }
+            // Look right.
+            else if (_right_button.isPressed) {
                 _horizontal_axis.transform.Rotate(xAngle: 0f, yAngle: 1.0f * Time.deltaTime * ADJUST, zAngle: 0f);
             }
-            // move the camera to the position of the character's eyes.
+            // Moves the camera towards the character's eyes if it's too close.
             if (transform.localPosition.z < 0.1f) {
                 transform.localPosition += new Vector3(x: 0f,  y: -0.01f, z: 0.075f * Time.deltaTime * ADJUST);
             }

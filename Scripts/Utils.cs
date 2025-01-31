@@ -11,13 +11,13 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// name of Dictionary is too long, it be named Map.
+    /// Renamed Dictionary to Map for simplicity.
     /// </summary>
     public class Map<K, V> : Dictionary<K, V> {
     }
 
     /// <summary>
-    /// changed event args.
+    /// Changed event args.
     /// </summary>
     public class EvtArgs : EventArgs {
 #nullable enable
@@ -30,34 +30,34 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, noun phrase, adjective]
+        // Public Properties [noun, noun phrase, adjective]
 
         public string Name { get; }
         public string? Value { get; set; }
     }
 
     /// <summary>
-    /// changed event handler.
+    /// Changed event handler.
     /// </summary>
     public delegate void Changed(object sender, EvtArgs e);
 
     /// <summary>
-    /// generic utility class
+    /// Generic utility class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Utils {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Fields [noun, adjectives] 
+        // Static Fields [noun, adjectives] 
 
         /// <summary>
-        /// color.
+        /// Colors.
         /// </summary>
         static Color _red, _orange, _yellow, _lime, _green, _cyan, _azure, _blue, _purple, _magenta, _white;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Constructor
+        // Static Constructor
 
         static Utils() {
             ColorUtility.TryParseHtmlString(htmlString: COLOR_RED, color: out _red);
@@ -74,7 +74,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Properties [noun, noun phrase, adjective]
+        // Public Static Properties [noun, noun phrase, adjective]
 
         public static Color red { get => _red; }
         public static Color orange { get => _orange; }
@@ -89,12 +89,12 @@ namespace Germio {
         public static Color white { get => _white; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Methods [verb]
+        // Public Static Methods [verb]
 
-        #region has the component.
+        #region Has Component
 
         /// <summary>
-        /// has level.
+        /// Has level.
         /// </summary>
         public static bool HasLevel() {
             GameObject game_object = Find(name: LEVEL_TYPE);
@@ -102,7 +102,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// has player.
+        /// Has player.
         /// </summary>
         public static bool HasPlayer() {
             GameObject game_object = Find(name: PLAYER_TYPE);
@@ -110,7 +110,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// has vehicle.
+        /// Has vehicle.
         /// </summary>
         public static bool HasVehicle() {
             GameObject game_object = Find(name: VEHICLE_TYPE);
@@ -118,7 +118,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// has home.
+        /// Has home.
         /// </summary>
         public static bool HasHome() {
             GameObject game_object = Find(name: HOME_TYPE);
@@ -127,41 +127,41 @@ namespace Germio {
 
         #endregion
 
-        #region generic static methods.
+        #region Generic Static Methods
 
         /// <summary>
-        /// swap only the localPosition Y coordinate.
+        /// Swap only the localPosition Y coordinate.
         /// </summary>
         public static Vector3 SwapLocalPositionY(Transform transform, float value) {
             return new Vector3(transform.localPosition.x, value, transform.localPosition.z);
         }
 
         /// <summary>
-        /// returns an enum of the player's direction.
+        /// Returns an enum of the player's direction.
         /// </summary>
         public static Direction GetDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
             float forward_y = (float) Round(a: forward_vector.y);
             float forward_z = (float) Round(a: forward_vector.z);
-            if (forward_x == 0 && forward_z == 1) { return Direction.PositiveZ; } // z-axis positive.
-            if (forward_x == 0 && forward_z == -1) { return Direction.NegativeZ; } // z-axis negative.
-            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // x-axis positive.
-            if (forward_x == -1 && forward_z == 0) { return Direction.NegativeX; } // x-axis negative.
-            // determine the difference between the two axes.
+            if (forward_x == 0 && forward_z == 1) { return Direction.PositiveZ; } // Z-axis positive.
+            if (forward_x == 0 && forward_z == -1) { return Direction.NegativeZ; } // Z-axis negative.
+            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // X-axis positive.
+            if (forward_x == -1 && forward_z == 0) { return Direction.NegativeX; } // X-axis negative.
+            // Determine the difference between the two axes.
             float absolute_x = Abs(value: forward_vector.x);
             float absolute_z = Abs(value: forward_vector.z);
             if (absolute_x > absolute_z) {
-                if (forward_x == 1) { return Direction.PositiveX; } // x-axis positive.
-                if (forward_x == -1) { return Direction.NegativeX; } // x-axis negative.
+                if (forward_x == 1) { return Direction.PositiveX; } // X-axis positive.
+                if (forward_x == -1) { return Direction.NegativeX; } // X-axis negative.
             } else if (absolute_x < absolute_z) {
-                if (forward_z == 1) { return Direction.PositiveZ; } // z-axis positive.
-                if (forward_z == -1) { return Direction.NegativeZ; } // z-axis negative.
+                if (forward_z == 1) { return Direction.PositiveZ; } // Z-axis positive.
+                if (forward_z == -1) { return Direction.NegativeZ; } // Z-axis negative.
             }
-            return Direction.None; // unknown.
+            return Direction.None; // Unknown.
         }
 
         /// <summary>
-        /// set the rendering mode of the material.
+        /// Sets the rendering mode of the material.
         /// </summary>
         public static void SetRenderingMode(Material material, RenderingMode rendering_mode) {
             switch (rendering_mode) {
@@ -212,7 +212,7 @@ namespace Germio {
     }
 
     /// <summary>
-    /// class for vibrate an Android phone.
+    /// Class for vibrate an Android phone.
     /// @author h.adachi
     /// </summary>
     public static class AndroidVibrator {

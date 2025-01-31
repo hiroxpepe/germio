@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// block controller
+    /// A Block controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Block : Common {
@@ -29,21 +29,21 @@ namespace Germio {
         protected GameObject _player_object;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, adjectives]
+        // Public Properties [noun, adjectives]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // Public Events [verb, verb phrase]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // Public Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
             /// <summary>
-            /// set load Methods handler.
+            /// Sets load Methods handler.
             /// </summary>
             abilities_OnAwake();
         }
@@ -52,25 +52,25 @@ namespace Germio {
         new void Start() {
             base.Start();
             /// <summary>
-            /// set update methods handler.
+            /// Sets update methods handler.
             /// </summary>
             abilities_OnStart();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods handler.
+        // Update Methods handler.
 
         /// <summary>
-        /// load methods handler.
+        /// Handles the load methods.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// update methods handler.
+        /// Handles the update methods.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
     }
 }

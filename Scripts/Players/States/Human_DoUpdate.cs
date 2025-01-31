@@ -3,17 +3,17 @@
 
 namespace Germio {
     /// <summary>
-    /// human controller
+    /// A Human controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
+        #region Inner Classes
 
         /// <summary>
-        /// class for the Update() method.
+        /// The Class for the Update() method.
         /// </summary>
         protected class DoUpdate {
 
@@ -71,7 +71,7 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// returns an initialized instance.
+            /// Returns an initialized instance.
             /// </summary>
             public static DoUpdate GetInstance() {
                 DoUpdate instance = new();
@@ -80,7 +80,7 @@ namespace Germio {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // public Methods [verb]
+            // Public Methods [verb]
 
             public void ResetState() {
                 _grounded = _climbing = _pushing = _holding = _faceing = _virtualControllerMode = false;

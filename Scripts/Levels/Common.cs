@@ -15,7 +15,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// common controller
+    /// A Common controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Common : MonoBehaviour {
@@ -39,12 +39,12 @@ namespace Germio {
         Transform _left_hand_transform, _right_hand_transform;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, adjectives]
+        // Public Properties [noun, adjectives]
 
         public bool holdable { get => _CAN_HOLD; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
+        // Public Methods [verb]
 
         public Transform GetLeftHandTransform() {
             return _left_hand_transform;
@@ -55,28 +55,31 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         protected void Start() {
             /// <summary>
-            /// be holded.
+            /// Sets up hand objects when the item is held.
             /// </summary>
             if (_CAN_HOLD) {
                 _is_grounded = true;
-                // initializes the hand position object when being held by its parent.
+                // Creates left and right hand objects.
                 GameObject left_hand_game_object = new(name: "LeftHand");
                 GameObject right_hand_game_object = new(name: "RightHand");
+                // Gets the hand transforms.
                 _left_hand_transform = left_hand_game_object.transform;
                 _right_hand_transform = right_hand_game_object.transform;
+                // Sets hands as children of this object.
                 _left_hand_transform.parent = transform;
                 _right_hand_transform.parent = transform;
+                // Sets hands to default position.
                 _left_hand_transform.localPosition = new(x: 0f, y: 0f, z: 0f);
                 _right_hand_transform.localPosition = new(x: 0f, y: 0f, z: 0f);
             }
 
             /// <summary>
-            /// sets the grounded flag off when the player becomes the parent.
+            /// Sets the grounded flag off when the player becomes the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -88,7 +91,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// be lifted when the player keeps the parent.
+            /// Be lifted when the player keeps the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -96,15 +99,15 @@ namespace Germio {
                     transform.parent != null && transform.parent.gameObject.Like(type: PLAYER_TYPE) &&
                     !_is_grounded)
                 .Subscribe(onNext: x => {
-                    if (transform.parent.transform.position.y > transform.position.y + 0.2f) { // 0.2f: adjustment value
-                        beHolded(speed: 8.0f); // lifted from above.
+                    if (transform.parent.transform.position.y > transform.position.y + 0.2f) { // 0.2f: Adjustment value
+                        beHolded(speed: 8.0f); // Lifted from above.
                     } else {
-                        beHolded(); // lifted from the side.
+                        beHolded(); // Lifted from the side.
                     }
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// falls when the player is no longer a parent.
+            /// Falls when the player is no longer a parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x =>
@@ -112,65 +115,65 @@ namespace Germio {
                     (transform.parent == null || !transform.parent.gameObject.Like(type: PLAYER_TYPE)) &&
                     !_is_grounded)
                 .Subscribe(onNext: x => {
-                    Ray ray = new(transform.position, new(x: 0, y: -1f, z: 0)); // creates a ray to search downwards.
-                    // when throwing a ray down and getting a reaction.
-                    if (Physics.Raycast(ray: ray, hitInfo: out RaycastHit raycast_hit, maxDistance: 20f)) { // 20f: adjustment value
+                    Ray ray = new(transform.position, new(x: 0, y: -1f, z: 0)); // Creates a ray to search downwards.
+                    // When throwing a ray down and getting a reaction.
+                    if (Physics.Raycast(ray: ray, hitInfo: out RaycastHit raycast_hit, maxDistance: 20f)) { // 20f: Adjustment value
 #if DEBUG
                         Debug.DrawRay(start: ray.origin, dir: ray.direction, color: Color.yellow, duration: 3, depthTest: false);
 #endif
                         float distance = (float) Round(value: raycast_hit.distance, digits: 3, mode: MidpointRounding.AwayFromZero);
-                        if (distance < 0.2f) { // the distance is close.
+                        if (distance < 0.2f) { // The distance is close.
                             _is_grounded = true;
-                            // gets the top position of being hit object.
+                            // Gets the top position of being hit object.
                             float top = getTopOf(target: raycast_hit.transform.gameObject);
-                            transform.localPosition = SwapLocalPositionY(transform: transform, value: top); // put it in that position.
-                            alignAfterHold(); // adjusts position.
+                            transform.localPosition = SwapLocalPositionY(transform: transform, value: top); // Put it in that position.
+                            alignAfterHold(); // Adjusts position.
                         }
                     }
-                    // falls when not touched the ground yet.
+                    // Falls when not touched the ground yet.
                     if (!_is_grounded) {
-                        transform.localPosition -= new Vector3(x: 0f, y: 5.0f * Time.deltaTime, z: 0f); // 5.0f: adjustment value
+                        transform.localPosition -= new Vector3(x: 0f, y: 5.0f * Time.deltaTime, z: 0f); // 5.0f: Adjustment value
                     }
                 }).AddTo(gameObjectComponent: this);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Methods [verb]
+        // Protected Methods [verb]
 
         /// <summary>
-        /// get the player's pressed direction as an enumeration.
+        /// Gets the player's pressed direction as an enumeration.
         /// </summary>
         protected Direction getPushedDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
             float forward_y = (float) Round(a: forward_vector.y);
             float forward_z = (float) Round(a: forward_vector.z);
-            if (forward_x == 0 && forward_z == 1) { return Direction.PositiveZ; } // z-axis positive.
-            if (forward_x == 0 && forward_z == -1) { return Direction.NegativeZ; } // z-axis negative.
-            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // x-axis negative.
-            if (forward_x == -1 && forward_z == 0) { return Direction.NegativeX; } // x-axis negative.
-            // determine the difference between the two axes.
+            if (forward_x == 0 && forward_z == 1) { return Direction.PositiveZ; } // Z-axis positive.
+            if (forward_x == 0 && forward_z == -1) { return Direction.NegativeZ; } // Z-axis negative.
+            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // X-axis negative.
+            if (forward_x == -1 && forward_z == 0) { return Direction.NegativeX; } // X-axis negative.
+            // Determines the difference between the two axes.
             float absolute_x = Abs(value: forward_vector.x);
             float absolute_z = Abs(value: forward_vector.z);
             if (absolute_x > absolute_z) {
-                if (forward_x == 1) { return Direction.PositiveX; } // x-axis positive.
-                if (forward_x == -1) { return Direction.NegativeX; } // x-axis negative.
+                if (forward_x == 1) { return Direction.PositiveX; } // X-axis positive.
+                if (forward_x == -1) { return Direction.NegativeX; } // X-axis negative.
             } else if (absolute_x < absolute_z) {
-                if (forward_z == 1) { return Direction.PositiveZ; } // z-axis positive.
-                if (forward_z == -1) { return Direction.NegativeZ; } // z-axis negative.
+                if (forward_z == 1) { return Direction.PositiveZ; } // Z-axis positive.
+                if (forward_z == -1) { return Direction.NegativeZ; } // Z-axis negative.
             }
-            return Direction.None; // unknown.
+            return Direction.None; // Unknown.
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
 
         /// <summary>
-        /// moves to a position where being lifted by its parent.
+        /// Moves to a position where being lifted by its parent.
         /// </summary>
         void beHolded(float speed = 2.0f) {
             if (transform.localPosition.y < _HOLD_ADJUST_Y) {
                 Direction direction = getPushedDirection(transform.parent.forward);
-                // z-axis positive.
+                // Z-axis positive.
                 if (direction == Direction.PositiveZ) {
                     transform.position = new(
                         x: transform.parent.transform.position.x,
@@ -178,7 +181,7 @@ namespace Germio {
                         z: transform.parent.transform.position.z + _HOLD_ADJUST_X_OR_Z
                     );
                     transform.rotation = Euler(x: -_HOLD_ADJUST_DEGREE, y: 0f, z: 0f);
-                // z-axis negative.
+                // Z-axis negative.
                 } else if (direction == Direction.NegativeZ) {
                     transform.position = new(
                         x: transform.parent.transform.position.x,
@@ -186,7 +189,7 @@ namespace Germio {
                         z: transform.parent.transform.position.z - _HOLD_ADJUST_X_OR_Z
                     );
                     transform.rotation = Euler(x: _HOLD_ADJUST_DEGREE, y: 0f, z: 0f);
-                // x-axis positive.
+                // X-axis positive.
                 } else if (direction == Direction.PositiveX) {
                     transform.position = new(
                         x: transform.parent.transform.position.x + _HOLD_ADJUST_X_OR_Z,
@@ -194,7 +197,7 @@ namespace Germio {
                         z: transform.parent.transform.position.z
                     );
                     transform.rotation = Euler(x: 0f, y: 0f, z: _HOLD_ADJUST_DEGREE);
-                // x-axis negative.
+                // X-axis negative.
                 } else if (direction == Direction.NegativeX) {
                     transform.position = new(
                         x: transform.parent.transform.position.x - _HOLD_ADJUST_X_OR_Z,
@@ -207,7 +210,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// gets the top position of the target object.
+        /// Gets the top position of the target object.
         float getTopOf(GameObject target) {
             float height = target.Get<Renderer>().bounds.size.y;
             float position_y = target.transform.position.y;
@@ -215,7 +218,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// fine tune the position of the block to fit the grid.
+        /// Fine tune the position of the block to fit the grid.
         /// </summary>
         void alignAfterHold() {
             transform.position = new(

@@ -3,7 +3,7 @@
 
 namespace Germio {
     /// <summary>
-    /// envelope class
+    /// The envelope class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Env {

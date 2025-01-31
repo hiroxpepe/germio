@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// status system
+    /// The status system
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class NoticeSystem : MonoBehaviour {
@@ -26,7 +26,7 @@ namespace Germio {
         [SerializeField] protected Text _message_text, _targets_text, _points_text, _mode_text;
 
         /// <remarks>
-        /// for development.
+        /// Used for development.
         /// </remarks>
         [SerializeField] protected Text _energy_text, _power_text, _fps_text;
 
@@ -40,29 +40,29 @@ namespace Germio {
         float _elapsed_time;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
 
             /// <summary>
-            /// game system pause on.
+            /// When the game is paused.
             /// </summary>
             _game_system.OnPauseOn += () => { if (!_game_system.home) { _message_text.text = MESSAGE_GAME_PAUSE; }};
 
             /// <summary>
-            /// game system pause off.
+            /// When the game is unpaused.
             /// </summary>
             _game_system.OnPauseOff += () => { _message_text.text = string.Empty; };
 
             /// <summary>
-            /// game system came back.
+            /// When the game comes back home.
             /// </summary>
             _game_system.OnCameBackHome += () => { _message_text.text = MESSAGE_LEVEL_CLEAR; };
 
             /// <summary>
-            /// game system start a level.
+            /// When a new level starts.
             /// </summary>
             _game_system.OnStartLevel += () => {
                 switch (GetActiveScene().name) {
@@ -76,10 +76,12 @@ namespace Germio {
                         _message_text.text = SCENE_LEVEL_3;
                         break;
                 }
+                // Waits 1.5 seconds, then show the message.
                 Observable.Timer(TimeSpan.FromSeconds(1.5))
                     .Subscribe(onNext: _ => {
                         _message_text.text = MESSAGE_LEVEL_START;
                     }).AddTo(gameObjectComponent: this);
+                // Waits 3 seconds, then clear the message.
                 Observable.Timer(TimeSpan.FromSeconds(3.0))
                     .Subscribe(onNext: _ => {
                         _message_text.text = string.Empty;
@@ -87,14 +89,14 @@ namespace Germio {
             };
 
             /// <summary>
-            /// set load Methods handler.
+            /// Sets up the load methods.
             /// </summary>
             abilities_OnAwake();
         }
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         void Start() {
-            // update text ui.
+            // Updates the UI with the latest game, vehicle, and FPS status.
             this.UpdateAsObservable()
                 .Subscribe(onNext: _ => {
                     updateGameStatus();
@@ -103,29 +105,29 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// set update methods handler.
+            /// Sets up the update methods.
             /// </summary>
             abilities_OnStart();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods handler.
+        // Update Methods handler.
 
         /// <summary>
-        /// load methods handler.
+        /// Handles the loading of methods.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// update methods handler.
+        /// Handles the updating of methods.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
 
         /// <summary>
-        /// update game status
+        /// Updates the game status.
         /// </summary>
         void updateGameStatus() {
             _mode_text.text = string.Format("Mode: {0}", _game_system.mode);
@@ -137,13 +139,13 @@ namespace Germio {
         }
 
         /// <summary>
-        /// update vehicle status
+        /// Updates the vehicle status.
         /// </summary>
         void updateVehicleStatus() {
         }
 
         /// <summary>
-        /// update fps status
+        /// Updates the FPS status.
         /// </summary>
         void updateFpsStatus() {
             _frame_count++;

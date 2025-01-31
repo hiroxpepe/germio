@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// home class
+    /// The Home class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Home : MonoBehaviour {
@@ -29,12 +29,12 @@ namespace Germio {
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // Public Events [verb, verb phrase]
 
         public event Action? OnCameBack;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -43,7 +43,9 @@ namespace Germio {
 
         // Start is called before the first frame update.
         void Start() {
+            // Saves the original y position of the object.
             float original_position = transform.position.y;
+            // Updates the object's position if moving.
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
                     _move)
@@ -57,7 +59,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when being touched player.
+            /// When player collides with the object.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x => 
@@ -67,7 +69,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when being touched player.
+            /// When player triggers the object.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -77,7 +79,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// when being touched vehicle.
+            /// When vehicle collides with the object.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x => 
