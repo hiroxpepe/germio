@@ -10,7 +10,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// ending scene
+    /// The ending scene.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Ending : InputMaper {
@@ -22,19 +22,19 @@ namespace Germio {
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
         }
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         new void Start() {
             base.Start();
 
             /// <summary>
-            /// go to title. 
+            /// Moves to the title scene.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 

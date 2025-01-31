@@ -5,14 +5,14 @@ using static System.Math;
 
 namespace Germio {
     /// <summary>
-    /// human controller
+    /// A Human controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
+        #region Inner Classes
 
         protected class Acceleration {
 
@@ -67,14 +67,14 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// hide the constructor.
+            /// Hides the constructor.
             /// </summary>
             Acceleration(Human parent) {
                 _parent = parent;
             }
 
             /// <summary>
-            /// returns an initialized instance.
+            /// Returns an initialized instance.
             /// </summary>
             public static Acceleration GetInstance(Human parent) {
                 return new Acceleration(parent);

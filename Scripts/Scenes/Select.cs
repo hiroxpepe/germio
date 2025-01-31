@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// select scene
+    /// The select scene
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Select : InputMaper {
@@ -42,12 +42,12 @@ namespace Germio {
         int _idx = 0;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
-            // set default focus.
+            //Sets default focus.
             _focus.Add(key: 0, value: MODE_EASY);
             _focus.Add(key: 1, value: MODE_NORMAL);
             _focus.Add(key: 2, value: MODE_HARD);
@@ -56,12 +56,12 @@ namespace Germio {
             changeSelectedColor();
         }
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         new void Start() {
             base.Start();
 
             /// <summary>
-            /// select up.
+            /// Selects the previous option.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -77,7 +77,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// select down.
+            /// Selects the next option.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -93,7 +93,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// return title.
+            /// Returns to the title screen.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -104,8 +104,11 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
 
+        /// <summary>
+        /// Changes the color of the selected mode.
+        /// </summary>
         void changeSelectedColor() {
             switch (_selected) {
                 case MODE_EASY:
