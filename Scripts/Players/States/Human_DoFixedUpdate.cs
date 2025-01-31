@@ -3,17 +3,17 @@
 
 namespace Germio {
     /// <summary>
-    /// human controller
+    /// A Human controller
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
+        #region Inner Classes
 
         /// <summary>
-        /// class for the FixedUpdate() method.
+        /// The Class for the FixedUpdate() method.
         /// </summary>
         protected class DoFixedUpdate {
 
@@ -43,14 +43,14 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// returns an initialized instance.
+            /// Returns an initialized instance.
             /// </summary>
             public static DoFixedUpdate GetInstance() {
                 return new DoFixedUpdate();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // public Methods [verb]
+            // Public Methods [verb]
 
             public void Apply(FixedUpdate type) {
                 switch (type) {

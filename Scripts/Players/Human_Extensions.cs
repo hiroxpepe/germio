@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Germio {
     /// <summary>
-    /// human extension methods.
+    /// The Human extension methods.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Human_Extensions {
 #nullable enable
 
         /// <summary>
-        /// whether the player hits the side of the colliding object.
+        /// Whether the player hits the side of the colliding object.
         /// </summary>
         internal static bool isHitSide(this GameObject self, GameObject target) {
             const float ADJUST = 0.1f;
@@ -29,7 +29,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// move it up when the player hits a block.
+        /// Moves it up when the player hits a block.
         /// </summary>
         internal static void moveUp(this GameObject self) {
             const float MOVE_VALUE = 12.0f;
@@ -38,7 +38,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// move it down when the player hits a block.
+        /// Moves it down when the player hits a block.
         /// </summary>
         internal static void moveDown(this GameObject self) {
             const float MOVE_VALUE = 6.0f;
@@ -47,7 +47,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// the value until the top of the block.
+        /// The value until the top of the block.
         /// </summary>
         internal static double getReach(this GameObject self, GameObject target) {
             //Debug.Log($"name: {target.name}");
@@ -62,24 +62,24 @@ namespace Germio {
         }
 
         /// <summary>
-        /// move aside when the player hits a block.
+        /// Moves aside when the player hits a block.
         /// </summary>
         /// <param name="direction">the player's direction is provided.</param>
         internal static void moveLetfOrRight(this GameObject self, Direction direction) {
             const float MOVE_VALUE = 0.3f;
             Vector3 new_position = self.transform.position;
             float move_amount = MOVE_VALUE * Time.deltaTime;
-            // z-axis positive and negative.
+            // Z-axis positive and negative.
             if (direction == Direction.PositiveZ || direction == Direction.NegativeZ) {
                 float move_direction = (self.transform.forward.x < 0f) ? -1.0f : 1.0f;
                 new_position += new Vector3(x: move_amount * move_direction, y: 0f, z: 0f);
             }
-            // x-axis positive and negative.
+            // X-axis positive and negative.
             else if (direction == Direction.PositiveX || direction == Direction.NegativeX) {
                 float move_direction = (self.transform.forward.z < 0f) ? -1.0f : 1.0f;
                 new_position += new Vector3(x: 0f, y: 0f, z: move_amount * move_direction);
             }
-            // move to a new position.
+            // Moves to a new position.
             self.transform.position = new_position;
         }
     }

@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// despawn class
+    /// The Despawn class
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
@@ -24,12 +24,12 @@ namespace Germio {
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // Public Events [verb, verb phrase]
 
         public event Action? OnDespawn;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -39,7 +39,7 @@ namespace Germio {
         // Start is called before the first frame update.
         void Start() {
             /// <summary>
-            /// when being touched player.
+            /// When the player touches the object.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x =>

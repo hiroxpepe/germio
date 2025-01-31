@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// level scene
+    /// A level scene.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Level : InputMaper {
@@ -28,7 +28,7 @@ namespace Germio {
         protected bool _is_pausing = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // Public Events [verb, verb phrase]
 
         public event Action? OnPauseOn;
 
@@ -37,7 +37,7 @@ namespace Germio {
         public event Action? OnStart;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -45,7 +45,7 @@ namespace Germio {
             _sound_system = Find(name: SOUND_SYSTEM).Get<SoundSystem>();
 
             /// <summary>
-            /// game system came back home.
+            /// When the game system returns home.
             /// </summary>
             _game_system.OnCameBackHome += () => {
                 _sound_system.Play(type: SEClip.Item);
@@ -54,22 +54,22 @@ namespace Germio {
             };
 
             /// <summary>
-            /// set the default beat flag.
+            /// Sets the default beat flag.
             /// </summary>
             _game_system.beat = true;
 
             /// <summary>
-            /// set load Methods handler.
+            /// Sets load Methods handler.
             /// </summary>
             abilities_OnAwake();
         }
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         new void Start() {
             base.Start();
 
             /// <summary>
-            /// pause the game execute or cancel.
+            /// Pauses or unpauses the game.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -86,7 +86,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// next level.
+            /// Loads the next level based on the current scene.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -110,7 +110,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// restart game.
+            /// Restarts the game by reloading the current scene.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -120,12 +120,12 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// set update methods handler.
+            /// Sets up the update method handler.
             /// </summary>
             abilities_OnStart();
 
             /// <summary>
-            /// start event.
+            /// Triggers the start event.
             /// </summary>
             OnStart?.Invoke();
         }

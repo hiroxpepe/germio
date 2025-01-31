@@ -10,7 +10,7 @@ using UniRx.Triggers;
 
 namespace Germio {
     /// <summary>
-    /// to map physical gamepad
+    /// Maps physical gamepad inputs
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class InputMaper : MonoBehaviour {
@@ -39,16 +39,16 @@ namespace Germio {
         // Properties [noun, adjectives] 
 
         /// <summary>
-        /// whether to use virtual controllers.
+        /// True if virtual controllers are used.
         /// </summary>
         public bool useVirtualController { get => _use_v_controller; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods
+        // Update Methods
 
-        // Start is called before the first frame update
+        // Start is called before the first frame update.
         protected void Start() {
-            // get virtual controller object.
+            // Gets virtual controller.
             _v_controller_object = Find(name: "VController");
 
             // Update is called once per frame.
@@ -59,7 +59,7 @@ namespace Germio {
 
             #region mobile phone vibration.
 
-            // vibrate the smartphone when the button is pressed.
+            // Gets vibration on button press.
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
                     _v_controller_object && _use_vibration &&
@@ -71,7 +71,7 @@ namespace Germio {
                     AndroidVibrator.Vibrate(milliseconds: 50L);
                 }).AddTo(gameObjectComponent: this);
 
-            // no vibration of the smartphone by pressing the start and X buttons at the same time.
+            // Gets no vibration if start + X pressed together.
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
                     (_x_button.isPressed && _start_button.wasPressedThisFrame) || 
@@ -84,13 +84,13 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods [verb]
+        // Private Methods [verb]
 
         void mapGamepad() {
-            // check a physical gamepad connected.
+            // Checks if a physical gamepad is connected.
             string[] controller_names = Input.GetJoystickNames();
             if (controller_names.Length == 0 || controller_names[0] == "") {
-                // use a PC Keyboard.
+                // Uses PC Keyboard if no gamepad is connected.
                 if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
                     _v_controller_object.SetActive(value: false);
                     _use_v_controller = false;
@@ -121,8 +121,7 @@ namespace Germio {
                 _v_controller_object.SetActive(value: false);
                 _use_v_controller = false;
             }
-
-            // identifies the OS.
+            // Identifies the OS and sets button mappings accordingly.
             _up_button = Gamepad.current.dpad.up;
             _down_button = Gamepad.current.dpad.down;
             _left_button = Gamepad.current.dpad.left;
@@ -130,28 +129,31 @@ namespace Germio {
             _start_button = Gamepad.current.startButton;
             _select_button = Gamepad.current.selectButton;
             if (Application.platform == RuntimePlatform.Android) {
-                // Android OS
+                // For Android OS.
                 _a_button = Gamepad.current.aButton;
                 _b_button = Gamepad.current.bButton;
                 _x_button = Gamepad.current.xButton;
                 _y_button = Gamepad.current.yButton;
             } else if (Application.platform == RuntimePlatform.WindowsPlayer) {
-                // Windows OS
+                // For Windows OS.
                 _a_button = Gamepad.current.bButton;
                 _b_button = Gamepad.current.aButton;
                 _x_button = Gamepad.current.yButton;
                 _y_button = Gamepad.current.xButton;
             } else {
-                // FIXME: can't get it during development with Unity?
+                // For other platforms (e.g., during Unity development)
+                // FIXME: Can't get correct mapping during Unity development.
                 _a_button = Gamepad.current.bButton;
                 _b_button = Gamepad.current.aButton;
                 _x_button = Gamepad.current.yButton;
                 _y_button = Gamepad.current.xButton;
             }
+            // Sets shoulder and trigger buttons for gamepad.
             _left_1_button = Gamepad.current.leftShoulder;
             _right_1_button = Gamepad.current.rightShoulder;
             _left_2_button = Gamepad.current.leftTrigger;
             _right_2_button = Gamepad.current.rightTrigger;
+            // Sets right stick direction buttons.
             _right_stick_up_button = Gamepad.current.rightStick.up;
             _right_stick_down_button = Gamepad.current.rightStick.down;
             _right_stick_left_button = Gamepad.current.rightStick.left;
