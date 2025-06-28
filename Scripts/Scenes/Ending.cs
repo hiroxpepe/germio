@@ -10,7 +10,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// The ending scene.
+    /// Manages the ending scene, providing navigation back to the title screen.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Ending : InputMaper {
@@ -19,6 +19,9 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

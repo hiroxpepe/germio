@@ -11,13 +11,13 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// Renamed Dictionary to Map for simplicity.
+    /// A dictionary renamed to Map for simplicity.
     /// </summary>
     public class Map<K, V> : Dictionary<K, V> {
     }
 
     /// <summary>
-    /// Changed event args.
+    /// Represents event arguments with a name and optional value.
     /// </summary>
     public class EvtArgs : EventArgs {
 #nullable enable
@@ -32,17 +32,24 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Properties [noun, noun phrase, adjective]
 
+        /// <summary>
+        /// The name of the event.
+        /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// The optional value of the event.
+        /// </summary>
         public string? Value { get; set; }
     }
 
     /// <summary>
-    /// Changed event handler.
+    /// A delegate for handling changed events.
     /// </summary>
     public delegate void Changed(object sender, EvtArgs e);
 
     /// <summary>
-    /// Generic utility class
+    /// Provides generic utility methods and properties.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Utils {
@@ -52,7 +59,7 @@ namespace Germio {
         // Static Fields [noun, adjectives] 
 
         /// <summary>
-        /// Colors.
+        /// Predefined colors.
         /// </summary>
         static Color _red, _orange, _yellow, _lime, _green, _cyan, _azure, _blue, _purple, _magenta, _white;
 
@@ -76,16 +83,59 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Static Properties [noun, noun phrase, adjective]
 
+        /// <summary>
+        /// The red color.
+        /// </summary>
         public static Color red { get => _red; }
+
+        /// <summary>
+        /// The orange color.
+        /// </summary>
         public static Color orange { get => _orange; }
+
+        /// <summary>
+        /// The yellow color.
+        /// </summary>
         public static Color yellow { get => _yellow; }
+
+        /// <summary>
+        /// The lime color.
+        /// </summary>
         public static Color lime { get => _lime; }
+
+        /// <summary>
+        /// The green color.
+        /// </summary>
         public static Color green { get => _green; }
+
+        /// <summary>
+        /// The cyan color.
+        /// </summary>
         public static Color cyan { get => _cyan; }
+
+        /// <summary>
+        /// The azure color.
+        /// </summary>
         public static Color azure { get => _azure; }
+
+        /// <summary>
+        /// The blue color.
+        /// </summary>
         public static Color blue { get => _blue; }
+
+        /// <summary>
+        /// The purple color.
+        /// </summary>
         public static Color purple { get => _purple; }
+
+        /// <summary>
+        /// The magenta color.
+        /// </summary>
         public static Color magenta { get => _magenta; }
+
+        /// <summary>
+        /// The white color.
+        /// </summary>
         public static Color white { get => _white; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +144,7 @@ namespace Germio {
         #region Has Component
 
         /// <summary>
-        /// Has level.
+        /// Checks if a level component exists.
         /// </summary>
         public static bool HasLevel() {
             GameObject game_object = Find(name: LEVEL_TYPE);
@@ -102,7 +152,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Has player.
+        /// Checks if a player component exists.
         /// </summary>
         public static bool HasPlayer() {
             GameObject game_object = Find(name: PLAYER_TYPE);
@@ -110,7 +160,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Has vehicle.
+        /// Checks if a vehicle component exists.
         /// </summary>
         public static bool HasVehicle() {
             GameObject game_object = Find(name: VEHICLE_TYPE);
@@ -118,7 +168,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Has home.
+        /// Checks if a home component exists.
         /// </summary>
         public static bool HasHome() {
             GameObject game_object = Find(name: HOME_TYPE);
@@ -130,14 +180,14 @@ namespace Germio {
         #region Generic Static Methods
 
         /// <summary>
-        /// Swap only the localPosition Y coordinate.
+        /// Swaps the Y coordinate of the local position.
         /// </summary>
         public static Vector3 SwapLocalPositionY(Transform transform, float value) {
             return new Vector3(transform.localPosition.x, value, transform.localPosition.z);
         }
 
         /// <summary>
-        /// Returns an enum of the player's direction.
+        /// Determines the player's direction based on the forward vector.
         /// </summary>
         public static Direction GetDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
@@ -212,9 +262,9 @@ namespace Germio {
     }
 
     /// <summary>
-    /// Class for vibrate an Android phone.
-    /// @author h.adachi
+    /// Provides functionality to vibrate an Android phone.
     /// </summary>
+    /// <author>h.adachi</author>
     public static class AndroidVibrator {
 #if UNITY_ANDROID && !UNITY_EDITOR
         public static AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");

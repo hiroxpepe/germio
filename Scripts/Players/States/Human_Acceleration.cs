@@ -14,28 +14,60 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         #region Inner Classes
 
+        /// <summary>
+        /// Handles acceleration logic for the Human player.
+        /// </summary>
         protected class Acceleration {
 
             ///////////////////////////////////////////////////////////////////////////////////////
             // Fields [noun, adjectives] 
 
+            /// <summary>
+            /// Reference to the parent Human object.
+            /// </summary>
             Human _parent;
 
-            float _current_speed, _previous_speed;
+            /// <summary>
+            /// Current speed of the player.
+            /// </summary>
+            float _current_speed;
+
+            /// <summary>
+            /// Previous speed of the player.
+            /// </summary>
+            float _previous_speed;
 
             ///////////////////////////////////////////////////////////////////////////////////////
             // Properties [noun, adjectives] 
 
+            /// <summary>
+            /// Gets or sets the current speed of the player.
+            /// </summary>
             public float currentSpeed { get => _current_speed; set => _current_speed = value; }
 
+            /// <summary>
+            /// Gets or sets the previous speed of the player.
+            /// </summary>
             public float previousSpeed { get => _previous_speed; set => _previous_speed = value; }
 
+            /// <summary>
+            /// Indicates whether the player can walk.
+            /// </summary>
             public bool canWalk { get => _current_speed < _parent._FORWARD_SPEED_LIMIT; }
 
+            /// <summary>
+            /// Indicates whether the player can run.
+            /// </summary>
             public bool canRun { get => _current_speed < _parent._RUN_SPEED_LIMIT; }
 
+            /// <summary>
+            /// Indicates whether the player can move backward.
+            /// </summary>
             public bool canBackward { get => _current_speed < _parent._BACKWARD_SPEED_LIMIT; }
 
+            /// <summary>
+            /// Indicates whether the player's movement is frozen.
+            /// </summary>
             public bool freeze {
                 get {
                     if (Round(value: _previous_speed, digits: 2) < 0.02 &&
@@ -47,7 +79,10 @@ namespace Germio {
                 }
             }
 
-            public float jumpPower  {
+            /// <summary>
+            /// Gets the jump power of the player based on the current state.
+            /// </summary>
+            public float jumpPower {
                 get {
                     float value = 0f;
                     if (_parent._y_button.isPressed || _parent._do_update.virtualControllerMode) {

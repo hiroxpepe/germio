@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// The Home class
+    /// Represents an home object in the game.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Home : MonoBehaviour {
@@ -21,16 +21,25 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
+        /// <summary>
+        /// Indicates whether the object is moving.
+        /// </summary>
         [SerializeField] bool _move = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Events [verb, verb phrase]
 
+        /// <summary>
+        /// Occurs when the player comes back home.
+        /// </summary>
         public event Action? OnCameBack;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
