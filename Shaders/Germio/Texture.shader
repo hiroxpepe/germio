@@ -51,10 +51,7 @@ Shader "Germio/Texture"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float4 texture_color = tex2D(_MainTex, i.uv);
-                float4 final_color = texture_color * _Color;
-                final_color.a = _Color.a;
-                return final_color;
+                return tex2D(_MainTex, i.uv) * _Color;
             }
             ENDCG
         }

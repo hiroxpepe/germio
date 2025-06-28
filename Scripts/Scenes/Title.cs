@@ -10,7 +10,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// The title scene
+    /// Manages the title scene, including navigation to other scenes.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Title : InputMaper {
@@ -19,6 +19,9 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

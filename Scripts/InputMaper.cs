@@ -10,7 +10,7 @@ using UniRx.Triggers;
 
 namespace Germio {
     /// <summary>
-    /// Maps physical gamepad inputs
+    /// Maps physical gamepad inputs.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class InputMaper : MonoBehaviour {
@@ -19,34 +19,60 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives] 
 
+        /// <summary>
+        /// Virtual controller object.
+        /// </summary>
         protected GameObject _v_controller_object;
 
+        /// <summary>
+        /// Gamepad buttons.
+        /// </summary>
         protected ButtonControl _a_button, _b_button, _x_button, _y_button, _up_button, _down_button, _left_button, _right_button;
 
+        /// <summary>
+        /// Shoulder and trigger buttons.
+        /// </summary>
         protected ButtonControl _left_1_button, _right_1_button, _left_2_button, _right_2_button;
 
+        /// <summary>
+        /// Right stick buttons.
+        /// </summary>
         protected ButtonControl _right_stick_up_button, _right_stick_down_button, _right_stick_left_button, _right_stick_right_button, _right_stick_button;
 
+        /// <summary>
+        /// Start and select buttons.
+        /// </summary>
         protected ButtonControl _start_button, _select_button;
 
+        /// <summary>
+        /// Indicates whether the look functionality is active.
+        /// </summary>
         protected static bool _look = false;
 
+        /// <summary>
+        /// Indicates whether vibration is enabled.
+        /// </summary>
         bool _use_vibration = true;
 
+        /// <summary>
+        /// Indicates whether the virtual controller is used.
+        /// </summary>
         bool _use_v_controller;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives] 
 
         /// <summary>
-        /// True if virtual controllers are used.
+        /// Gets a value indicating whether virtual controllers are used.
         /// </summary>
         public bool useVirtualController { get => _use_v_controller; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Update Methods
 
-        // Start is called before the first frame update.
+        /// <summary>
+        /// Called before the first frame update.
+        /// </summary>
         protected void Start() {
             // Gets virtual controller.
             _v_controller_object = Find(name: "VController");
@@ -57,7 +83,7 @@ namespace Germio {
                     mapGamepad();
                 }).AddTo(gameObjectComponent: this);
 
-            #region mobile phone vibration.
+            #region Mobile phone vibration
 
             // Gets vibration on button press.
             this.UpdateAsObservable()
@@ -71,7 +97,7 @@ namespace Germio {
                     AndroidVibrator.Vibrate(milliseconds: 50L);
                 }).AddTo(gameObjectComponent: this);
 
-            // Gets no vibration if start + X pressed together.
+            // Disables vibration if start + X are pressed together.
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
                     (_x_button.isPressed && _start_button.wasPressedThisFrame) || 
@@ -86,11 +112,14 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Private Methods [verb]
 
+        /// <summary>
+        /// Maps gamepad inputs.
+        /// </summary>
         void mapGamepad() {
             // Checks if a physical gamepad is connected.
             string[] controller_names = Input.GetJoystickNames();
             if (controller_names.Length == 0 || controller_names[0] == "") {
-                // Uses PC Keyboard if no gamepad is connected.
+                // Uses PC keyboard if no gamepad is connected.
                 if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
                     _v_controller_object.SetActive(value: false);
                     _use_v_controller = false;
@@ -141,7 +170,7 @@ namespace Germio {
                 _x_button = Gamepad.current.yButton;
                 _y_button = Gamepad.current.xButton;
             } else {
-                // For other platforms (e.g., during Unity development)
+                // For other platforms (e.g., during Unity development).
                 // FIXME: Can't get correct mapping during Unity development.
                 _a_button = Gamepad.current.bButton;
                 _b_button = Gamepad.current.aButton;

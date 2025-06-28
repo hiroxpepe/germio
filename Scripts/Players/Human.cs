@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// A Human controller
+    /// Controls the Human player, including movement and interactions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
@@ -23,31 +23,67 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
+        /// <summary>
+        /// Jump power of the player.
+        /// </summary>
         [SerializeField] protected float _JUMP_POWER = 10.0f;
 
+        /// <summary>
+        /// Rotational speed of the player.
+        /// </summary>
         [SerializeField] protected float _ROTATIONAL_SPEED = 10.0f;
 
+        /// <summary>
+        /// Forward speed limit of the player.
+        /// </summary>
         [SerializeField] protected float _FORWARD_SPEED_LIMIT = 1.5f;
 
+        /// <summary>
+        /// Running speed limit of the player.
+        /// </summary>
         [SerializeField] protected float _RUN_SPEED_LIMIT = 3.25f;
 
+        /// <summary>
+        /// Backward speed limit of the player.
+        /// </summary>
         [SerializeField] protected float _BACKWARD_SPEED_LIMIT = 1.0f;
 
+        /// <summary>
+        /// Animation component for the player.
+        /// </summary>
         [SerializeField] protected SimpleAnimation _simple_anime;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives] 
 
+        /// <summary>
+        /// Handles update logic.
+        /// </summary>
         protected DoUpdate _do_update;
 
+        /// <summary>
+        /// Handles fixed update logic.
+        /// </summary>
         protected DoFixedUpdate _do_fixed_update;
 
+        /// <summary>
+        /// Handles acceleration logic.
+        /// </summary>
         protected Acceleration _acceleration;
 
-        protected Vector3[] _previous_position = new Vector3[60]; // Saves position 30 frames ago.
+        /// <summary>
+        /// Stores the player's position from previous frames.
+        /// </summary>
+        protected Vector3[] _previous_position = new Vector3[60];
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         protected GameSystem _game_system;
 
+        /// <summary>
+        /// Reference to the sound system.
+        /// </summary>
         protected SoundSystem _sound_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +111,9 @@ namespace Germio {
             }
         }
 
+        /// <summary>
+        /// Indicates whether the player is facing a surface.
+        /// </summary>
         public bool Faceing { get => _do_update.faceing; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +146,9 @@ namespace Germio {
             abilities_OnAwake();
         }
 
-        // Start is called before the first frame update.
+        /// <summary>
+        /// Called before the first frame update.
+        /// </summary>
         new void Start() {
             base.Start();
 
@@ -436,6 +477,9 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Protected Properties [noun, adjectives]
 
+        /// <summary>
+        /// Indicates whether updates should continue.
+        /// </summary>
         protected bool continueUpdate {
             get {
                 return !_look && !_do_update.pushing;

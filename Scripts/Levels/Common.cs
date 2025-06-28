@@ -15,7 +15,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// A Common controller
+    /// Provides shared functionality for common game objects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Common : MonoBehaviour {
@@ -23,33 +23,65 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
+        /// <summary>
+        /// Indicates whether the object can be held.
+        /// </summary>
         [SerializeField] protected bool _CAN_HOLD = false;
 
+        /// <summary>
+        /// Adjustment value for the Y-axis when held.
+        /// </summary>
         [SerializeField] protected float _HOLD_ADJUST_Y = 0.6f;
 
+        /// <summary>
+        /// Adjustment value for the X or Z-axis when held.
+        /// </summary>
         [SerializeField] protected float _HOLD_ADJUST_X_OR_Z = 0.8f;
 
+        /// <summary>
+        /// Adjustment value for the rotation degree when held.
+        /// </summary>
         [SerializeField] protected float _HOLD_ADJUST_DEGREE = 15.0f;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Indicates whether the object is grounded.
+        /// </summary>
         protected bool _is_grounded;
 
-        Transform _left_hand_transform, _right_hand_transform;
+        /// <summary>
+        /// Transform for the left hand.
+        /// </summary>
+        Transform _left_hand_transform;
+
+        /// <summary>
+        /// Transform for the right hand.
+        /// </summary>
+        Transform _right_hand_transform;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Properties [noun, adjectives]
 
+        /// <summary>
+        /// Gets whether the object is holdable.
+        /// </summary>
         public bool holdable { get => _CAN_HOLD; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Methods [verb]
 
+        /// <summary>
+        /// Gets the transform for the left hand.
+        /// </summary>
         public Transform GetLeftHandTransform() {
             return _left_hand_transform;
         }
 
+        /// <summary>
+        /// Gets the transform for the right hand.
+        /// </summary>
         public Transform GetRightHandTransform() {
             return _right_hand_transform;
         }
@@ -149,7 +181,7 @@ namespace Germio {
             float forward_z = (float) Round(a: forward_vector.z);
             if (forward_x == 0 && forward_z == 1) { return Direction.PositiveZ; } // Z-axis positive.
             if (forward_x == 0 && forward_z == -1) { return Direction.NegativeZ; } // Z-axis negative.
-            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // X-axis negative.
+            if (forward_x == 1 && forward_z == 0) { return Direction.PositiveX; } // X-axis positive.
             if (forward_x == -1 && forward_z == 0) { return Direction.NegativeX; } // X-axis negative.
             // Determines the difference between the two axes.
             float absolute_x = Abs(value: forward_vector.x);
@@ -211,6 +243,7 @@ namespace Germio {
 
         /// <summary>
         /// Gets the top position of the target object.
+        /// </summary>
         float getTopOf(GameObject target) {
             float height = target.Get<Renderer>().bounds.size.y;
             float position_y = target.transform.position.y;

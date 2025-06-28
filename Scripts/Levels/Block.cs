@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// A Block controller
+    /// Represents a block object in the game
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Block : Common {
@@ -26,6 +26,9 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the player object.
+        /// </summary>
         protected GameObject _player_object;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

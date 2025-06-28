@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// The status system
+    /// Manages game status notifications.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class NoticeSystem : MonoBehaviour {
@@ -23,20 +23,57 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
-        [SerializeField] protected Text _message_text, _targets_text, _points_text, _mode_text;
+        /// <summary>
+        /// Text field for displaying messages.
+        /// </summary>
+        [SerializeField] protected Text _message_text;
 
-        /// <remarks>
-        /// Used for development.
-        /// </remarks>
-        [SerializeField] protected Text _energy_text, _power_text, _fps_text;
+        /// <summary>
+        /// Text field for displaying target information.
+        /// </summary>
+        [SerializeField] protected Text _targets_text;
+
+        /// <summary>
+        /// Text field for displaying points.
+        /// </summary>
+        [SerializeField] protected Text _points_text;
+
+        /// <summary>
+        /// Text field for displaying the game mode.
+        /// </summary>
+        [SerializeField] protected Text _mode_text;
+
+        /// <summary>
+        /// Text field for displaying energy information (used for development).
+        /// </summary>
+        [SerializeField] protected Text _energy_text;
+
+        /// <summary>
+        /// Text field for displaying power information (used for development).
+        /// </summary>
+        [SerializeField] protected Text _power_text;
+
+        /// <summary>
+        /// Text field for displaying FPS information (used for development).
+        /// </summary>
+        [SerializeField] protected Text _fps_text;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives] 
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         protected GameSystem _game_system;
 
+        /// <summary>
+        /// Frame count for FPS calculation.
+        /// </summary>
         int _frame_count;
 
+        /// <summary>
+        /// Elapsed time for FPS calculation.
+        /// </summary>
         float _elapsed_time;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,12 +113,12 @@ namespace Germio {
                         _message_text.text = SCENE_LEVEL_3;
                         break;
                 }
-                // Waits 1.5 seconds, then show the message.
+                // Waits 1.5 seconds, then shows the start message.
                 Observable.Timer(TimeSpan.FromSeconds(1.5))
                     .Subscribe(onNext: _ => {
                         _message_text.text = MESSAGE_LEVEL_START;
                     }).AddTo(gameObjectComponent: this);
-                // Waits 3 seconds, then clear the message.
+                // Waits 3 seconds, then clears the message.
                 Observable.Timer(TimeSpan.FromSeconds(3.0))
                     .Subscribe(onNext: _ => {
                         _message_text.text = string.Empty;

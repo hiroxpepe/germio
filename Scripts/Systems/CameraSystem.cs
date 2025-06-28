@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// The camera controller
+    /// Controls the camera system, including rotation and transparency effects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class CameraSystem : InputMaper {
@@ -21,13 +21,37 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
-        [SerializeField] GameObject _horizontal_axis, _vertical_axis, _main_camera, _look_target;
+        /// <summary>
+        /// Horizontal axis object for camera rotation.
+        /// </summary>
+        [SerializeField] GameObject _horizontal_axis;
+
+        /// <summary>
+        /// Vertical axis object for camera rotation.
+        /// </summary>
+        [SerializeField] GameObject _vertical_axis;
+
+        /// <summary>
+        /// Main camera object.
+        /// </summary>
+        [SerializeField] GameObject _main_camera;
+
+        /// <summary>
+        /// Target object for camera focus.
+        /// </summary>
+        [SerializeField] GameObject _look_target;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives] 
 
+        /// <summary>
+        /// Default local position of the camera.
+        /// </summary>
         Vector3 _default_local_position;
 
+        /// <summary>
+        /// Default local rotation of the camera.
+        /// </summary>
         Quaternion _default_local_rotation;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
