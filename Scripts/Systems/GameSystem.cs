@@ -10,7 +10,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// The game system
+    /// Manages the game system, including levels and home interactions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class GameSystem : MonoBehaviour {
@@ -20,17 +20,17 @@ namespace Germio {
         // Properties [noun, adjectives] 
 
         /// <summary>
-        /// Current game mode.
+        /// Gets or sets the current game mode.
         /// </summary>
         public string mode { get => Status.mode; set => Status.mode = value; }
 
         /// <summary>
-        /// True if the player is home.
+        /// Gets or sets a value indicating whether the player is home.
         /// </summary>
         public bool home { get; set; }
 
         /// <summary>
-        /// True if the level is beaten.
+        /// Gets or sets a value indicating whether the level is beaten.
         /// </summary>
         public bool beat { get; set; }
 
@@ -38,22 +38,22 @@ namespace Germio {
         // Public Events [verb, verb phrase]
 
         /// <summary>
-        /// When the game is paused.
+        /// Occurs when the game is paused.
         /// </summary>
         public event Action? OnPauseOn;
 
         /// <summary>
-        /// When the game is unpaused.
+        /// Occurs when the game is unpaused.
         /// </summary>
         public event Action? OnPauseOff;
 
         /// <summary>
-        /// When a level starts.
+        /// Occurs when a level starts.
         /// </summary>
         public event Action? OnStartLevel;
 
         /// <summary>
-        /// When the player comes back home.
+        /// Occurs when the player comes back home.
         /// </summary>
         public event Action? OnCameBackHome;
 
@@ -65,7 +65,7 @@ namespace Germio {
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
-            // Sets frame rate.
+            // Sets the frame rate.
             Application.targetFrameRate = FPS;
 
             if (HasLevel()) {
@@ -134,12 +134,18 @@ namespace Germio {
 
         #region Status
 
+        /// <summary>
+        /// Represents the game status.
+        /// </summary>
         static class Status {
 #nullable enable
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Static Fields [nouns, noun phrases]
 
+            /// <summary>
+            /// The current game mode.
+            /// </summary>
             static string _mode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
@@ -152,6 +158,9 @@ namespace Germio {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Public Static Properties [noun, noun phrase, adjective]
 
+            /// <summary>
+            /// Gets or sets the current game mode.
+            /// </summary>
             public static string mode {
                 get => _mode; set => _mode = value;
             }

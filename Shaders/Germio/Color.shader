@@ -41,9 +41,7 @@ Shader "Germio/Color"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float4 final_color = _Color;
-                final_color.a = _Color.a;
-                return final_color;
+                return _Color;
             }
             ENDCG
         }

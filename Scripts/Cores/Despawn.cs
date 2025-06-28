@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// The Despawn class
+    /// Handles player despawn logic, including scene reloads.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
@@ -21,11 +21,17 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Events [verb, verb phrase]
 
+        /// <summary>
+        /// Occurs when the player despawns.
+        /// </summary>
         public event Action? OnDespawn;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
