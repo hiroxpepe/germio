@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// A level scene.
+    /// Manages a level scene, including pause functionality and level transitions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Level : InputMaper {
@@ -21,19 +21,37 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         protected GameSystem _game_system;
 
+        /// <summary>
+        /// Reference to the sound system.
+        /// </summary>
         protected SoundSystem _sound_system;
 
+        /// <summary>
+        /// Indicates whether the game is currently paused.
+        /// </summary>
         protected bool _is_pausing = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Public Events [verb, verb phrase]
 
+        /// <summary>
+        /// Occurs when the game is paused.
+        /// </summary>
         public event Action? OnPauseOn;
 
+        /// <summary>
+        /// Occurs when the game is unpaused.
+        /// </summary>
         public event Action? OnPauseOff;
 
+        /// <summary>
+        /// Occurs when the level starts.
+        /// </summary>
         public event Action? OnStart;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,12 +152,12 @@ namespace Germio {
         // update Methods handler.
 
         /// <summary>
-        /// load methods handler.
+        /// Handles the loading of methods.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// update methods handler.
+        /// Handles the updating of methods.
         /// </summary>
         protected virtual void abilities_OnStart() { }
     }

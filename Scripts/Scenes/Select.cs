@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// The select scene
+    /// Manages the select scene, including mode selection and navigation.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Select : InputMaper {
@@ -23,22 +23,50 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constants
 
+        /// <summary>
+        /// The number of selectable modes.
+        /// </summary>
         const int SELECT_COUNT = 3;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
-        [SerializeField] Image _easy, _normal, _hard;
+        /// <summary>
+        /// Image for the easy mode.
+        /// </summary>
+        [SerializeField] Image _easy;
+
+        /// <summary>
+        /// Image for the normal mode.
+        /// </summary>
+        [SerializeField] Image _normal;
+
+        /// <summary>
+        /// Image for the hard mode.
+        /// </summary>
+        [SerializeField] Image _hard;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields [noun, adjectives]
 
+        /// <summary>
+        /// Reference to the game system.
+        /// </summary>
         GameSystem _game_system;
 
+        /// <summary>
+        /// Map of selectable modes.
+        /// </summary>
         Map<int, string> _focus = new();
 
+        /// <summary>
+        /// Currently selected mode.
+        /// </summary>
         string _selected = MODE_NORMAL;
 
+        /// <summary>
+        /// Index of the currently selected mode.
+        /// </summary>
         int _idx = 0;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,11 +75,11 @@ namespace Germio {
         // Awake is called when the script instance is being loaded.
         void Awake() {
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
-            //Sets default focus.
+            // Sets default focus.
             _focus.Add(key: 0, value: MODE_EASY);
             _focus.Add(key: 1, value: MODE_NORMAL);
             _focus.Add(key: 2, value: MODE_HARD);
-            _idx = 1; // FIXME:
+            _idx = 1; // FIXME: Default to normal mode.
             _selected = _focus[_idx];
             changeSelectedColor();
         }

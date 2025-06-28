@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Germio {
     /// <summary>
-    /// The Human extension methods.
+    /// Provides extension methods for the Human class.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Human_Extensions {
 #nullable enable
 
         /// <summary>
-        /// Whether the player hits the side of the colliding object.
+        /// Determines whether the player hits the side of the colliding object.
         /// </summary>
         internal static bool isHitSide(this GameObject self, GameObject target) {
             const float ADJUST = 0.1f;
@@ -29,7 +29,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Moves it up when the player hits a block.
+        /// Moves the player up when hitting a block.
         /// </summary>
         internal static void moveUp(this GameObject self) {
             const float MOVE_VALUE = 12.0f;
@@ -38,7 +38,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Moves it down when the player hits a block.
+        /// Moves the player down when hitting a block.
         /// </summary>
         internal static void moveDown(this GameObject self) {
             const float MOVE_VALUE = 6.0f;
@@ -47,7 +47,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// The value until the top of the block.
+        /// Calculates the distance to the top of the block.
         /// </summary>
         internal static double getReach(this GameObject self, GameObject target) {
             //Debug.Log($"name: {target.name}");
@@ -62,9 +62,9 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Moves aside when the player hits a block.
+        /// Moves the player left or right when hitting a block.
         /// </summary>
-        /// <param name="direction">the player's direction is provided.</param>
+        /// <param name="direction">The player's direction.</param>
         internal static void moveLetfOrRight(this GameObject self, Direction direction) {
             const float MOVE_VALUE = 0.3f;
             Vector3 new_position = self.transform.position;
