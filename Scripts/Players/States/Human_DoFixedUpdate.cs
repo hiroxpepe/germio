@@ -3,7 +3,7 @@
 
 namespace Germio {
     /// <summary>
-    /// A Human controller
+    /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
@@ -97,7 +97,7 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// Returns an initialized instance.
+            /// Creates and returns an initialized DoFixedUpdate instance.
             /// </summary>
             public static DoFixedUpdate GetInstance() {
                 return new DoFixedUpdate();

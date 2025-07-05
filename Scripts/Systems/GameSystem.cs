@@ -20,12 +20,12 @@ namespace Germio {
         // Properties [noun, adjectives] 
 
         /// <summary>
-        /// Gets or sets the current game mode.
+        /// Gets or sets the current game mode for the system.
         /// </summary>
         public string mode { get => Status.mode; set => Status.mode = value; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the player is home.
+        /// Gets or sets a value indicating whether the player is at home.
         /// </summary>
         public bool home { get; set; }
 
@@ -53,7 +53,7 @@ namespace Germio {
         public event Action? OnStartLevel;
 
         /// <summary>
-        /// Occurs when the player comes back home.
+        /// Occurs when the player returns home.
         /// </summary>
         public event Action? OnCameBackHome;
 
@@ -73,17 +73,17 @@ namespace Germio {
                 Level level = Find(name: LEVEL_TYPE).Get<Level>();
 
                 /// <summary>
-                /// Triggers when the level pauses.
+                /// Invokes the pause event when the level is paused.
                 /// </summary>
                 level.OnPauseOn += () => { OnPauseOn?.Invoke(); };
 
                 /// <summary>
-                /// Triggers when the level resumes.
+                /// Invokes the resume event when the level is unpaused.
                 /// </summary>
                 level.OnPauseOff += () => { OnPauseOff?.Invoke(); };
 
                 /// <summary>
-                /// Triggers when the level starts.
+                /// Invokes the start event when the level starts.
                 /// </summary>
                 level.OnStart += () => { OnStartLevel?.Invoke(); };
             }
@@ -93,7 +93,7 @@ namespace Germio {
                 Home home = Find(name: HOME_TYPE).Get<Home>();
 
                 /// <summary>
-                /// Triggers when home is returned to.
+                /// Invokes the event when the player returns home.
                 /// </summary>
                 this.home = false;
                 home.OnCameBack += () => {
@@ -103,7 +103,7 @@ namespace Germio {
             }
 
             /// <summary>
-            /// Sets the load methods handler.
+            /// Calls the ability load handler for initialization.
             /// </summary>
             abilities_OnAwake();
         }
@@ -111,7 +111,7 @@ namespace Germio {
         // Start is called before the first frame update.
         void Start() {
             /// <summary>
-            /// Sets the update methods handler.
+            /// Calls the ability update handler for initialization.
             /// </summary>
             abilities_OnStart();
         }
@@ -120,12 +120,12 @@ namespace Germio {
         // Update Methods handler.
 
         /// <summary>
-        /// Handles the loading of methods.
+        /// Handles the loading of ability-related methods during Awake.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// Handles the updating of methods.
+        /// Handles the updating of ability-related methods during Start.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
@@ -144,13 +144,16 @@ namespace Germio {
             // static Fields [nouns, noun phrases]
 
             /// <summary>
-            /// The current game mode.
+            /// Stores the current game mode.
             /// </summary>
             static string _mode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // static Constructor
 
+            /// <summary>
+            /// Initializes the static Status class and sets the default game mode.
+            /// </summary>
             static Status() {
                 _mode = MODE_NORMAL;
             }
@@ -159,7 +162,7 @@ namespace Germio {
             // public static Properties [noun, noun phrase, adjective]
 
             /// <summary>
-            /// Gets or sets the current game mode.
+            /// Gets or sets the current game mode for the status.
             /// </summary>
             public static string mode {
                 get => _mode; set => _mode = value;

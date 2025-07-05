@@ -24,37 +24,37 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Text field for displaying messages.
+        /// Gets the text field for displaying messages.
         /// </summary>
         [SerializeField] protected Text _message_text;
 
         /// <summary>
-        /// Text field for displaying target information.
+        /// Gets the text field for displaying target information.
         /// </summary>
         [SerializeField] protected Text _targets_text;
 
         /// <summary>
-        /// Text field for displaying points.
+        /// Gets the text field for displaying points.
         /// </summary>
         [SerializeField] protected Text _points_text;
 
         /// <summary>
-        /// Text field for displaying the game mode.
+        /// Gets the text field for displaying the game mode.
         /// </summary>
         [SerializeField] protected Text _mode_text;
 
         /// <summary>
-        /// Text field for displaying energy information (used for development).
+        /// Gets the text field for displaying energy information (used for development).
         /// </summary>
         [SerializeField] protected Text _energy_text;
 
         /// <summary>
-        /// Text field for displaying power information (used for development).
+        /// Gets the text field for displaying power information (used for development).
         /// </summary>
         [SerializeField] protected Text _power_text;
 
         /// <summary>
-        /// Text field for displaying FPS information (used for development).
+        /// Gets the text field for displaying FPS information (used for development).
         /// </summary>
         [SerializeField] protected Text _fps_text;
 
@@ -62,17 +62,17 @@ namespace Germio {
         // Fields [noun, adjectives] 
 
         /// <summary>
-        /// Reference to the game system.
+        /// Gets the reference to the game system.
         /// </summary>
         protected GameSystem _game_system;
 
         /// <summary>
-        /// Frame count for FPS calculation.
+        /// Gets the frame count for FPS calculation.
         /// </summary>
         int _frame_count;
 
         /// <summary>
-        /// Elapsed time for FPS calculation.
+        /// Gets the elapsed time for FPS calculation.
         /// </summary>
         float _elapsed_time;
 
@@ -84,22 +84,22 @@ namespace Germio {
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
 
             /// <summary>
-            /// When the game is paused.
+            /// Handles the event when the game is paused.
             /// </summary>
             _game_system.OnPauseOn += () => { if (!_game_system.home) { _message_text.text = MESSAGE_GAME_PAUSE; }};
 
             /// <summary>
-            /// When the game is unpaused.
+            /// Handles the event when the game is unpaused.
             /// </summary>
             _game_system.OnPauseOff += () => { _message_text.text = string.Empty; };
 
             /// <summary>
-            /// When the game comes back home.
+            /// Handles the event when the player returns home.
             /// </summary>
             _game_system.OnCameBackHome += () => { _message_text.text = MESSAGE_LEVEL_CLEAR; };
 
             /// <summary>
-            /// When a new level starts.
+            /// Handles the event when a new level starts.
             /// </summary>
             _game_system.OnStartLevel += () => {
                 switch (GetActiveScene().name) {
@@ -126,7 +126,7 @@ namespace Germio {
             };
 
             /// <summary>
-            /// Sets up the load methods.
+            /// Calls the ability load handler for initialization.
             /// </summary>
             abilities_OnAwake();
         }
@@ -142,7 +142,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Sets up the update methods.
+            /// Calls the ability update handler for initialization.
             /// </summary>
             abilities_OnStart();
         }
@@ -151,12 +151,12 @@ namespace Germio {
         // update Methods handler.
 
         /// <summary>
-        /// Handles the loading of methods.
+        /// Handles the loading of ability-related methods during Awake.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// Handles the updating of methods.
+        /// Handles the updating of ability-related methods during Start.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
@@ -164,7 +164,7 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// Updates the game status.
+        /// Updates the game mode status display.
         /// </summary>
         void updateGameStatus() {
             _mode_text.text = string.Format("Mode: {0}", _game_system.mode);
@@ -176,13 +176,13 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Updates the vehicle status.
+        /// Updates the vehicle status display.
         /// </summary>
         void updateVehicleStatus() {
         }
 
         /// <summary>
-        /// Updates the FPS status.
+        /// Updates the FPS status display.
         /// </summary>
         void updateFpsStatus() {
             _frame_count++;
