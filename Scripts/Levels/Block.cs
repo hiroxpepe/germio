@@ -32,16 +32,16 @@ namespace Germio {
         protected GameObject _player_object;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Properties [noun, adjectives]
+        // public Properties [noun, adjectives]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Events [verb, verb phrase]
+        // public Events [verb, verb phrase]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Methods [verb]
+        // public Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -61,7 +61,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods handler.
+        // update Methods handler.
 
         /// <summary>
         /// Handles the load methods.
@@ -74,6 +74,6 @@ namespace Germio {
         protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
     }
 }

@@ -44,7 +44,7 @@ namespace Germio {
 
         #endregion
 
-        #region Get the Component
+        #region get the component.
 
         /// <summary>
         /// Retrieves all components of type T from the GameObject's children.
@@ -83,7 +83,7 @@ namespace Germio {
 
         #endregion
 
-        #region For Material
+        #region for Material.
 
         /// <summary>
         /// Sets the Material's color to opaque.
