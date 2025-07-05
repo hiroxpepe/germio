@@ -20,27 +20,27 @@ namespace Germio {
         // Fields [noun, adjectives] 
 
         /// <summary>
-        /// Virtual controller object.
+        /// Holds the virtual controller GameObject instance.
         /// </summary>
         protected GameObject _v_controller_object;
 
         /// <summary>
-        /// Gamepad buttons.
+        /// Holds the main gamepad button controls.
         /// </summary>
         protected ButtonControl _a_button, _b_button, _x_button, _y_button, _up_button, _down_button, _left_button, _right_button;
 
         /// <summary>
-        /// Shoulder and trigger buttons.
+        /// Holds the shoulder and trigger button controls.
         /// </summary>
         protected ButtonControl _left_1_button, _right_1_button, _left_2_button, _right_2_button;
 
         /// <summary>
-        /// Right stick buttons.
+        /// Holds the right stick button controls.
         /// </summary>
         protected ButtonControl _right_stick_up_button, _right_stick_down_button, _right_stick_left_button, _right_stick_right_button, _right_stick_button;
 
         /// <summary>
-        /// Start and select buttons.
+        /// Holds the start and select button controls.
         /// </summary>
         protected ButtonControl _start_button, _select_button;
 
@@ -50,12 +50,12 @@ namespace Germio {
         protected static bool _look = false;
 
         /// <summary>
-        /// Indicates whether vibration is enabled.
+        /// Indicates whether vibration is enabled for the controller.
         /// </summary>
         bool _use_vibration = true;
 
         /// <summary>
-        /// Indicates whether the virtual controller is used.
+        /// Indicates whether the virtual controller is currently used.
         /// </summary>
         bool _use_v_controller;
 
@@ -63,7 +63,7 @@ namespace Germio {
         // Properties [noun, adjectives] 
 
         /// <summary>
-        /// Gets a value indicating whether virtual controllers are used.
+        /// Gets a value indicating whether the virtual controller is currently used.
         /// </summary>
         public bool useVirtualController { get => _use_v_controller; }
 
@@ -72,6 +72,9 @@ namespace Germio {
 
         // Start is called before the first frame update.
         protected void Start() {
+            /// <summary>
+            /// Called by Unity before the first frame update. Initializes the virtual controller and sets up input subscriptions.
+            /// </summary>
             // Gets virtual controller.
             _v_controller_object = Find(name: "VController");
 
@@ -111,7 +114,7 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// Maps gamepad inputs.
+        /// Maps physical and virtual gamepad inputs to button fields and sets up controller state.
         /// </summary>
         void mapGamepad() {
             // Checks if a physical gamepad is connected.

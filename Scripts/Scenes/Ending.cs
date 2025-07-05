@@ -20,7 +20,7 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the game system.
+        /// Gets the reference to the game system.
         /// </summary>
         GameSystem _game_system;
 
@@ -37,7 +37,7 @@ namespace Germio {
             base.Start();
 
             /// <summary>
-            /// Moves to the title scene.
+            /// Moves to the title scene when the start or A button is pressed.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 

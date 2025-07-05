@@ -4,7 +4,6 @@
 using System;
 using static System.Math;
 using UnityEngine;
-using static UnityEngine.GameObject;
 using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
 using UniRx;
@@ -92,7 +91,7 @@ namespace Germio {
         // Start is called before the first frame update.
         protected void Start() {
             /// <summary>
-            /// Sets up hand objects when the item is held.
+            /// Sets up hand objects and initializes hold state if the item is holdable.
             /// </summary>
             if (_CAN_HOLD) {
                 _is_grounded = true;
@@ -111,7 +110,7 @@ namespace Germio {
             }
 
             /// <summary>
-            /// Sets the grounded flag off when the player becomes the parent.
+            /// Sets the grounded flag to false when the player becomes the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -123,7 +122,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Be lifted when the player keeps the parent.
+            /// Lifts the object when the player remains the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x => 
@@ -139,7 +138,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Falls when the player is no longer a parent.
+            /// Causes the object to fall when the player is no longer the parent.
             /// </summary>
             this.FixedUpdateAsObservable()
                 .Where(predicate: x =>
@@ -175,6 +174,8 @@ namespace Germio {
         /// <summary>
         /// Gets the player's pressed direction as an enumeration.
         /// </summary>
+        /// <param name="forward_vector">Forward vector representing the player's facing direction.</param>
+        /// </summary>
         protected Direction getPushedDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
             float forward_y = (float) Round(a: forward_vector.y);
@@ -200,7 +201,9 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// Moves to a position where being lifted by its parent.
+        /// Moves the object to a position where it is being lifted by its parent.
+        /// </summary>
+        /// <param name="speed">Speed at which the object is lifted. Default is 2.0f.</param>
         /// </summary>
         void beHolded(float speed = 2.0f) {
             if (transform.localPosition.y < _HOLD_ADJUST_Y) {
@@ -243,6 +246,8 @@ namespace Germio {
 
         /// <summary>
         /// Gets the top position of the target object.
+        /// </summary>
+        /// <param name="target">Target game object to get the top position of.</param>
         /// </summary>
         float getTopOf(GameObject target) {
             float height = target.Get<Renderer>().bounds.size.y;
