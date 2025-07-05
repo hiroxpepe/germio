@@ -69,7 +69,7 @@ namespace Germio {
         AudioSource _audio_source_bgm;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Methods [verb]
+        // public Methods [verb]
 
         /// <summary>
         /// Plays the specified sound effect.
@@ -159,7 +159,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Start is called before the first frame update.
         void Start() {
