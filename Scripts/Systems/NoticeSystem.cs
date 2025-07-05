@@ -77,7 +77,7 @@ namespace Germio {
         float _elapsed_time;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -148,7 +148,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods handler.
+        // update Methods handler.
 
         /// <summary>
         /// Handles the loading of methods.
@@ -161,7 +161,7 @@ namespace Germio {
         protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// Updates the game status.

@@ -35,7 +35,7 @@ namespace Germio {
         public bool beat { get; set; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Events [verb, verb phrase]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the game is paused.
@@ -58,10 +58,10 @@ namespace Germio {
         public event Action? OnCameBackHome;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Methods [verb]
+        // public Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -141,7 +141,7 @@ namespace Germio {
 #nullable enable
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Static Fields [nouns, noun phrases]
+            // static Fields [nouns, noun phrases]
 
             /// <summary>
             /// The current game mode.
@@ -149,14 +149,14 @@ namespace Germio {
             static string _mode;
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Static Constructor
+            // static Constructor
 
             static Status() {
                 _mode = MODE_NORMAL;
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Public Static Properties [noun, noun phrase, adjective]
+            // public static Properties [noun, noun phrase, adjective]
 
             /// <summary>
             /// Gets or sets the current game mode.
