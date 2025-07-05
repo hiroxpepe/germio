@@ -22,17 +22,17 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the game system.
+        /// Gets the reference to the game system.
         /// </summary>
         protected GameSystem _game_system;
 
         /// <summary>
-        /// Reference to the sound system.
+        /// Gets the reference to the sound system.
         /// </summary>
         protected SoundSystem _sound_system;
 
         /// <summary>
-        /// Indicates whether the game is currently paused.
+        /// Gets a value indicating whether the game is currently paused.
         /// </summary>
         protected bool _is_pausing = false;
 
@@ -152,12 +152,12 @@ namespace Germio {
         // update Methods handler.
 
         /// <summary>
-        /// Handles the loading of methods.
+        /// Handles the loading of ability-related methods during Awake.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// Handles the updating of methods.
+        /// Handles the updating of ability-related methods during Start.
         /// </summary>
         protected virtual void abilities_OnStart() { }
     }

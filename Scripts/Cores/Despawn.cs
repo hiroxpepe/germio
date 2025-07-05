@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// Handles player despawn logic, including scene reloads.
+    /// Handles player despawn logic and manages scene reloads when necessary.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
@@ -22,15 +22,16 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the game system.
+        /// Holds a reference to the game system instance.
         /// </summary>
         GameSystem _game_system;
+        
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
 
         /// <summary>
-        /// Occurs when the player despawns.
+        /// Occurs when the player is despawned from the scene.
         /// </summary>
         public event Action? OnDespawn;
 
@@ -39,13 +40,16 @@ namespace Germio {
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
+            /// <summary>
+            /// Initializes the game system reference when the script instance is loaded.
+            /// </summary>
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
         }
 
         // Start is called before the first frame update.
         void Start() {
             /// <summary>
-            /// When the player touches the object.
+            /// Handles the event when the player collides with this object and triggers despawn logic.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x =>

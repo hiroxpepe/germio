@@ -3,7 +3,7 @@
 
 namespace Germio {
     /// <summary>
-    /// A Human controller
+    /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
@@ -123,7 +123,7 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// Returns an initialized instance.
+            /// Creates and returns an initialized DoUpdate instance with the default state.
             /// </summary>
             public static DoUpdate GetInstance() {
                 DoUpdate instance = new();
@@ -135,7 +135,7 @@ namespace Germio {
             // public Methods [verb]
 
             /// <summary>
-            /// Resets the state of the player.
+            /// Resets all state flags for the player to their default values.
             /// </summary>
             public void ResetState() {
                 _grounded = _climbing = _pushing = _holding = _faceing = _virtualControllerMode = false;

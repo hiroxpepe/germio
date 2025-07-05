@@ -24,32 +24,32 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Jump power of the player.
+        /// Gets the jump power of the player.
         /// </summary>
         [SerializeField] protected float _JUMP_POWER = 10.0f;
 
         /// <summary>
-        /// Rotational speed of the player.
+        /// Gets the rotational speed of the player.
         /// </summary>
         [SerializeField] protected float _ROTATIONAL_SPEED = 10.0f;
 
         /// <summary>
-        /// Forward speed limit of the player.
+        /// Gets the forward speed limit of the player.
         /// </summary>
         [SerializeField] protected float _FORWARD_SPEED_LIMIT = 1.5f;
 
         /// <summary>
-        /// Running speed limit of the player.
+        /// Gets the running speed limit of the player.
         /// </summary>
         [SerializeField] protected float _RUN_SPEED_LIMIT = 3.25f;
 
         /// <summary>
-        /// Backward speed limit of the player.
+        /// Gets the backward speed limit of the player.
         /// </summary>
         [SerializeField] protected float _BACKWARD_SPEED_LIMIT = 1.0f;
 
         /// <summary>
-        /// Animation component for the player.
+        /// Gets the animation component for the player.
         /// </summary>
         [SerializeField] protected SimpleAnimation _simple_anime;
 
@@ -57,32 +57,32 @@ namespace Germio {
         // Fields [noun, adjectives] 
 
         /// <summary>
-        /// Handles update logic.
+        /// Handles update logic for the player.
         /// </summary>
         protected DoUpdate _do_update;
 
         /// <summary>
-        /// Handles fixed update logic.
+        /// Handles fixed update logic for the player.
         /// </summary>
         protected DoFixedUpdate _do_fixed_update;
 
         /// <summary>
-        /// Handles acceleration logic.
+        /// Handles acceleration logic for the player.
         /// </summary>
         protected Acceleration _acceleration;
 
         /// <summary>
-        /// Stores the player's position from previous frames.
+        /// Stores the player's positions from previous frames.
         /// </summary>
         protected Vector3[] _previous_position = new Vector3[60];
 
         /// <summary>
-        /// Reference to the game system.
+        /// Gets the reference to the game system.
         /// </summary>
         protected GameSystem _game_system;
 
         /// <summary>
-        /// Reference to the sound system.
+        /// Gets the reference to the sound system.
         /// </summary>
         protected SoundSystem _sound_system;
 
@@ -90,7 +90,7 @@ namespace Germio {
         // public Properties [noun, adjectives]
 
         /// <summary>
-        /// Transform position.
+        /// Gets or sets the transform position of the player.
         /// </summary>
         public Vector3 position { 
             get => transform.position; 
@@ -101,7 +101,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Transform rotation.
+        /// Gets or sets the transform rotation of the player.
         /// </summary>
         public Quaternion rotation { 
             get => transform.rotation; 
@@ -112,7 +112,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Indicates whether the player is facing a surface.
+        /// Gets a value indicating whether the player is facing a surface.
         /// </summary>
         public bool Faceing { get => _do_update.faceing; }
 
@@ -120,12 +120,12 @@ namespace Germio {
         // public Events [verb, verb phrase]
 
         /// <summary>
-        /// On grounded event handler.
+        /// Occurs when the player is grounded.
         /// </summary>
         public event Action? OnGrounded;
 
         /// <summary>
-        /// Changed event handler.
+        /// Occurs when the player state is updated.
         /// </summary>
         public event Changed? Updated;
 
@@ -465,12 +465,12 @@ namespace Germio {
         // update Methods handler.
 
         /// <summary>
-        /// Load methods handler.
+        /// Handles ability initialization for the player. Override to add custom ability setup.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// Update methods handler.
+        /// Handles update method initialization for the player. Override to add custom update setup.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 
@@ -478,13 +478,13 @@ namespace Germio {
         // Protected Properties [noun, adjectives]
 
         /// <summary>
-        /// Indicates whether updates should continue.
+        /// Gets a value indicating whether the update process should continue.
         /// </summary>
         protected bool continueUpdate {
             get {
                 return !_look && !_do_update.pushing;
             }
-        } 
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -507,8 +507,9 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Whether there was an up or down movement.
+        /// Determines whether there was an upward or downward movement in the player's Y position.
         /// </summary>
+        /// <returns>True if the Y position changed; otherwise, false.</returns>
         bool isUpOrDown() {
             int fps = Application.targetFrameRate;
             int ADJUST_VALUE = 9;
@@ -526,8 +527,9 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Whether there was a down movement.
+        /// Determines whether there was a downward movement in the player's Y position.
         /// </summary>
+        /// <returns>True if the Y position decreased or stayed the same; otherwise, false.</returns>
         bool isDown() {
             int fps = Application.targetFrameRate;
             int ADJUST_VALUE = 9;
@@ -543,8 +545,9 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Faces the surface directly.
+        /// Rotates the player to face the surface directly.
         /// </summary>
+        /// <param name="speed">Rotation speed for facing the surface.</param>
         void faceToFace(float speed = 20.0f) {
             float SPEED = speed; // Rotation speed.
             float forward_x = (float) Round(transform.forward.x);
@@ -561,9 +564,11 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Changed event handler from energy.
+        /// Handles the changed event from the energy system.
         /// </summary>
-        void onChanged(object sender, EvtArgs  e) {
+        /// <param name="sender">Event source object.</param>
+        /// <param name="e">Event arguments.</param>
+        void onChanged(object sender, EvtArgs e) {
         }
     }
 }

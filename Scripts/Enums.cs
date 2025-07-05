@@ -7,28 +7,30 @@ namespace Germio {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public enum Direction {
+#nullable enable
+
         /// <summary>
-        /// Positive Z-axis direction.
+        /// Represents the positive Z-axis direction.
         /// </summary>
         PositiveZ,
 
         /// <summary>
-        /// Negative Z-axis direction.
+        /// Represents the negative Z-axis direction.
         /// </summary>
         NegativeZ,
 
         /// <summary>
-        /// Positive X-axis direction.
+        /// Represents the positive X-axis direction.
         /// </summary>
         PositiveX,
 
         /// <summary>
-        /// Negative X-axis direction.
+        /// Represents the negative X-axis direction.
         /// </summary>
         NegativeX,
 
         /// <summary>
-        /// No direction specified.
+        /// Represents no direction specified.
         /// </summary>
         None
     };
@@ -40,22 +42,22 @@ namespace Germio {
     /// </summary>
     public enum RenderingMode {
         /// <summary>
-        /// Opaque rendering mode.
+        /// Represents the opaque rendering mode.
         /// </summary>
         Opaque,
 
         /// <summary>
-        /// Cutout rendering mode.
+        /// Represents the cutout rendering mode.
         /// </summary>
         Cutout,
 
         /// <summary>
-        /// Fade rendering mode.
+        /// Represents the fade rendering mode.
         /// </summary>
         Fade,
 
         /// <summary>
-        /// Transparent rendering mode.
+        /// Represents the transparent rendering mode.
         /// </summary>
         Transparent,
     }

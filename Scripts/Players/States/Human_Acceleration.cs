@@ -5,7 +5,7 @@ using static System.Math;
 
 namespace Germio {
     /// <summary>
-    /// A Human controller
+    /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMaper {
@@ -102,15 +102,17 @@ namespace Germio {
             // Constructor
 
             /// <summary>
-            /// Hides the constructor.
+            /// Initializes a new instance of the Acceleration class with the specified parent.
             /// </summary>
+            /// <param name="parent">Parent Human object to associate with this acceleration logic.</param>
             Acceleration(Human parent) {
                 _parent = parent;
             }
 
             /// <summary>
-            /// Returns an initialized instance.
+            /// Creates and returns an initialized Acceleration instance for the specified parent.
             /// </summary>
+            /// <param name="parent">Parent Human object to associate with the new Acceleration instance.</param>
             public static Acceleration GetInstance(Human parent) {
                 return new Acceleration(parent);
             }

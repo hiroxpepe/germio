@@ -22,22 +22,22 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Horizontal axis object for camera rotation.
+        /// Gets the horizontal axis object for camera rotation.
         /// </summary>
         [SerializeField] GameObject _horizontal_axis;
 
         /// <summary>
-        /// Vertical axis object for camera rotation.
+        /// Gets the vertical axis object for camera rotation.
         /// </summary>
         [SerializeField] GameObject _vertical_axis;
 
         /// <summary>
-        /// Main camera object.
+        /// Gets the main camera object.
         /// </summary>
         [SerializeField] GameObject _main_camera;
 
         /// <summary>
-        /// Target object for camera focus.
+        /// Gets the target object for camera focus.
         /// </summary>
         [SerializeField] GameObject _look_target;
 
@@ -45,12 +45,12 @@ namespace Germio {
         // Fields [noun, adjectives] 
 
         /// <summary>
-        /// Default local position of the camera.
+        /// Gets the default local position of the camera.
         /// </summary>
         Vector3 _default_local_position;
 
         /// <summary>
-        /// Default local rotation of the camera.
+        /// Gets the default local rotation of the camera.
         /// </summary>
         Quaternion _default_local_rotation;
 
@@ -62,13 +62,13 @@ namespace Germio {
             base.Start();
 
             /// <summary>
-            /// Saves the camera's default position and rotation.
+            /// Saves the camera's default local position and rotation.
             /// </summary>
             _default_local_position = transform.localPosition;
             _default_local_rotation = transform.localRotation;
 
             /// <summary>
-            /// Enables or resets the look-around camera.
+            /// Enables or resets the look-around camera mode.
             /// </summary>
             this.UpdateAsObservable()
                 .Subscribe(_ => {
@@ -85,7 +85,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Rotates the camera view.
+            /// Rotates the camera view each frame.
             /// </summary>
             this.UpdateAsObservable()
                 .Subscribe(onNext: _ => {
@@ -93,7 +93,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Resets the camera view.
+            /// Resets the camera view to its default state.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -103,7 +103,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Makes the wall transparent when touched.
+            /// Makes the wall transparent when the camera collides with it.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -114,7 +114,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Restores the wall to normal when leaving.
+            /// Restores the wall to opaque when the camera leaves it.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
@@ -125,7 +125,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Makes the ground transparent when touched.
+            /// Makes the ground transparent when the camera collides with it.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -136,7 +136,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Restores the ground to normal when leaving.
+            /// Restores the ground to opaque when the camera leaves it.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 
@@ -147,7 +147,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Makes the block transparent when touched.
+            /// Makes the block transparent when the camera collides with it.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -158,7 +158,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Restores the block to normal when leaving.
+            /// Restores the block to opaque when the camera leaves it.
             /// </summary>
             this.OnTriggerExitAsObservable()
                 .Where(predicate: x => 

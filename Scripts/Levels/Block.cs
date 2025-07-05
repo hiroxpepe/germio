@@ -14,7 +14,7 @@ using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// Represents a block object in the game
+    /// Represents a block object in the game.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Block : Common {
@@ -27,7 +27,7 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the player object.
+        /// Holds a reference to the player object.
         /// </summary>
         protected GameObject _player_object;
 
@@ -46,7 +46,7 @@ namespace Germio {
         // Awake is called when the script instance is being loaded.
         void Awake() {
             /// <summary>
-            /// Sets load Methods handler.
+            /// Initializes the block's abilities when the script instance is loaded.
             /// </summary>
             abilities_OnAwake();
         }
@@ -55,7 +55,7 @@ namespace Germio {
         new void Start() {
             base.Start();
             /// <summary>
-            /// Sets update methods handler.
+            /// Initializes update method handlers for the block.
             /// </summary>
             abilities_OnStart();
         }
@@ -64,12 +64,12 @@ namespace Germio {
         // update Methods handler.
 
         /// <summary>
-        /// Handles the load methods.
+        /// Handles the initialization of block abilities during the Awake phase.
         /// </summary>
         protected virtual void abilities_OnAwake() { }
 
         /// <summary>
-        /// Handles the update methods.
+        /// Handles the initialization of block abilities during the Start phase.
         /// </summary>
         protected virtual void abilities_OnStart() { }
 

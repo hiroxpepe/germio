@@ -16,37 +16,37 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Sound effect for item interaction.
+        /// Gets the sound effect clip for item interaction.
         /// </summary>
         [SerializeField] AudioClip _se_item_clip;
 
         /// <summary>
-        /// Sound effect for jumping.
+        /// Gets the sound effect clip for jumping.
         /// </summary>
         [SerializeField] AudioClip _se_jump_clip;
 
         /// <summary>
-        /// Sound effect for climbing.
+        /// Gets the sound effect clip for climbing.
         /// </summary>
         [SerializeField] AudioClip _se_climb_clip;
 
         /// <summary>
-        /// Sound effect for walking.
+        /// Gets the sound effect clip for walking.
         /// </summary>
         [SerializeField] AudioClip _se_walk_clip;
 
         /// <summary>
-        /// Sound effect for running.
+        /// Gets the sound effect clip for running.
         /// </summary>
         [SerializeField] AudioClip _se_run_clip;
 
         /// <summary>
-        /// Sound effect for grounding.
+        /// Gets the sound effect clip for grounding.
         /// </summary>
         [SerializeField] AudioClip _se_grounded_clip;
 
         /// <summary>
-        /// Background music for level beat.
+        /// Gets the background music clip for level beat.
         /// </summary>
         [SerializeField] AudioClip _bgm_beat_level_clip;
 
@@ -54,17 +54,17 @@ namespace Germio {
         // Fields [noun, adjectives] 
 
         /// <summary>
-        /// Currently playing sound effect.
+        /// Gets the currently playing sound effect type.
         /// </summary>
         SEClip _now_playing_clip_se1;
 
         /// <summary>
-        /// Audio source for sound effects.
+        /// Gets the audio source for sound effects.
         /// </summary>
         AudioSource _audio_source_se1;
 
         /// <summary>
-        /// Audio source for background music.
+        /// Gets the audio source for background music.
         /// </summary>
         AudioSource _audio_source_bgm;
 
@@ -72,9 +72,9 @@ namespace Germio {
         // public Methods [verb]
 
         /// <summary>
-        /// Plays the specified sound effect.
+        /// Plays the specified sound effect clip.
         /// </summary>
-        /// <param name="type">The type of sound effect to play.</param>
+        /// <param name="type">Type of sound effect to play.</param>
         public void Play(SEClip type) {
             switch (type) {
                 case SEClip.Item:
@@ -136,9 +136,9 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Plays the specified background music.
+        /// Plays the specified background music clip.
         /// </summary>
-        /// <param name="type">The type of background music to play.</param>
+        /// <param name="type">Type of background music to play.</param>
         public void Play(BGMClip type) {
             switch (type) {
                 case BGMClip.BeatLevel:
@@ -150,7 +150,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Stops the currently playing sound effect.
+        /// Stops the currently playing sound effect clip.
         /// </summary>
         public void StopSEClip() {
             if (_now_playing_clip_se1 != SEClip.Grounded && _now_playing_clip_se1 != SEClip.Item) {
@@ -173,37 +173,37 @@ namespace Germio {
     /// </summary>
     public enum SEClip {
         /// <summary>
-        /// Sound effect for item interaction.
+        /// Represents the sound effect for item interaction.
         /// </summary>
         Item,
 
         /// <summary>
-        /// Sound effect for jumping.
+        /// Represents the sound effect for jumping.
         /// </summary>
         Jump,
 
         /// <summary>
-        /// Sound effect for climbing.
+        /// Represents the sound effect for climbing.
         /// </summary>
         Climb,
 
         /// <summary>
-        /// Sound effect for walking.
+        /// Represents the sound effect for walking.
         /// </summary>
         Walk,
 
         /// <summary>
-        /// Sound effect for running.
+        /// Represents the sound effect for running.
         /// </summary>
         Run,
 
         /// <summary>
-        /// Sound effect for grounding.
+        /// Represents the sound effect for grounding.
         /// </summary>
         Grounded,
 
         /// <summary>
-        /// Sound effect for pushing.
+        /// Represents the sound effect for pushing.
         /// </summary>
         Push
     }
@@ -213,7 +213,7 @@ namespace Germio {
     /// </summary>
     public enum BGMClip {
         /// <summary>
-        /// Background music for level beat.
+        /// Represents the background music for level beat.
         /// </summary>
         BeatLevel
     }

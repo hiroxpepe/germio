@@ -25,6 +25,10 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvtArgs"/> class with the specified event name.
+        /// </summary>
+        /// <param name="name">Name of the event.</param>
         public EvtArgs(string name) {
             Name = name;
         }
@@ -33,18 +37,18 @@ namespace Germio {
         // public Properties [noun, noun phrase, adjective]
 
         /// <summary>
-        /// The name of the event.
+        /// Gets the name of the event.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// The optional value of the event.
+        /// Gets or sets the optional value of the event.
         /// </summary>
         public string? Value { get; set; }
     }
 
     /// <summary>
-    /// A delegate for handling changed events.
+    /// Represents a delegate for handling changed events.
     /// </summary>
     public delegate void Changed(object sender, EvtArgs e);
 
@@ -59,13 +63,15 @@ namespace Germio {
         // static Fields [noun, adjectives] 
 
         /// <summary>
-        /// Predefined colors.
+        /// Holds predefined color values for utility access.
         /// </summary>
         static Color _red, _orange, _yellow, _lime, _green, _cyan, _azure, _blue, _purple, _magenta, _white;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
-
+        /// <summary>
+        /// Initializes static color fields for the <see cref="Utils"/> class.
+        /// </summary>
         static Utils() {
             ColorUtility.TryParseHtmlString(htmlString: COLOR_RED, color: out _red);
             ColorUtility.TryParseHtmlString(htmlString: COLOR_ORANGE, color: out _orange);
@@ -84,57 +90,57 @@ namespace Germio {
         // public static Properties [noun, noun phrase, adjective]
 
         /// <summary>
-        /// The red color.
+        /// Gets the red color.
         /// </summary>
         public static Color red { get => _red; }
 
         /// <summary>
-        /// The orange color.
+        /// Gets the orange color.
         /// </summary>
         public static Color orange { get => _orange; }
 
         /// <summary>
-        /// The yellow color.
+        /// Gets the yellow color.
         /// </summary>
         public static Color yellow { get => _yellow; }
 
         /// <summary>
-        /// The lime color.
+        /// Gets the lime color.
         /// </summary>
         public static Color lime { get => _lime; }
 
         /// <summary>
-        /// The green color.
+        /// Gets the green color.
         /// </summary>
         public static Color green { get => _green; }
 
         /// <summary>
-        /// The cyan color.
+        /// Gets the cyan color.
         /// </summary>
         public static Color cyan { get => _cyan; }
 
         /// <summary>
-        /// The azure color.
+        /// Gets the azure color.
         /// </summary>
         public static Color azure { get => _azure; }
 
         /// <summary>
-        /// The blue color.
+        /// Gets the blue color.
         /// </summary>
         public static Color blue { get => _blue; }
 
         /// <summary>
-        /// The purple color.
+        /// Gets the purple color.
         /// </summary>
         public static Color purple { get => _purple; }
 
         /// <summary>
-        /// The magenta color.
+        /// Gets the magenta color.
         /// </summary>
         public static Color magenta { get => _magenta; }
 
         /// <summary>
-        /// The white color.
+        /// Gets the white color.
         /// </summary>
         public static Color white { get => _white; }
 
@@ -144,7 +150,7 @@ namespace Germio {
         #region has the component.
 
         /// <summary>
-        /// Checks if a level component exists.
+        /// Determines whether a level component exists in the scene.
         /// </summary>
         public static bool HasLevel() {
             GameObject game_object = Find(name: LEVEL_TYPE);
@@ -152,7 +158,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Checks if a player component exists.
+        /// Determines whether a player component exists in the scene.
         /// </summary>
         public static bool HasPlayer() {
             GameObject game_object = Find(name: PLAYER_TYPE);
@@ -160,7 +166,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Checks if a vehicle component exists.
+        /// Determines whether a vehicle component exists in the scene.
         /// </summary>
         public static bool HasVehicle() {
             GameObject game_object = Find(name: VEHICLE_TYPE);
@@ -168,7 +174,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Checks if a home component exists.
+        /// Determines whether a home component exists in the scene.
         /// </summary>
         public static bool HasHome() {
             GameObject game_object = Find(name: HOME_TYPE);
@@ -180,8 +186,11 @@ namespace Germio {
         #region generic static methods.
 
         /// <summary>
-        /// Swaps the Y coordinate of the local position.
+        /// Swaps the Y coordinate of the local position for a Transform.
         /// </summary>
+        /// <param name="transform">Target Transform instance.</param>
+        /// <param name="value">New Y coordinate value.</param>
+        /// <returns>Vector3 with the swapped Y coordinate.</returns>
         public static Vector3 SwapLocalPositionY(Transform transform, float value) {
             return new Vector3(transform.localPosition.x, value, transform.localPosition.z);
         }
@@ -189,6 +198,8 @@ namespace Germio {
         /// <summary>
         /// Determines the player's direction based on the forward vector.
         /// </summary>
+        /// <param name="forward_vector">Forward direction vector.</param>
+        /// <returns>Direction value representing the player's facing direction.</returns>
         public static Direction GetDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
             float forward_y = (float) Round(a: forward_vector.y);
@@ -211,8 +222,10 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Sets the rendering mode of the material.
+        /// Sets the rendering mode of the specified material.
         /// </summary>
+        /// <param name="material">Target Material instance.</param>
+        /// <param name="rendering_mode">Rendering mode to apply.</param>
         public static void SetRenderingMode(Material material, RenderingMode rendering_mode) {
             switch (rendering_mode) {
                 case RenderingMode.Opaque:
@@ -262,7 +275,7 @@ namespace Germio {
     }
 
     /// <summary>
-    /// Provides functionality to vibrate an Android phone.
+    /// Provides static methods to vibrate an Android phone or device.
     /// </summary>
     /// <author>h.adachi</author>
     public static class AndroidVibrator {
