@@ -68,11 +68,9 @@ namespace Germio {
         public bool useVirtualController { get => _use_v_controller; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
-        /// <summary>
-        /// Called before the first frame update.
-        /// </summary>
+        // Start is called before the first frame update.
         protected void Start() {
             // Gets virtual controller.
             _v_controller_object = Find(name: "VController");
@@ -83,7 +81,7 @@ namespace Germio {
                     mapGamepad();
                 }).AddTo(gameObjectComponent: this);
 
-            #region Mobile phone vibration
+            #region mobile phone vibration.
 
             // Gets vibration on button press.
             this.UpdateAsObservable()
@@ -110,7 +108,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// Maps gamepad inputs.

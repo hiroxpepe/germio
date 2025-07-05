@@ -30,7 +30,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Properties [noun, noun phrase, adjective]
+        // public Properties [noun, noun phrase, adjective]
 
         /// <summary>
         /// The name of the event.
@@ -56,7 +56,7 @@ namespace Germio {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Static Fields [noun, adjectives] 
+        // static Fields [noun, adjectives] 
 
         /// <summary>
         /// Predefined colors.
@@ -64,7 +64,7 @@ namespace Germio {
         static Color _red, _orange, _yellow, _lime, _green, _cyan, _azure, _blue, _purple, _magenta, _white;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Static Constructor
+        // static Constructor
 
         static Utils() {
             ColorUtility.TryParseHtmlString(htmlString: COLOR_RED, color: out _red);
@@ -81,7 +81,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Static Properties [noun, noun phrase, adjective]
+        // public static Properties [noun, noun phrase, adjective]
 
         /// <summary>
         /// The red color.
@@ -139,9 +139,9 @@ namespace Germio {
         public static Color white { get => _white; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Static Methods [verb]
+        // public static Methods [verb]
 
-        #region Has Component
+        #region has the component.
 
         /// <summary>
         /// Checks if a level component exists.
@@ -177,7 +177,7 @@ namespace Germio {
 
         #endregion
 
-        #region Generic Static Methods
+        #region generic static methods.
 
         /// <summary>
         /// Swaps the Y coordinate of the local position.

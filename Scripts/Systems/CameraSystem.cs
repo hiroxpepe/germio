@@ -55,7 +55,7 @@ namespace Germio {
         Quaternion _default_local_rotation;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Start is called before the first frame update.
         new void Start() {

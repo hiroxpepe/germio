@@ -25,7 +25,7 @@ namespace Germio {
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {

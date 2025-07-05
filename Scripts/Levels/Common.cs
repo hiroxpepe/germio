@@ -62,7 +62,7 @@ namespace Germio {
         Transform _right_hand_transform;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Properties [noun, adjectives]
+        // public Properties [noun, adjectives]
 
         /// <summary>
         /// Gets whether the object is holdable.
@@ -70,7 +70,7 @@ namespace Germio {
         public bool holdable { get => _CAN_HOLD; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Methods [verb]
+        // public Methods [verb]
 
         /// <summary>
         /// Gets the transform for the left hand.
@@ -87,7 +87,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Start is called before the first frame update.
         protected void Start() {
@@ -170,7 +170,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Protected Methods [verb]
+        // protected Methods [verb]
 
         /// <summary>
         /// Gets the player's pressed direction as an enumeration.
@@ -197,7 +197,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// Moves to a position where being lifted by its parent.

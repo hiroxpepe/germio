@@ -87,7 +87,7 @@ namespace Germio {
         protected SoundSystem _sound_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Properties [noun, adjectives]
+        // public Properties [noun, adjectives]
 
         /// <summary>
         /// Transform position.
@@ -117,7 +117,7 @@ namespace Germio {
         public bool Faceing { get => _do_update.faceing; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Events [verb, verb phrase]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// On grounded event handler.
@@ -130,7 +130,7 @@ namespace Germio {
         public event Changed? Updated;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
@@ -462,7 +462,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods handler.
+        // update Methods handler.
 
         /// <summary>
         /// Load methods handler.
@@ -487,7 +487,7 @@ namespace Germio {
         } 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// Saves position value for the previous n frame.

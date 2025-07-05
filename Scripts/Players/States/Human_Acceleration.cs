@@ -12,7 +12,7 @@ namespace Germio {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region Inner Classes
+        #region inner Classes
 
         /// <summary>
         /// Handles acceleration logic for the Human player.

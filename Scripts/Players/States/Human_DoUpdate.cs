@@ -10,7 +10,7 @@ namespace Germio {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region Inner Classes
+        #region inner Classes
 
         /// <summary>
         /// Handles the Update() method logic.
@@ -132,7 +132,7 @@ namespace Germio {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Public Methods [verb]
+            // public Methods [verb]
 
             /// <summary>
             /// Resets the state of the player.

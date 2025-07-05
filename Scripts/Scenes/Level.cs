@@ -37,7 +37,7 @@ namespace Germio {
         protected bool _is_pausing = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Events [verb, verb phrase]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the game is paused.
@@ -55,7 +55,7 @@ namespace Germio {
         public event Action? OnStart;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {

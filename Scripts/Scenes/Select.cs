@@ -132,7 +132,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private Methods [verb]
+        // private Methods [verb]
 
         /// <summary>
         /// Changes the color of the selected mode.

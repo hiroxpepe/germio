@@ -78,3 +78,6 @@ crashlytics-build.properties
 LICENSE.meta
 README.md.meta
 vs.code-workspace.meta
+
+# etc
+*.orig

@@ -35,7 +35,7 @@ namespace Germio {
         GameSystem _game_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Public Events [verb, verb phrase]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the player comes back home.
@@ -43,7 +43,7 @@ namespace Germio {
         public event Action? OnCameBack;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods
+        // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {

@@ -10,7 +10,7 @@ namespace Germio {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region Inner Classes
+        #region inner Classes
 
         /// <summary>
         /// Handles the FixedUpdate() method logic.
@@ -104,7 +104,7 @@ namespace Germio {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Public Methods [verb]
+            // public Methods [verb]
 
             /// <summary>
             /// Applies the specified FixedUpdate state.
