@@ -24,7 +24,7 @@ namespace Germio {
         // Constants
 
         /// <summary>
-        /// The number of selectable modes.
+        /// Gets the number of selectable modes.
         /// </summary>
         const int SELECT_COUNT = 3;
 
@@ -32,17 +32,17 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Image for the easy mode.
+        /// Gets the image for the easy mode.
         /// </summary>
         [SerializeField] Image _easy;
 
         /// <summary>
-        /// Image for the normal mode.
+        /// Gets the image for the normal mode.
         /// </summary>
         [SerializeField] Image _normal;
 
         /// <summary>
-        /// Image for the hard mode.
+        /// Gets the image for the hard mode.
         /// </summary>
         [SerializeField] Image _hard;
 
@@ -50,22 +50,22 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the game system.
+        /// Gets the reference to the game system.
         /// </summary>
         GameSystem _game_system;
 
         /// <summary>
-        /// Map of selectable modes.
+        /// Gets the map of selectable modes.
         /// </summary>
         Map<int, string> _focus = new();
 
         /// <summary>
-        /// Currently selected mode.
+        /// Gets or sets the currently selected mode.
         /// </summary>
         string _selected = MODE_NORMAL;
 
         /// <summary>
-        /// Index of the currently selected mode.
+        /// Gets or sets the index of the currently selected mode.
         /// </summary>
         int _idx = 0;
 
@@ -89,7 +89,7 @@ namespace Germio {
             base.Start();
 
             /// <summary>
-            /// Selects the previous option.
+            /// Moves the selection to the previous mode in the list.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -105,7 +105,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Selects the next option.
+            /// Moves the selection to the next mode in the list.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -121,7 +121,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Returns to the title screen.
+            /// Loads the title scene from the select scene.
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 

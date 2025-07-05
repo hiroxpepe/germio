@@ -15,6 +15,8 @@ namespace Germio {
         /// <summary>
         /// Determines whether the player hits the side of the colliding object.
         /// </summary>
+        /// <param name="self">The player GameObject.</param>
+        /// <param name="target">The target GameObject to check collision with.</param>
         internal static bool isHitSide(this GameObject self, GameObject target) {
             const float ADJUST = 0.1f;
             float target_height = target.Get<Renderer>().bounds.size.y;
@@ -31,6 +33,7 @@ namespace Germio {
         /// <summary>
         /// Moves the player up when hitting a block.
         /// </summary>
+        /// <param name="self">The player GameObject.</param>
         internal static void moveUp(this GameObject self) {
             const float MOVE_VALUE = 12.0f;
             Vector3 new_position = self.transform.position + Vector3.up * MOVE_VALUE * Time.deltaTime;
@@ -40,6 +43,7 @@ namespace Germio {
         /// <summary>
         /// Moves the player down when hitting a block.
         /// </summary>
+        /// <param name="self">The player GameObject.</param>
         internal static void moveDown(this GameObject self) {
             const float MOVE_VALUE = 6.0f;
             Vector3 new_position = self.transform.position - Vector3.up * MOVE_VALUE * Time.deltaTime;
@@ -49,6 +53,8 @@ namespace Germio {
         /// <summary>
         /// Calculates the distance to the top of the block.
         /// </summary>
+        /// <param name="self">The player GameObject.</param>
+        /// <param name="target">The target GameObject to measure distance to.</param>
         internal static double getReach(this GameObject self, GameObject target) {
             //Debug.Log($"name: {target.name}");
             float distance_y = self.transform.position.y - target.transform.position.y;
@@ -64,6 +70,7 @@ namespace Germio {
         /// <summary>
         /// Moves the player left or right when hitting a block.
         /// </summary>
+        /// <param name="self">The player GameObject.</param>
         /// <param name="direction">The player's direction.</param>
         internal static void moveLetfOrRight(this GameObject self, Direction direction) {
             const float MOVE_VALUE = 0.3f;

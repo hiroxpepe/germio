@@ -12,7 +12,7 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// Represents an home object in the game.
+    /// Represents a home object in the game and manages player and vehicle interactions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Home : MonoBehaviour {
@@ -22,7 +22,7 @@ namespace Germio {
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
-        /// Indicates whether the object is moving.
+        /// Indicates whether this object is currently moving.
         /// </summary>
         [SerializeField] bool _move = false;
 
@@ -30,7 +30,7 @@ namespace Germio {
         // Fields [noun, adjectives]
 
         /// <summary>
-        /// Reference to the game system.
+        /// Holds a reference to the game system instance.
         /// </summary>
         GameSystem _game_system;
 
@@ -38,7 +38,7 @@ namespace Germio {
         // public Events [verb, verb phrase]
 
         /// <summary>
-        /// Occurs when the player comes back home.
+        /// Occurs when the player returns to the home object.
         /// </summary>
         public event Action? OnCameBack;
 
@@ -47,11 +47,17 @@ namespace Germio {
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
+            /// <summary>
+            /// Initializes the game system reference when the script instance is loaded.
+            /// </summary>
             _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
         }
 
         // Start is called before the first frame update.
         void Start() {
+            /// <summary>
+            /// Handles movement and collision events for the home object.
+            /// </summary>
             // Saves the original y position of the object.
             float original_position = transform.position.y;
             // Updates the object's position if moving.
@@ -68,7 +74,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// When player collides with the object.
+            /// Handles the event when the player collides with this object.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x => 
@@ -78,7 +84,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// When player triggers the object.
+            /// Handles the event when the player enters the trigger of this object.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x => 
@@ -88,7 +94,7 @@ namespace Germio {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// When vehicle collides with the object.
+            /// Handles the event when a vehicle collides with this object while the beat is active.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x => 
