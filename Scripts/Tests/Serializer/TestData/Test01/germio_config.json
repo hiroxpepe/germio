@@ -1,0 +1,23 @@
+{
+  "state": {
+    "flags": { "hasSword": true },
+    "inventory": { "gold": 100 },
+    "turn": 1
+  },
+  "worlds": [
+    {
+      "id": "overworld",
+      "name": "World Map",
+      "scene": "Scene_Overworld",
+      "levels": [
+        {
+          "id": "town1",
+          "name": "Beginner Town",
+          "scene": "Scene_Town1",
+          "next": [ { "id": "field1", "condition": "flags.hasSword" } ],
+          "events": [ { "id": "meetVillager", "trigger": "onEnter", "action": { "setFlag": "hasSword" } } ]
+        }
+      ]
+    }
+  ]
+}
