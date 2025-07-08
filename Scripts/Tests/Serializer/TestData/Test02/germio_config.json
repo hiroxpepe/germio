@@ -1,0 +1,23 @@
+{
+  "state": {
+    "flags": { "hasShield": false },
+    "inventory": { "gold": 999, "potion": 3 },
+    "turn": 2
+  },
+  "worlds": [
+    {
+      "id": "dungeon",
+      "name": "Dark Dungeon",
+      "scene": "Scene_Dungeon",
+      "levels": [
+        {
+          "id": "bossroom",
+          "name": "Boss Room",
+          "scene": "Scene_BossRoom",
+          "next": [ { "id": "exit", "condition": "flags.hasShield" } ],
+          "events": [ { "id": "bossFight", "trigger": "onEnter", "action": { "setFlag": "hasShield" } } ]
+        }
+      ]
+    }
+  ]
+}
