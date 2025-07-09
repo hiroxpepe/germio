@@ -9,22 +9,22 @@ namespace Germio {
     /// Root data class for Germio game save data.
     /// Contains the overall game state and all worlds.
     /// </summary>
-    public class Data {
+    public class DataRoot {
         /// <summary>
         /// The current game state (flags, inventory, turn, etc).
         /// </summary>
-        public State state { get; set; } = new State();
+        public DataState state { get; set; } = new DataState();
 
         /// <summary>
         /// List of all worlds in the game.
         /// </summary>
-        public List<World> worlds { get; set; } = new List<World>();
+        public List<DataWorld> worlds { get; set; } = new List<DataWorld>();
     }
 
     /// <summary>
     /// Represents the player's current state, including flags, inventory, and progress.
     /// </summary>
-    public class State {
+    public class DataState {
         /// <summary>
         /// Boolean flags for game events, achievements, etc.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Germio {
     /// <summary>
     /// Represents a world in the game, containing multiple levels.
     /// </summary>
-    public class World {
+    public class DataWorld {
         /// <summary>
         /// Unique world identifier.
         /// </summary>
@@ -93,13 +93,13 @@ namespace Germio {
         /// <summary>
         /// List of levels in this world.
         /// </summary>
-        public List<Level> levels { get; set; } = new List<Level>();
+        public List<DataLevel> levels { get; set; } = new List<DataLevel>();
     }
 
     /// <summary>
     /// Represents a level within a world.
     /// </summary>
-    public class Level {
+    public class DataLevel {
         /// <summary>
         /// Unique level identifier.
         /// </summary>
@@ -118,18 +118,18 @@ namespace Germio {
         /// <summary>
         /// List of possible next levels and their conditions.
         /// </summary>
-        public List<Next> next { get; set; } = new List<Next>();
+        public List<DataNext> next { get; set; } = new List<DataNext>();
 
         /// <summary>
         /// List of events that can occur in this level.
         /// </summary>
-        public List<Event> events { get; set; } = new List<Event>();
+        public List<DataEvent> events { get; set; } = new List<DataEvent>();
     }
 
     /// <summary>
     /// Represents a transition to another level, with an optional condition.
     /// </summary>
-    public class Next {
+    public class DataNext {
         /// <summary>
         /// ID of the next level.
         /// </summary>
@@ -144,7 +144,7 @@ namespace Germio {
     /// <summary>
     /// Represents an event that can occur in a level.
     /// </summary>
-    public class Event {
+    public class DataEvent {
         /// <summary>
         /// Unique event identifier.
         /// </summary>
@@ -158,14 +158,14 @@ namespace Germio {
         /// <summary>
         /// Action to perform when this event is triggered.
         /// </summary>
-        public GameAction action { get; set; } = new GameAction();
+        public DataAction action { get; set; } = new DataAction();
     }
 
     /// <summary>
     /// Represents an action to be performed as part of an event.
     /// Extend this class to support more action types.
     /// </summary>
-    public class GameAction {
+    public class DataAction {
         /// <summary>
         /// Name of the flag to set (if any).
         /// </summary>
