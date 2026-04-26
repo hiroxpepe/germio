@@ -1,0 +1,10 @@
+<!-- Prevent IL2CPP from stripping Germio data types during AOT compilation.
+     These classes are instantiated via Newtonsoft.Json reflection at runtime. -->
+<linker>
+  <assembly fullname="Assembly-CSharp" preserve="all">
+    <namespace fullname="Germio" preserve="all" />
+  </assembly>
+  <assembly fullname="Assembly-CSharp-firstpass" preserve="all">
+    <namespace fullname="Germio" preserve="all" />
+  </assembly>
+</linker>
