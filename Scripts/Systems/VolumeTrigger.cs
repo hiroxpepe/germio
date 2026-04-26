@@ -10,7 +10,7 @@ using static Germio.Env;
 namespace Germio {
     /// <summary>
     /// Attaches to a trigger collider in the scene.
-    /// When the player enters or exits, delegates to <see cref="UniversalTriggerSystem"/>.
+    /// When the player enters or exits, delegates to <see cref="TriggerHub"/>.
     /// This component knows nothing about game logic — it only reports a trigger ID.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
@@ -28,7 +28,7 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        UniversalTriggerSystem? _uts;
+        TriggerHub? _trigger_hub;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Unity lifecycle
@@ -36,10 +36,10 @@ namespace Germio {
         // Start is called before the first frame update (after all Awake calls).
         void Start() {
             /// <summary>
-            /// Retrieves the UniversalTriggerSystem reference from GameSystem.
-            /// Using Start (not Awake) ensures GameSystem.Awake() has already initialised UTS.
+            /// Retrieves the TriggerHub reference from GameSystem.
+            /// Using Start (not Awake) ensures GameSystem.Awake() has already initialised the hub.
             /// </summary>
-            _uts = Find(name: GAME_SYSTEM).Get<GameSystem>().universalTriggerSystem;
+            _trigger_hub = Find(name: GAME_SYSTEM).Get<GameSystem>().triggerHub;
         }
 
         void OnTriggerEnter(Collider other) {
@@ -47,7 +47,7 @@ namespace Germio {
             /// Notifies the hub when the player enters this volume.
             /// </summary>
             if (other.gameObject.CompareTag(tag: PLAYER_TYPE)) {
-                _uts?.OnAreaEnter(_trigger_id);
+                _trigger_hub?.OnAreaEnter(_trigger_id);
             }
         }
 
@@ -56,7 +56,7 @@ namespace Germio {
             /// Clears the G2 guard when the player exits this volume.
             /// </summary>
             if (other.gameObject.CompareTag(tag: PLAYER_TYPE)) {
-                _uts?.OnAreaExit(_trigger_id);
+                _trigger_hub?.OnAreaExit(_trigger_id);
             }
         }
     }

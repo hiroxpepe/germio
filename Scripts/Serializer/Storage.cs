@@ -17,7 +17,7 @@ namespace Germio
     /// All file I/O is async to avoid blocking the main thread on Android storage.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class DataSerializer
+    public static class Storage
     {
 #nullable enable
 
