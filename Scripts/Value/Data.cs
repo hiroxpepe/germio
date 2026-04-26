@@ -114,7 +114,7 @@ namespace Germio {
 
         /// <summary>
         /// Abstract trigger ID. Matches VolumeTrigger.triggerId or a signal ID
-        /// dispatched via UniversalTriggerSystem.OnSignalReceived.
+        /// dispatched via TriggerHub.OnSignalReceived.
         /// </summary>
         public string trigger { get; set; } = string.Empty;
 
@@ -131,7 +131,7 @@ namespace Germio {
 
         /// <summary>
         /// If true (default), this event fires at most once per session.
-        /// StateManager blocks subsequent dispatches for the same event ID.
+        /// Store blocks subsequent dispatches for the same event ID.
         /// Set to false only for repeatable effects (e.g., ambient counters).
         /// </summary>
         public bool once { get; set; } = true;

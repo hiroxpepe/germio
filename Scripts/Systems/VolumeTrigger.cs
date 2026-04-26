@@ -21,7 +21,7 @@ namespace Germio {
         // Inspector Fields
 
         /// <summary>
-        /// The trigger identifier reported to UniversalTriggerSystem, e.g. "vol_goal".
+        /// The trigger identifier reported to TriggerHub, e.g. "vol_goal".
         /// </summary>
         [SerializeField] string _trigger_id = string.Empty;
 
