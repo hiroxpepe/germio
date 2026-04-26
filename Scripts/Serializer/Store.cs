@@ -10,7 +10,7 @@ namespace Germio {
     /// G2 idempotency: once=true events are tracked in DataState.firedEvents.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class StateManager {
+    public class Store {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,10 +33,10 @@ namespace Germio {
         // Constructor (public for unit tests — no file I/O)
 
         /// <summary>
-        /// Constructs a StateManager with a pre-loaded DataRoot.
+        /// Constructs a Store with a pre-loaded DataRoot.
         /// Used in unit tests to inject state without file access.
         /// </summary>
-        public StateManager(DataRoot root) {
+        public Store(DataRoot root) {
             _root     = root;
             _basePath = string.Empty;
         }
@@ -57,12 +57,12 @@ namespace Germio {
         // public Methods [verb]
 
         /// <summary>
-        /// Initializes the manager by loading data from disk.
+        /// Initializes the store by loading data from disk.
         /// Call this instead of the constructor for production usage.
         /// </summary>
         public async Task InitializeAsync(string basePath) {
             _basePath = basePath;
-            var loaded = await DataSerializer.LoadAsync(basePath);
+            var loaded = await Storage.LoadAsync(basePath);
             if (loaded != null) { _root = loaded; }
             _isDirty = false;
         }
@@ -72,13 +72,13 @@ namespace Germio {
         /// </summary>
         public async Task SaveAsync(bool encrypt = false) {
             if (!_isDirty) { return; }
-            await DataSerializer.SaveAsync(_root, encrypt, _basePath);
+            await Storage.SaveAsync(_root, encrypt, _basePath);
             _isDirty = false;
         }
 
         /// <summary>
         /// Marks state as needing save.
-        /// Called by ActionExecutor after any mutation.
+        /// Called by Executor after any mutation.
         /// </summary>
         public void MarkDirty() {
             _isDirty = true;
@@ -100,10 +100,10 @@ namespace Germio {
                 if (evt.once && _root.state.firedEvents.Contains(evt.id)) { continue; }
 
                 // Condition guard
-                if (!ConditionEvaluator.Evaluate(evt.condition, _root.state)) { continue; }
+                if (!Evaluator.Evaluate(evt.condition, _root.state)) { continue; }
 
                 // Execute action
-                ActionExecutor.Execute(evt.action, this);
+                Executor.Execute(evt.action, this);
 
                 // Record once-shot event
                 if (evt.once) { _root.state.firedEvents.Add(evt.id); }
@@ -119,7 +119,7 @@ namespace Germio {
             if (current == null) { return null; }
 
             foreach (var next in current.next) {
-                if (ConditionEvaluator.Evaluate(next.condition, _root.state)) {
+                if (Evaluator.Evaluate(next.condition, _root.state)) {
                     return findLevel(next.id);
                 }
             }
@@ -141,7 +141,7 @@ namespace Germio {
 
         /// <summary>
         /// Fires the OnTransitionRequested event with the given target ID.
-        /// Called by ActionExecutor for requestTransition actions.
+        /// Called by Executor for requestTransition actions.
         /// </summary>
         public void RequestTransition(string targetId) {
             OnTransitionRequested?.Invoke(targetId);

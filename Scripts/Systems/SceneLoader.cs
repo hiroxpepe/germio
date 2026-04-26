@@ -5,7 +5,7 @@ using System;
 
 namespace Germio {
     /// <summary>
-    /// Listens for transition requests from the StateManager and loads the corresponding scene.
+    /// Listens for transition requests from the Store and loads the corresponding scene.
     /// Uses an injected <see cref="Action{String}"/> for the actual load call so that
     /// the class is fully testable without a Unity runtime.
     ///
@@ -15,16 +15,16 @@ namespace Germio {
     ///   3. Mark state dirty so the next save persists the updated current scene.
     ///   4. Invoke the injected load delegate (Unity: SceneManager.LoadScene).
     ///
-    /// Call <see cref="Dispose"/> to unsubscribe from the StateManager event.
+    /// Call <see cref="Dispose"/> to unsubscribe from the Store event.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class DynamicSceneLoader : IDisposable {
+    public class SceneLoader : IDisposable {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        readonly StateManager _manager;
+        readonly Store _store;
         readonly Action<string> _load_scene;
         bool _disposed;
 
@@ -32,30 +32,30 @@ namespace Germio {
         // Constructor
 
         /// <summary>
-        /// Constructs a DynamicSceneLoader and subscribes to <see cref="StateManager.OnTransitionRequested"/>.
+        /// Constructs a SceneLoader and subscribes to <see cref="Store.OnTransitionRequested"/>.
         /// </summary>
-        /// <param name="manager">The StateManager whose root provides level-to-scene mapping.</param>
+        /// <param name="store">The Store whose root provides level-to-scene mapping.</param>
         /// <param name="loadScene">
         /// Delegate invoked with the resolved scene name when a transition is requested.
         /// In Unity production code: <c>name =&gt; SceneManager.LoadScene(name)</c>.
         /// In tests: any capture lambda.
         /// </param>
-        public DynamicSceneLoader(StateManager manager, Action<string> loadScene) {
-            _manager    = manager;
+        public SceneLoader(Store store, Action<string> loadScene) {
+            _store      = store;
             _load_scene = loadScene;
-            _manager.OnTransitionRequested += handleTransition;
+            _store.OnTransitionRequested += handleTransition;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         /// <summary>
-        /// Unsubscribes from the StateManager transition event.
+        /// Unsubscribes from the Store transition event.
         /// Safe to call multiple times.
         /// </summary>
         public void Dispose() {
             if (_disposed) { return; }
-            _manager.OnTransitionRequested -= handleTransition;
+            _store.OnTransitionRequested -= handleTransition;
             _disposed = true;
         }
 
@@ -63,7 +63,7 @@ namespace Germio {
         // private Methods [verb]
 
         /// <summary>
-        /// Handles the <see cref="StateManager.OnTransitionRequested"/> event.
+        /// Handles the <see cref="Store.OnTransitionRequested"/> event.
         /// Looks up the scene name, updates state, and invokes the load delegate.
         /// </summary>
         /// <param name="targetLevelId">The target level ID to transition to.</param>
@@ -71,21 +71,21 @@ namespace Germio {
             string? sceneName = findSceneName(targetLevelId);
             // Guard: skip unknown levels and levels with empty scene names
             if (string.IsNullOrEmpty(sceneName)) { return; }
-            _manager.state.currentScene = targetLevelId;
-            _manager.MarkDirty();
+            _store.state.currentScene = targetLevelId;
+            _store.MarkDirty();
             _load_scene(sceneName);
         }
 
         /// <summary>
         /// Searches all worlds in the current DataRoot for a level matching <paramref name="levelId"/>
         /// and returns its <c>scene</c> field.
-        /// Uses <see cref="StateManager.root"/> (not a cached reference) so that data loaded
+        /// Uses <see cref="Store.root"/> (not a cached reference) so that data loaded
         /// asynchronously after construction is always reflected.
         /// </summary>
         /// <param name="levelId">The level ID to search for.</param>
         /// <returns>The scene name, or null if not found.</returns>
         string? findSceneName(string levelId) {
-            foreach (var world in _manager.root.worlds) {
+            foreach (var world in _store.root.worlds) {
                 foreach (var level in world.levels) {
                     if (level.id == levelId) {
                         return string.IsNullOrEmpty(level.scene) ? null : level.scene;

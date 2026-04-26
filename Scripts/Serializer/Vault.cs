@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Germio {
     /// <summary>
-    /// Provides AES key material for DataSerializer encryption.
+    /// Provides AES key material for Storage encryption.
     /// Key source priority (first available wins):
     ///   1. Environment variable GERMIO_AES_KEY (Base64, 48 bytes: 32 key + 16 IV) [testable]
     ///   2. StreamingAssets/germio_key.bin (Unity only)
@@ -18,7 +18,7 @@ namespace Germio {
     /// Throws InvalidOperationException if no source is available or material is too short.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class KeyManager {
+    public static class Vault {
 #nullable enable
         const string ENV_VAR     = "GERMIO_AES_KEY";
         const int    MATERIAL_LEN = 48; // 32 bytes key + 16 bytes IV

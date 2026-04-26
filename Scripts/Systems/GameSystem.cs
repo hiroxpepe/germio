@@ -13,8 +13,8 @@ using static Germio.Utils;
 namespace Germio {
     /// <summary>
     /// Manages the game system, including levels, home interactions, and the JSON-driven state machine.
-    /// Initialises <see cref="StateManager"/>, <see cref="UniversalTriggerSystem"/>,
-    /// and <see cref="DynamicSceneLoader"/> from <c>StreamingAssets/germio_config.json</c>.
+    /// Initialises <see cref="Store"/>, <see cref="TriggerHub"/>,
+    /// and <see cref="SceneLoader"/> from <c>StreamingAssets/germio_config.json</c>.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class GameSystem : MonoBehaviour {
@@ -24,13 +24,13 @@ namespace Germio {
         // Fields
 
         /// <summary>Runtime data state machine.</summary>
-        StateManager _state_manager = null!;
+        Store _store = null!;
 
         /// <summary>Trigger dispatch hub (G2 Layer-1 guard).</summary>
-        UniversalTriggerSystem _universal_trigger_system = null!;
+        TriggerHub _trigger_hub = null!;
 
         /// <summary>Subscribes to transition requests and calls SceneManager.</summary>
-        DynamicSceneLoader _dynamic_scene_loader = null!;
+        SceneLoader _scene_loader = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties [noun, adjectives]
@@ -51,9 +51,9 @@ namespace Germio {
         public bool beat { get; set; }
 
         /// <summary>
-        /// Exposes the UniversalTriggerSystem for use by VolumeTrigger, Home, and Despawn.
+        /// Exposes the TriggerHub for use by VolumeTrigger, Home, and Despawn.
         /// </summary>
-        public UniversalTriggerSystem? universalTriggerSystem => _universal_trigger_system;
+        public TriggerHub? triggerHub => _trigger_hub;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
@@ -88,16 +88,16 @@ namespace Germio {
 
             // --- Germio state machine bootstrap ---
             // Create objects synchronously with an empty root so that VolumeTrigger,
-            // Home, and Despawn can safely obtain a reference to universalTriggerSystem
+            // Home, and Despawn can safely obtain a reference to triggerHub
             // in their Start() methods. The actual JSON config is loaded in Start().
-            _state_manager = new StateManager(new DataRoot());
-            _universal_trigger_system = new UniversalTriggerSystem(_state_manager);
-            _dynamic_scene_loader = new DynamicSceneLoader(
-                manager:   _state_manager,
+            _store = new Store(new DataRoot());
+            _trigger_hub = new TriggerHub(_store);
+            _scene_loader = new SceneLoader(
+                store:     _store,
                 loadScene: name => {
                     // Bridge: persist currentScene to PlayerPrefs so it survives the scene reload.
                     // When the new scene's GameSystem reads InitializeAsync, it restores this value.
-                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _state_manager.state.currentScene);
+                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _store.state.currentScene);
                     PlayerPrefs.Save();
                     // Reset time scale so the next scene does not start frozen.
                     // Level.cs's OnCameBackHome handler sets timeScale=0f; this undoes that
@@ -150,7 +150,7 @@ namespace Germio {
 
         // OnDestroy is called when the MonoBehaviour will be destroyed.
         void OnDestroy() {
-            _dynamic_scene_loader?.Dispose();
+            _scene_loader?.Dispose();
         }
 
         // Start is called before the first frame update.
@@ -172,11 +172,11 @@ namespace Germio {
         // private Coroutines
 
         /// <summary>
-        /// Coroutine that wraps async StateManager.InitializeAsync so it runs inside Unity's
+        /// Coroutine that wraps async Store.InitializeAsync so it runs inside Unity's
         /// update loop without blocking the main thread.
         /// </summary>
         IEnumerator initializeStateCoroutine() {
-            var task = _state_manager.InitializeAsync(Application.streamingAssetsPath);
+            var task = _store.InitializeAsync(Application.streamingAssetsPath);
             while (!task.IsCompleted) { yield return null; }
             if (task.IsFaulted) {
                 Debug.LogError($"[Germio] Failed to load germio_config.json: {task.Exception}");
@@ -186,7 +186,7 @@ namespace Germio {
             // JSON on disk still having the initial currentScene after LoadScene.
             string bridged = PlayerPrefs.GetString(key: CURRENT_SCENE_KEY, defaultValue: string.Empty);
             if (!string.IsNullOrEmpty(bridged)) {
-                _state_manager.state.currentScene = bridged;
+                _store.state.currentScene = bridged;
             }
         }
 

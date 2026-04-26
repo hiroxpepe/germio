@@ -14,8 +14,8 @@ namespace Germio {
     /// <summary>
     /// Handles player despawn logic.
     /// Directly reloads the active scene (original behavior retained as primary fallback),
-    /// and also emits "sig_despawn" to <see cref="UniversalTriggerSystem"/> so that
-    /// StateManager can update counters/flags as needed (Strangler Fig Pattern).
+    /// and also emits "sig_despawn" to <see cref="TriggerHub"/> so that
+    /// Store can update counters/flags as needed (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
@@ -63,7 +63,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     OnDespawn?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
-                    _game_system.universalTriggerSystem?.OnSignalReceived("sig_despawn");
+                    _game_system.triggerHub?.OnSignalReceived("sig_despawn");
                 }).AddTo(gameObjectComponent: this);
         }
     }

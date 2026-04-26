@@ -13,7 +13,7 @@ using static Germio.Env;
 namespace Germio {
     /// <summary>
     /// Represents a home object in the game and manages player and vehicle interactions.
-    /// On contact, emits the "vol_home" signal to <see cref="UniversalTriggerSystem"/>
+    /// On contact, emits the "vol_home" signal to <see cref="TriggerHub"/>
     /// so that scene transitions are driven by the JSON config (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
@@ -78,18 +78,18 @@ namespace Germio {
 
             /// <summary>
             /// When the player collides with this object, emit "vol_home" signal.
-            /// StateManager resolves the transition from germio_config.json.
+            /// Store resolves the transition from germio_config.json.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     // OnCameBack fires first so Level.cs can react (e.g. play sound).
-                    // OnSignalReceived fires second so DynamicSceneLoader resets
+                    // OnSignalReceived fires second so SceneLoader resets
                     // Time.timeScale=1f before LoadScene, preventing the next scene
                     // from starting frozen.
                     OnCameBack?.Invoke();
-                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
+                    _game_system.triggerHub?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -100,7 +100,7 @@ namespace Germio {
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
+                    _game_system.triggerHub?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -112,7 +112,7 @@ namespace Germio {
                     _game_system.beat)
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
+                    _game_system.triggerHub?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
     }

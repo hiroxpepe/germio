@@ -18,7 +18,7 @@ namespace Germio {
     /// Unknown prefix safely returns false without throwing.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public static class ConditionEvaluator {
+    public static class Evaluator {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
