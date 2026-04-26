@@ -13,6 +13,8 @@ using static Germio.Env;
 namespace Germio {
     /// <summary>
     /// Represents a home object in the game and manages player and vehicle interactions.
+    /// On contact, emits the "vol_home" signal to <see cref="UniversalTriggerSystem"/>
+    /// so that scene transitions are driven by the JSON config (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Home : MonoBehaviour {
@@ -32,13 +34,14 @@ namespace Germio {
         /// <summary>
         /// Holds a reference to the game system instance.
         /// </summary>
-        GameSystem _game_system;
+        GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the player returns to the home object.
+        /// Retained for backward compatibility with observers (e.g., SoundSystem).
         /// </summary>
         public event Action? OnCameBack;
 
@@ -62,46 +65,54 @@ namespace Germio {
             float original_position = transform.position.y;
             // Updates the object's position if moving.
             this.UpdateAsObservable()
-                .Where(predicate: _ => 
+                .Where(predicate: _ =>
                     _move)
                 .Subscribe(onNext: _ => {
-                    const int SPEED = 5; const float DISTANCE = 0.3f; 
+                    const int SPEED = 5; const float DISTANCE = 0.3f;
                     transform.position = new(
-                        x: transform.position.x, 
-                        y: original_position + PingPong(Time.time / SPEED, DISTANCE), 
+                        x: transform.position.x,
+                        y: original_position + PingPong(Time.time / SPEED, DISTANCE),
                         z: transform.position.z
                     );
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Handles the event when the player collides with this object.
+            /// When the player collides with this object, emit "vol_home" signal.
+            /// StateManager resolves the transition from germio_config.json.
             /// </summary>
             this.OnCollisionEnterAsObservable()
-                .Where(predicate: x => 
+                .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
+                    // OnCameBack fires first so Level.cs can react (e.g. play sound).
+                    // OnSignalReceived fires second so DynamicSceneLoader resets
+                    // Time.timeScale=1f before LoadScene, preventing the next scene
+                    // from starting frozen.
                     OnCameBack?.Invoke();
+                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
             /// Handles the event when the player enters the trigger of this object.
             /// </summary>
             this.OnTriggerEnterAsObservable()
-                .Where(predicate: x => 
+                .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
+                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
             /// Handles the event when a vehicle collides with this object while the beat is active.
             /// </summary>
             this.OnCollisionEnterAsObservable()
-                .Where(predicate: x => 
-                    x.Like(type: VEHICLE_TYPE) && 
+                .Where(predicate: x =>
+                    x.Like(type: VEHICLE_TYPE) &&
                     _game_system.beat)
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
+                    _game_system.universalTriggerSystem?.OnSignalReceived("vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
     }

@@ -12,7 +12,10 @@ using static Germio.Env;
 
 namespace Germio {
     /// <summary>
-    /// Handles player despawn logic and manages scene reloads when necessary.
+    /// Handles player despawn logic.
+    /// Directly reloads the active scene (original behavior retained as primary fallback),
+    /// and also emits "sig_despawn" to <see cref="UniversalTriggerSystem"/> so that
+    /// StateManager can update counters/flags as needed (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
@@ -24,14 +27,14 @@ namespace Germio {
         /// <summary>
         /// Holds a reference to the game system instance.
         /// </summary>
-        GameSystem _game_system;
-        
+        GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the player is despawned from the scene.
+        /// Retained for backward compatibility with observers (e.g., SoundSystem).
         /// </summary>
         public event Action? OnDespawn;
 
@@ -49,7 +52,10 @@ namespace Germio {
         // Start is called before the first frame update.
         void Start() {
             /// <summary>
-            /// Handles the event when the player collides with this object and triggers despawn logic.
+            /// When the player enters the despawn trigger:
+            ///   1. Reload the active scene directly (primary, always works).
+            ///   2. Emit "sig_despawn" signal so StateManager can react (counters, flags).
+            /// Both LoadScene calls targeting the same scene are idempotent in Unity.
             /// </summary>
             this.OnTriggerEnterAsObservable()
                 .Where(predicate: x =>
@@ -57,6 +63,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     OnDespawn?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
+                    _game_system.universalTriggerSystem?.OnSignalReceived("sig_despawn");
                 }).AddTo(gameObjectComponent: this);
         }
     }

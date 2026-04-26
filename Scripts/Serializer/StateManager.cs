@@ -44,6 +44,9 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Properties
 
+        /// <summary>The root data object. Updated after InitializeAsync completes.</summary>
+        public DataRoot root => _root;
+
         /// <summary>The current runtime DataState.</summary>
         public DataState state => _root.state;
 

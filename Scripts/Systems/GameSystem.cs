@@ -2,22 +2,38 @@
 // Licensed under the GPL v2.0 license. See LICENSE text in the project root for license information.
 
 using System;
+using System.Collections;
 using UnityEngine;
 using static UnityEngine.GameObject;
+using static UnityEngine.SceneManagement.SceneManager;
 
 using static Germio.Env;
 using static Germio.Utils;
 
 namespace Germio {
     /// <summary>
-    /// Manages the game system, including levels and home interactions.
+    /// Manages the game system, including levels, home interactions, and the JSON-driven state machine.
+    /// Initialises <see cref="StateManager"/>, <see cref="UniversalTriggerSystem"/>,
+    /// and <see cref="DynamicSceneLoader"/> from <c>StreamingAssets/germio_config.json</c>.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class GameSystem : MonoBehaviour {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives] 
+        // Fields
+
+        /// <summary>Runtime data state machine.</summary>
+        StateManager _state_manager = null!;
+
+        /// <summary>Trigger dispatch hub (G2 Layer-1 guard).</summary>
+        UniversalTriggerSystem _universal_trigger_system = null!;
+
+        /// <summary>Subscribes to transition requests and calls SceneManager.</summary>
+        DynamicSceneLoader _dynamic_scene_loader = null!;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties [noun, adjectives]
 
         /// <summary>
         /// Gets or sets the current game mode for the system.
@@ -33,6 +49,11 @@ namespace Germio {
         /// Gets or sets a value indicating whether the level is beaten.
         /// </summary>
         public bool beat { get; set; }
+
+        /// <summary>
+        /// Exposes the UniversalTriggerSystem for use by VolumeTrigger, Home, and Despawn.
+        /// </summary>
+        public UniversalTriggerSystem? universalTriggerSystem => _universal_trigger_system;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
@@ -58,15 +79,34 @@ namespace Germio {
         public event Action? OnCameBackHome;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods [verb]
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
             // Sets the frame rate.
             Application.targetFrameRate = FPS;
+
+            // --- Germio state machine bootstrap ---
+            // Create objects synchronously with an empty root so that VolumeTrigger,
+            // Home, and Despawn can safely obtain a reference to universalTriggerSystem
+            // in their Start() methods. The actual JSON config is loaded in Start().
+            _state_manager = new StateManager(new DataRoot());
+            _universal_trigger_system = new UniversalTriggerSystem(_state_manager);
+            _dynamic_scene_loader = new DynamicSceneLoader(
+                manager:   _state_manager,
+                loadScene: name => {
+                    // Bridge: persist currentScene to PlayerPrefs so it survives the scene reload.
+                    // When the new scene's GameSystem reads InitializeAsync, it restores this value.
+                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _state_manager.state.currentScene);
+                    PlayerPrefs.Save();
+                    // Reset time scale so the next scene does not start frozen.
+                    // Level.cs's OnCameBackHome handler sets timeScale=0f; this undoes that
+                    // before Unity commits the scene load at end-of-frame.
+                    Time.timeScale = 1f;
+                    LoadScene(sceneName: name);
+                }
+            );
+            // -----------------------------------------------
 
             if (HasLevel()) {
                 // Gets the level by name.
@@ -98,7 +138,7 @@ namespace Germio {
                 this.home = false;
                 home.OnCameBack += () => {
                     this.home = true;
-                    OnCameBackHome?.Invoke(); 
+                    OnCameBackHome?.Invoke();
                 };
             }
 
@@ -108,12 +148,46 @@ namespace Germio {
             abilities_OnAwake();
         }
 
+        // OnDestroy is called when the MonoBehaviour will be destroyed.
+        void OnDestroy() {
+            _dynamic_scene_loader?.Dispose();
+        }
+
         // Start is called before the first frame update.
         void Start() {
+            /// <summary>
+            /// Loads germio_config.json asynchronously from StreamingAssets.
+            /// The coroutine waits until the Task completes so the JSON state is ready
+            /// before any trigger fires.
+            /// </summary>
+            StartCoroutine(initializeStateCoroutine());
+
             /// <summary>
             /// Calls the ability update handler for initialization.
             /// </summary>
             abilities_OnStart();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Coroutines
+
+        /// <summary>
+        /// Coroutine that wraps async StateManager.InitializeAsync so it runs inside Unity's
+        /// update loop without blocking the main thread.
+        /// </summary>
+        IEnumerator initializeStateCoroutine() {
+            var task = _state_manager.InitializeAsync(Application.streamingAssetsPath);
+            while (!task.IsCompleted) { yield return null; }
+            if (task.IsFaulted) {
+                Debug.LogError($"[Germio] Failed to load germio_config.json: {task.Exception}");
+            }
+            // Bridge: restore currentScene from PlayerPrefs if a prior scene set it.
+            // This fixes the "die in Level 2 → restart Level 1" bug caused by the
+            // JSON on disk still having the initial currentScene after LoadScene.
+            string bridged = PlayerPrefs.GetString(key: CURRENT_SCENE_KEY, defaultValue: string.Empty);
+            if (!string.IsNullOrEmpty(bridged)) {
+                _state_manager.state.currentScene = bridged;
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
