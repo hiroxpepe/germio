@@ -17,8 +17,8 @@ namespace Germio {
         // Fields
 
         DataRoot _root;
-        string   _basePath;
-        bool     _isDirty;
+        string   _base_path;
+        bool     _is_dirty;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Events
@@ -37,8 +37,8 @@ namespace Germio {
         /// Used in unit tests to inject state without file access.
         /// </summary>
         public Store(DataRoot root) {
-            _root     = root;
-            _basePath = string.Empty;
+            _root      = root;
+            _base_path = string.Empty;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace Germio {
         public DataState state => _root.state;
 
         /// <summary>True if state has been mutated since the last save.</summary>
-        public bool isDirty => _isDirty;
+        public bool isDirty => _is_dirty;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
@@ -60,20 +60,20 @@ namespace Germio {
         /// Initializes the store by loading data from disk.
         /// Call this instead of the constructor for production usage.
         /// </summary>
-        public async Task InitializeAsync(string basePath) {
-            _basePath = basePath;
-            var loaded = await Storage.LoadAsync(basePath);
+        public async Task InitializeAsync(string base_path) {
+            _base_path = base_path;
+            var loaded = await Storage.LoadAsync(base_path);
             if (loaded != null) { _root = loaded; }
-            _isDirty = false;
+            _is_dirty = false;
         }
 
         /// <summary>
         /// Persists state to disk if dirty.
         /// </summary>
         public async Task SaveAsync(bool encrypt = false) {
-            if (!_isDirty) { return; }
-            await Storage.SaveAsync(_root, encrypt, _basePath);
-            _isDirty = false;
+            if (!_is_dirty) { return; }
+            await Storage.SaveAsync(_root, encrypt, _base_path);
+            _is_dirty = false;
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Germio {
         /// Called by Executor after any mutation.
         /// </summary>
         public void MarkDirty() {
-            _isDirty = true;
+            _is_dirty = true;
         }
 
         /// <summary>
@@ -114,8 +114,8 @@ namespace Germio {
         /// Returns the first level that satisfies its transition condition from the given level.
         /// Returns null if no condition is met.
         /// </summary>
-        public DataLevel? GetNextLevel(string currentLevelId) {
-            var current = findLevel(currentLevelId);
+        public DataLevel? GetNextLevel(string current_level_id) {
+            var current = findLevel(current_level_id);
             if (current == null) { return null; }
 
             foreach (var next in current.next) {
@@ -129,11 +129,11 @@ namespace Germio {
         /// <summary>
         /// Retrieves a level by world ID and level ID.
         /// </summary>
-        public DataLevel? GetLevel(string worldId, string levelId) {
+        public DataLevel? GetLevel(string world_id, string level_id) {
             foreach (var world in _root.worlds) {
-                if (world.id != worldId) { continue; }
+                if (world.id != world_id) { continue; }
                 foreach (var level in world.levels) {
-                    if (level.id == levelId) { return level; }
+                    if (level.id == level_id) { return level; }
                 }
             }
             return null;
@@ -143,8 +143,8 @@ namespace Germio {
         /// Fires the OnTransitionRequested event with the given target ID.
         /// Called by Executor for requestTransition actions.
         /// </summary>
-        public void RequestTransition(string targetId) {
-            OnTransitionRequested?.Invoke(targetId);
+        public void RequestTransition(string target_id) {
+            OnTransitionRequested?.Invoke(target_id);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,10 +153,10 @@ namespace Germio {
         /// <summary>
         /// Searches all worlds for a level matching the given ID.
         /// </summary>
-        DataLevel? findLevel(string levelId) {
+        DataLevel? findLevel(string level_id) {
             foreach (var world in _root.worlds) {
                 foreach (var level in world.levels) {
-                    if (level.id == levelId) { return level; }
+                    if (level.id == level_id) { return level; }
                 }
             }
             return null;
