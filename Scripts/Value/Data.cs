@@ -4,172 +4,179 @@
 
 using System.Collections.Generic;
 
+// When compiled outside Unity (e.g. dotnet test), provide a no-op stub so [Preserve]
+// attributes remain valid without requiring UnityEngine.dll.
+#if !UNITY_5_3_OR_NEWER
+namespace UnityEngine.Scripting {
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
+    internal class PreserveAttribute : System.Attribute {}
+}
+#endif
+
 namespace Germio {
     /// <summary>
-    /// Root data class for Germio game save data.
-    /// Contains the overall game state and all worlds.
+    /// Operation type for updating a numeric counter.
+    /// Serialized as lowercase string in JSON ("add", "sub", "set").
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
+    public enum CounterOp { Add, Sub, Set }
+
+    /// <summary>
+    /// Root data class for Germio runtime data.
+    /// Contains the overall game state and all abstract worlds.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
     public class DataRoot {
-        /// <summary>
-        /// The current game state (flags, inventory, turn, etc).
-        /// </summary>
+#nullable enable
+        /// <summary>The current runtime state (flags, counters, inventory).</summary>
         public DataState state { get; set; } = new DataState();
 
-        /// <summary>
-        /// List of all worlds in the game.
-        /// </summary>
+        /// <summary>List of all abstract worlds in the game.</summary>
         public List<DataWorld> worlds { get; set; } = new List<DataWorld>();
     }
 
     /// <summary>
-    /// Represents the player's current state, including flags, inventory, and progress.
+    /// Represents the player's runtime state.
+    /// All quantifiable state values are expressed as named counters — no hardcoded numeric fields.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataState {
-        /// <summary>
-        /// Boolean flags for game events, achievements, etc.
-        /// </summary>
+#nullable enable
+        /// <summary>Boolean state flags. (e.g., flags["zone_a_cleared"] = true)</summary>
         public Dictionary<string, bool> flags { get; set; } = new Dictionary<string, bool>();
 
         /// <summary>
-        /// Inventory items and their values (can be int, string, etc).
+        /// Generic numeric counters for any quantifiable state.
+        /// (e.g., counters["score"] = 100f, counters["elapsed_time"] = 0f, counters["depth"] = 3f)
         /// </summary>
-        public Dictionary<string, object> inventory { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, float> counters { get; set; } = new Dictionary<string, float>();
 
-        /// <summary>
-        /// Current turn number (if applicable).
-        /// </summary>
-        public int? turn { get; set; }
+        /// <summary>Item inventory with quantity. (e.g., inventory["key_01"] = 1)</summary>
+        public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
 
-        /// <summary>
-        /// Player's score (optional).
-        /// </summary>
-        public int? score { get; set; }
-
-        /// <summary>
-        /// Number of lives remaining (optional).
-        /// </summary>
-        public int? lives { get; set; }
-
-        /// <summary>
-        /// Number of bombs (optional).
-        /// </summary>
-        public int? bombs { get; set; }
-
-        /// <summary>
-        /// Number of power-ups (optional).
-        /// </summary>
-        public int? powerUps { get; set; }
-
-        /// <summary>
-        /// Name of the current scene.
-        /// </summary>
+        /// <summary>ID of the currently active scene/level.</summary>
         public string currentScene { get; set; } = string.Empty;
 
         /// <summary>
-        /// Name of the current team (if applicable).
+        /// Identifies the currently active decision-making agent in a sequential state machine.
+        /// (e.g., player_a / player_b in a two-agent sequence; empty if not applicable)
         /// </summary>
         public string currentTeam { get; set; } = string.Empty;
+
+        /// <summary>
+        /// G2: IDs of events that have already fired with once=true.
+        /// Persisted with save data so one-shot events survive save/load cycles.
+        /// </summary>
+        public HashSet<string> firedEvents { get; set; } = new HashSet<string>();
     }
 
     /// <summary>
-    /// Represents a world in the game, containing multiple levels.
+    /// Represents a world grouping multiple abstract levels.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataWorld {
-        /// <summary>
-        /// Unique world identifier.
-        /// </summary>
         public string id { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Display name of the world.
-        /// </summary>
         public string name { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Scene name associated with this world.
-        /// </summary>
         public string scene { get; set; } = string.Empty;
-
-        /// <summary>
-        /// List of levels in this world.
-        /// </summary>
         public List<DataLevel> levels { get; set; } = new List<DataLevel>();
     }
 
     /// <summary>
-    /// Represents a level within a world.
+    /// Represents a level (or node) within a world.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataLevel {
-        /// <summary>
-        /// Unique level identifier.
-        /// </summary>
         public string id { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Display name of the level.
-        /// </summary>
         public string name { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Scene name associated with this level.
-        /// </summary>
         public string scene { get; set; } = string.Empty;
-
-        /// <summary>
-        /// List of possible next levels and their conditions.
-        /// </summary>
         public List<DataNext> next { get; set; } = new List<DataNext>();
-
-        /// <summary>
-        /// List of events that can occur in this level.
-        /// </summary>
         public List<DataEvent> events { get; set; } = new List<DataEvent>();
     }
 
     /// <summary>
-    /// Represents a transition to another level, with an optional condition.
+    /// Represents a conditional transition to another level.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataNext {
-        /// <summary>
-        /// ID of the next level.
-        /// </summary>
         public string id { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Condition required to unlock this transition (expression or flag).
-        /// </summary>
         public string condition { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// Represents an event that can occur in a level.
+    /// Represents an event triggered within a level based on specific conditions.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataEvent {
-        /// <summary>
-        /// Unique event identifier.
-        /// </summary>
+#nullable enable
+        /// <summary>Unique event identifier.</summary>
         public string id { get; set; } = string.Empty;
 
         /// <summary>
-        /// Trigger type for this event (e.g., "onEnter").
+        /// Abstract trigger ID. Matches VolumeTrigger.triggerId or a signal ID
+        /// dispatched via UniversalTriggerSystem.OnSignalReceived.
         /// </summary>
         public string trigger { get; set; } = string.Empty;
 
         /// <summary>
-        /// Action to perform when this event is triggered.
+        /// Optional condition evaluated before executing the action.
+        /// Uses the same syntax as DataNext.condition.
+        /// Empty string = unconditional (action always executes when trigger fires).
+        /// Example: "counters.score >= 100" or "flags.zone_a_cleared"
         /// </summary>
+        public string condition { get; set; } = string.Empty;
+
+        /// <summary>Action to execute when this event fires.</summary>
         public DataAction action { get; set; } = new DataAction();
+
+        /// <summary>
+        /// If true (default), this event fires at most once per session.
+        /// StateManager blocks subsequent dispatches for the same event ID.
+        /// Set to false only for repeatable effects (e.g., ambient counters).
+        /// </summary>
+        public bool once { get; set; } = true;
     }
 
     /// <summary>
-    /// Represents an action to be performed as part of an event.
-    /// Extend this class to support more action types.
+    /// Represents a state mutation to be executed when an event fires.
+    /// Exactly one action field should be non-null per instance.
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class DataAction {
-        /// <summary>
-        /// Name of the flag to set (if any).
-        /// </summary>
-        public string setFlag { get; set; } = string.Empty;
-        // Extend as needed for more action types
+#nullable enable
+        /// <summary>Sets a boolean flag in DataState.flags.</summary>
+        public DataSetFlag? setFlag { get; set; }
+
+        /// <summary>Adds, subtracts, or assigns a value to DataState.counters.</summary>
+        public DataUpdateCounter? updateCounter { get; set; }
+
+        /// <summary>Adds or removes items from DataState.inventory.</summary>
+        public DataUpdateInventory? updateInventory { get; set; }
+
+        /// <summary>Requests an immediate scene transition to the specified level ID.</summary>
+        public string? requestTransition { get; set; }
+    }
+
+    /// <summary>Sets a named flag to a boolean value.</summary>
+    [UnityEngine.Scripting.Preserve]
+    public class DataSetFlag {
+        public string key { get; set; } = string.Empty;
+        public bool value { get; set; }
+    }
+
+    /// <summary>Updates a named counter by delta using the specified operation.</summary>
+    [UnityEngine.Scripting.Preserve]
+    public class DataUpdateCounter {
+        public string key { get; set; } = string.Empty;
+        public float delta { get; set; }
+        /// <summary>Operation: Add (default), Sub, or Set.</summary>
+        public CounterOp op { get; set; } = CounterOp.Add;
+    }
+
+    /// <summary>Changes the quantity of a named inventory item.</summary>
+    [UnityEngine.Scripting.Preserve]
+    public class DataUpdateInventory {
+        public string id { get; set; } = string.Empty;
+        public int delta { get; set; }
     }
 }
