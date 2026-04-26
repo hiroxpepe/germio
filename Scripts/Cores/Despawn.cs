@@ -54,7 +54,7 @@ namespace Germio {
             /// <summary>
             /// When the player enters the despawn trigger:
             ///   1. Reload the active scene directly (primary, always works).
-            ///   2. Emit "sig_despawn" signal so StateManager can react (counters, flags).
+            ///   2. Emit "sig_despawn" signal so Store can react (counters, flags).
             /// Both LoadScene calls targeting the same scene are idempotent in Unity.
             /// </summary>
             this.OnTriggerEnterAsObservable()
