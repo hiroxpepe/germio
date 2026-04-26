@@ -67,13 +67,13 @@ namespace Germio {
         /// Looks up the scene name, updates state, and invokes the load delegate.
         /// </summary>
         /// <param name="targetLevelId">The target level ID to transition to.</param>
-        void handleTransition(string targetLevelId) {
-            string? sceneName = findSceneName(targetLevelId);
+        void handleTransition(string target_level_id) {
+            string? scene_name = findSceneName(target_level_id);
             // Guard: skip unknown levels and levels with empty scene names
-            if (string.IsNullOrEmpty(sceneName)) { return; }
-            _store.state.currentScene = targetLevelId;
+            if (string.IsNullOrEmpty(scene_name)) { return; }
+            _store.state.currentScene = target_level_id;
             _store.MarkDirty();
-            _load_scene(sceneName);
+            _load_scene(scene_name);
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace Germio {
         /// </summary>
         /// <param name="levelId">The level ID to search for.</param>
         /// <returns>The scene name, or null if not found.</returns>
-        string? findSceneName(string levelId) {
+        string? findSceneName(string level_id) {
             foreach (var world in _store.root.worlds) {
                 foreach (var level in world.levels) {
-                    if (level.id == levelId) {
+                    if (level.id == level_id) {
                         return string.IsNullOrEmpty(level.scene) ? null : level.scene;
                     }
                 }

@@ -38,9 +38,9 @@ namespace Germio {
             byte[]? material = null;
 
             // Priority 1: environment variable (testable in NUnit without Unity)
-            string? envValue = Environment.GetEnvironmentVariable(ENV_VAR);
-            if (!string.IsNullOrEmpty(envValue)) {
-                material = Convert.FromBase64String(envValue);
+            string? env_value = Environment.GetEnvironmentVariable(ENV_VAR);
+            if (!string.IsNullOrEmpty(env_value)) {
+                material = Convert.FromBase64String(env_value);
             }
 
 #if UNITY_5_3_OR_NEWER
@@ -54,9 +54,9 @@ namespace Germio {
 
             // Priority 3: PlayerPrefs (mobile fallback)
             if (material == null) {
-                string? prefsValue = PlayerPrefs.GetString("germio_key", null);
-                if (!string.IsNullOrEmpty(prefsValue)) {
-                    material = Convert.FromBase64String(prefsValue);
+                string? prefs_value = PlayerPrefs.GetString("germio_key", null);
+                if (!string.IsNullOrEmpty(prefs_value)) {
+                    material = Convert.FromBase64String(prefs_value);
                 }
             }
 #endif
