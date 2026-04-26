@@ -7,20 +7,20 @@ namespace Germio {
     /// <summary>
     /// Central dispatch hub for all game triggers.
     /// Receives area enter/exit events and arbitrary signals,
-    /// then forwards them to the StateManager for event evaluation.
+    /// then forwards them to the Store for event evaluation.
     ///
     /// G2 Layer-1: maintains <see cref="_active_volume_triggers"/> (HashSet) to
     /// suppress duplicate OnAreaEnter calls for the same trigger ID until OnAreaExit clears it.
     /// Signals (<see cref="OnSignalReceived"/>) are never de-duplicated — they always dispatch.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class UniversalTriggerSystem {
+    public class TriggerHub {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        readonly StateManager _manager;
+        readonly Store _store;
 
         /// <summary>
         /// G2 Layer-1 guard: tracks trigger IDs currently inside an active volume area.
@@ -32,11 +32,11 @@ namespace Germio {
         // Constructor
 
         /// <summary>
-        /// Constructs a UniversalTriggerSystem connected to the given StateManager.
+        /// Constructs a TriggerHub connected to the given Store.
         /// </summary>
-        /// <param name="manager">The StateManager to dispatch all triggers to.</param>
-        public UniversalTriggerSystem(StateManager manager) {
-            _manager = manager;
+        /// <param name="store">The Store to dispatch all triggers to.</param>
+        public TriggerHub(Store store) {
+            _store = store;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace Germio {
         public void OnAreaEnter(string triggerId) {
             // G2 Layer-1: HashSet.Add returns false if already present → suppress duplicate
             if (!_active_volume_triggers.Add(triggerId)) { return; }
-            _manager.DispatchTrigger(triggerId);
+            _store.DispatchTrigger(triggerId);
         }
 
         /// <summary>
@@ -64,12 +64,12 @@ namespace Germio {
 
         /// <summary>
         /// Called to dispatch an instantaneous signal (not bound to an area).
-        /// Signals are never de-duplicated and always dispatch to the StateManager.
+        /// Signals are never de-duplicated and always dispatch to the Store.
         /// Use for events like player death ("sig_despawn") that can occur repeatedly.
         /// </summary>
         /// <param name="signalId">The signal identifier, e.g. "sig_despawn".</param>
         public void OnSignalReceived(string signalId) {
-            _manager.DispatchTrigger(signalId);
+            _store.DispatchTrigger(signalId);
         }
     }
 }
