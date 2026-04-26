@@ -191,5 +191,11 @@ namespace Germio {
         /// Gets the color code for white.
         /// </summary>
         public const string COLOR_WHITE = "#FFFFFF";
+        /// <summary>
+        /// Gets the PlayerPrefs key used to persist currentScene across scene reloads.
+        /// Required because StateManager re-reads germio_config.json on each scene load,
+        /// which would reset currentScene to the JSON's initial value.
+        /// </summary>
+        public const string CURRENT_SCENE_KEY = "germio_current_scene";
     }
 }
