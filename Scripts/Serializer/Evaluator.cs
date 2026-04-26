@@ -53,10 +53,10 @@ namespace Germio {
         static (string prefix, string key, string op, string rhs) tokenize(string condition) {
             // "counters.score >= 100" -> ["counters.score", ">=", "100"]
             var parts    = condition.Split(new char[] { ' ' }, 3, StringSplitOptions.RemoveEmptyEntries);
-            var lhsParts = parts[0].Split(new char[] { '.' }, 2);
+            var lhs_parts = parts[0].Split(new char[] { '.' }, 2);
 
-            string prefix = lhsParts[0];
-            string key    = lhsParts.Length > 1 ? lhsParts[1] : string.Empty;
+            string prefix = lhs_parts[0];
+            string key    = lhs_parts.Length > 1 ? lhs_parts[1] : string.Empty;
             string op     = parts.Length > 1 ? parts[1] : string.Empty;
             string rhs    = parts.Length > 2 ? parts[2] : string.Empty;
 
