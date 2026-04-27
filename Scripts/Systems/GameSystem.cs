@@ -94,7 +94,7 @@ namespace Germio {
             _trigger_hub = new TriggerHub(_store);
             _scene_loader = new SceneLoader(
                 store:     _store,
-                loadScene: name => {
+                load_scene: name => {
                     // Bridge: persist currentScene to PlayerPrefs so it survives the scene reload.
                     // When the new scene's GameSystem reads InitializeAsync, it restores this value.
                     PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _store.state.currentScene);
