@@ -32,8 +32,8 @@ Germio のゲーム構成は、
 {
   "state": {
     "flags": { "hasSword": false, "metVillager": false, "bossDefeated": false },
-    "inventory": { "gold": 100, "potions": 2 },
-    "turn": 1
+    "counters": { "gold": 100 },
+    "inventory": { "potions": 2 }
   },
   "worlds": [
     {
@@ -47,7 +47,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Town1",
           "next": [ { "id": "field1", "condition": "flags.metVillager" } ],
           "events": [
-            { "id": "meetVillager", "trigger": "onEnter", "action": { "setFlag": "metVillager" } }
+            { "id": "meetVillager", "trigger": "onEnter", "action": { "setFlag": { "key": "metVillager", "value": true } } }
           ]
         },
         {
@@ -56,7 +56,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Field1",
           "next": [ { "id": "dungeon1", "condition": "flags.hasSword" } ],
           "events": [
-            { "id": "findSword", "trigger": "onSearch", "action": { "setFlag": "hasSword" } }
+            { "id": "findSword", "trigger": "onSearch", "action": { "setFlag": { "key": "hasSword", "value": true } } }
           ]
         },
         {
@@ -65,7 +65,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Dungeon1",
           "next": [ { "id": "field1", "condition": "flags.bossDefeated" } ],
           "events": [
-            { "id": "bossBattle", "trigger": "onBossRoomEnter", "action": { "setFlag": "bossDefeated" } }
+            { "id": "bossBattle", "trigger": "onBossRoomEnter", "action": { "setFlag": { "key": "bossDefeated", "value": true } } }
           ]
         }
       ]
@@ -80,8 +80,8 @@ Germio のゲーム構成は、
 {
   "state": {
     "flags": { "foundKey": false },
-    "inventory": { "items": [] },
-    "currentScene": "room1"
+    "counters": {},
+    "inventory": {}
   },
   "worlds": [
     {
@@ -95,7 +95,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Room1",
           "next": [ { "id": "hallway", "condition": "flags.foundKey" } ],
           "events": [
-            { "id": "findKey", "trigger": "onSearch", "action": { "setFlag": "foundKey" } }
+            { "id": "findKey", "trigger": "onSearch", "action": { "setFlag": { "key": "foundKey", "value": true } } }
           ]
         },
         {
@@ -116,9 +116,10 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "turn": 1,
-    "currentTeam": "player",
-    "flags": { "bossDefeated": false }
+    "flags": { "bossDefeated": false },
+    "counters": { "turn": 1 },
+    "inventory": {},
+    "currentTeam": "player"
   },
   "worlds": [
     {
@@ -132,7 +133,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Map1",
           "next": [ { "id": "map2", "condition": "flags.bossDefeated" } ],
           "events": [
-            { "id": "bossBattle", "trigger": "onBossDefeat", "action": { "setFlag": "bossDefeated" } }
+            { "id": "bossBattle", "trigger": "onBossDefeat", "action": { "setFlag": { "key": "bossDefeated", "value": true } } }
           ]
         },
         {
@@ -153,9 +154,9 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "flags": { "cleared1_1": false }
+    "flags": { "cleared1_1": false },
+    "counters": { "score": 0, "lives": 3 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -169,7 +170,7 @@ Germio のゲーム構成は、
           "scene": "Scene_1_1",
           "next": [ { "id": "1-2", "condition": "flags.cleared1_1" } ],
           "events": [
-            { "id": "goal", "trigger": "onGoal", "action": { "setFlag": "cleared1_1" } }
+            { "id": "goal", "trigger": "onGoal", "action": { "setFlag": { "key": "cleared1_1", "value": true } } }
           ]
         },
         {
@@ -190,9 +191,9 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "flags": { "clearedStage1": false }
+    "flags": { "clearedStage1": false },
+    "counters": { "score": 0, "lives": 3 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -206,7 +207,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Stage1",
           "next": [ { "id": "stage2", "condition": "flags.clearedStage1" } ],
           "events": [
-            { "id": "bossDefeat", "trigger": "onBossDefeat", "action": { "setFlag": "clearedStage1" } }
+            { "id": "bossDefeat", "trigger": "onBossDefeat", "action": { "setFlag": { "key": "clearedStage1", "value": true } } }
           ]
         },
         {
@@ -227,10 +228,9 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "bombs": 1,
-    "flags": { "clearedStage1": false }
+    "flags": { "clearedStage1": false },
+    "counters": { "score": 0, "lives": 3, "bombs": 1 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -244,7 +244,7 @@ Germio のゲーム構成は、
           "scene": "Scene_Bomberman_1",
           "next": [ { "id": "stage2", "condition": "flags.clearedStage1" } ],
           "events": [
-            { "id": "clear", "trigger": "onExit", "action": { "setFlag": "clearedStage1" } }
+            { "id": "clear", "trigger": "onExit", "action": { "setFlag": { "key": "clearedStage1", "value": true } } }
           ]
         },
         {
@@ -265,10 +265,9 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "powerUps": 0,
-    "flags": { "clearedRoom1": false }
+    "flags": { "clearedRoom1": false },
+    "counters": { "score": 0, "lives": 3, "powerUps": 0 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -282,7 +281,7 @@ Germio のゲーム構成は、
           "scene": "Scene_MBJ_1",
           "next": [ { "id": "room2", "condition": "flags.clearedRoom1" } ],
           "events": [
-            { "id": "clear", "trigger": "onGoal", "action": { "setFlag": "clearedRoom1" } }
+            { "id": "clear", "trigger": "onGoal", "action": { "setFlag": { "key": "clearedRoom1", "value": true } } }
           ]
         },
         {
@@ -303,10 +302,9 @@ Germio のゲーム構成は、
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "bombs": 1,
-    "flags": { "mission1Complete": false }
+    "flags": { "mission1Complete": false },
+    "counters": { "score": 0, "lives": 3, "bombs": 1 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -320,7 +318,7 @@ Germio のゲーム構成は、
           "scene": "Scene_SkyKid_1",
           "next": [ { "id": "mission2", "condition": "flags.mission1Complete" } ],
           "events": [
-            { "id": "missionComplete", "trigger": "onBombTarget", "action": { "setFlag": "mission1Complete" } }
+            { "id": "missionComplete", "trigger": "onBombTarget", "action": { "setFlag": { "key": "mission1Complete", "value": true } } }
           ]
         },
         {
@@ -341,16 +339,16 @@ Germio のゲーム構成は、
 ### 開発時
 
 1. `Assets/StreamingAssets/germio_config.json` に平文 JSON を配置
-2. テキストエディターや Germio 用エディターで自由に編集・テスト
+2. テキストエディターや Germio ダッシュボード（Unity メニュー: Germio / Dashboard）で自由に編集・テスト
 3. Unity 実行時はそのまま JSON を読み込んで動作確認
 
 ### 製品版（リリース時）
 
 1. ビルド前に JSON を AES 等で暗号化し、`germio_config.dat` などのバイナリに変換
-   + 変換は専用ツールや Unity エディター拡張で自動化可能
+   + 変換は Unity エディター拡張（Dashboard）や専用ツールで自動化可能
 2. `Assets/StreamingAssets/germio_config.dat` としてビルドに含める
-3. ゲーム起動時はアプリ内で復号→JObject 化して利用
-   + 復号ロジックは C# で自動化
+3. ゲーム起動時はアプリ内で復号→DataRoot 化して利用
+   + 復号ロジックは C# で自動化（`Storage.LoadAsync` が `.json` → `.dat` の順で自動判別）
 4. 平文 JSON はビルド成果物に含めない（または消去）
 
 #### 備考
