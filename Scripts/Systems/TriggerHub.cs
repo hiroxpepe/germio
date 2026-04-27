@@ -46,20 +46,20 @@ namespace Germio {
         /// Called when a game entity enters an area volume with the specified trigger ID.
         /// G2 Layer-1: if the same trigger ID is already active, the call is silently ignored.
         /// </summary>
-        /// <param name="triggerId">The trigger identifier assigned to the volume, e.g. "vol_goal".</param>
-        public void OnAreaEnter(string triggerId) {
+        /// <param name="trigger_id">The trigger identifier assigned to the volume, e.g. "vol_goal".</param>
+        public void OnAreaEnter(string trigger_id) {
             // G2 Layer-1: HashSet.Add returns false if already present → suppress duplicate
-            if (!_active_volume_triggers.Add(triggerId)) { return; }
-            _store.DispatchTrigger(triggerId);
+            if (!_active_volume_triggers.Add(trigger_id)) { return; }
+            _store.DispatchTrigger(trigger_id: trigger_id);
         }
 
         /// <summary>
         /// Called when a game entity exits an area volume.
         /// Clears the G2 guard so the area can fire again on re-entry.
         /// </summary>
-        /// <param name="triggerId">The trigger identifier of the exited volume.</param>
-        public void OnAreaExit(string triggerId) {
-            _active_volume_triggers.Remove(triggerId);
+        /// <param name="trigger_id">The trigger identifier of the exited volume.</param>
+        public void OnAreaExit(string trigger_id) {
+            _active_volume_triggers.Remove(trigger_id);
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace Germio {
         /// Signals are never de-duplicated and always dispatch to the Store.
         /// Use for events like player death ("sig_despawn") that can occur repeatedly.
         /// </summary>
-        /// <param name="signalId">The signal identifier, e.g. "sig_despawn".</param>
-        public void OnSignalReceived(string signalId) {
-            _store.DispatchTrigger(signalId);
+        /// <param name="signal_id">The signal identifier, e.g. "sig_despawn".</param>
+        public void OnSignalReceived(string signal_id) {
+            _store.DispatchTrigger(trigger_id: signal_id);
         }
     }
 }

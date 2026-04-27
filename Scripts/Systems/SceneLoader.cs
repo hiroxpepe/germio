@@ -35,14 +35,14 @@ namespace Germio {
         /// Constructs a SceneLoader and subscribes to <see cref="Store.OnTransitionRequested"/>.
         /// </summary>
         /// <param name="store">The Store whose root provides level-to-scene mapping.</param>
-        /// <param name="loadScene">
+        /// <param name="load_scene">
         /// Delegate invoked with the resolved scene name when a transition is requested.
         /// In Unity production code: <c>name =&gt; SceneManager.LoadScene(name)</c>.
         /// In tests: any capture lambda.
         /// </param>
-        public SceneLoader(Store store, Action<string> loadScene) {
+        public SceneLoader(Store store, Action<string> load_scene) {
             _store      = store;
-            _load_scene = loadScene;
+            _load_scene = load_scene;
             _store.OnTransitionRequested += handleTransition;
         }
 
@@ -66,9 +66,9 @@ namespace Germio {
         /// Handles the <see cref="Store.OnTransitionRequested"/> event.
         /// Looks up the scene name, updates state, and invokes the load delegate.
         /// </summary>
-        /// <param name="targetLevelId">The target level ID to transition to.</param>
+        /// <param name="target_level_id">The target level ID to transition to.</param>
         void handleTransition(string target_level_id) {
-            string? scene_name = findSceneName(target_level_id);
+            string? scene_name = findSceneName(level_id: target_level_id);
             // Guard: skip unknown levels and levels with empty scene names
             if (string.IsNullOrEmpty(scene_name)) { return; }
             _store.state.currentScene = target_level_id;
@@ -77,12 +77,12 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Searches all worlds in the current DataRoot for a level matching <paramref name="levelId"/>
+        /// Searches all worlds in the current DataRoot for a level matching <paramref name="level_id"/>
         /// and returns its <c>scene</c> field.
         /// Uses <see cref="Store.root"/> (not a cached reference) so that data loaded
         /// asynchronously after construction is always reflected.
         /// </summary>
-        /// <param name="levelId">The level ID to search for.</param>
+        /// <param name="level_id">The level ID to search for.</param>
         /// <returns>The scene name, or null if not found.</returns>
         string? findSceneName(string level_id) {
             foreach (var world in _store.root.worlds) {

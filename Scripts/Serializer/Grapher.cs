@@ -43,10 +43,10 @@ namespace Germio {
 
             // Declare subgraphs — one per world, containing level nodes.
             foreach (var world in root.worlds) {
-                sb.AppendLine($"    subgraph {sanitize(world.id)} [\"{world.name}\"]");
+                sb.AppendLine($"    subgraph {sanitize(id: world.id)} [\"{world.name}\"]");
                 foreach (var level in world.levels) {
-                    string node_id   = sanitize(level.id);
-                    string node_class = getNodeClass(level.name);
+                    string node_id   = sanitize(id: level.id);
+                    string node_class = getNodeClass(name: level.name);
                     string node_decl  = node_class.Length > 0
                         ? $"([\"{level.name}\"]):::{node_class}"
                         : $"[\"{level.name}\"]";
@@ -58,11 +58,11 @@ namespace Germio {
             // Declare edges after all nodes to avoid forward-reference issues.
             foreach (var world in root.worlds) {
                 foreach (var level in world.levels) {
-                    string from = sanitize(level.id);
+                    string from = sanitize(id: level.id);
 
                     // Edges from DataNext (condition-gated static transitions).
                     foreach (var next in level.next) {
-                        string to = sanitize(next.id);
+                        string to = sanitize(id: next.id);
                         if (string.IsNullOrEmpty(next.condition)) {
                             sb.AppendLine($"    {from} --> {to}");
                         } else {
@@ -73,7 +73,7 @@ namespace Germio {
                     // Edges from DataEvent (event-driven transitions via requestTransition).
                     foreach (var evt in level.events) {
                         if (evt.action == null || evt.action.requestTransition == null) { continue; }
-                        string to    = sanitize(evt.action.requestTransition);
+                        string to    = sanitize(id: evt.action.requestTransition);
                         string label = evt.trigger;
                         if (!string.IsNullOrEmpty(evt.condition)) {
                             label = $"{label}\\n({evt.condition})";

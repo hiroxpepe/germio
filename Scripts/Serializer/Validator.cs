@@ -65,7 +65,7 @@ namespace Germio {
 
             // Rule 1: worlds must not be null or empty.
             if (root.worlds == null || root.worlds.Count == 0) {
-                results.Add(new ValidationResult(ValidationLevel.Error, "worlds list is empty."));
+                results.Add(new ValidationResult(level: ValidationLevel.Error, message: "worlds list is empty."));
                 return results;
             }
 
@@ -80,27 +80,27 @@ namespace Germio {
                     foreach (var next in level.next) {
                         // Rule 2: next.id must resolve to an existing level in the same world.
                         if (!level_ids.Contains(next.id)) {
-                            results.Add(new ValidationResult(ValidationLevel.Error,
-                                $"Level '{level.id}' → next.id '{next.id}' does not exist in world '{world.id}'."));
+                            results.Add(new ValidationResult(level: ValidationLevel.Error,
+                                message: $"Level '{level.id}' → next.id '{next.id}' does not exist in world '{world.id}'."));
                         }
                         // Rule 3: condition syntax must be valid.
-                        if (!isValidConditionSyntax(next.condition, out string cond_detail)) {
-                            results.Add(new ValidationResult(ValidationLevel.Error,
-                                $"Level '{level.id}' → next['{next.id}'].condition '{next.condition}' is invalid: {cond_detail}"));
+                        if (!isValidConditionSyntax(condition: next.condition, error_detail: out string cond_detail)) {
+                            results.Add(new ValidationResult(level: ValidationLevel.Error,
+                                message: $"Level '{level.id}' → next['{next.id}'].condition '{next.condition}' is invalid: {cond_detail}"));
                         }
                         // Rule 4: warn on undefined flags/counters keys.
-                        checkUndefinedKeyWarning(next.condition, root.state, level.id, "next.condition", results);
+                        checkUndefinedKeyWarning(condition: next.condition, state: root.state, level_id: level.id, location: "next.condition", results: results);
                     }
 
                     // Validate all DataEvent entries.
                     foreach (var evt in level.events) {
                         // Rule 3: event condition syntax must be valid.
-                        if (!isValidConditionSyntax(evt.condition, out string cond_detail)) {
-                            results.Add(new ValidationResult(ValidationLevel.Error,
-                                $"Level '{level.id}' → event['{evt.id}'].condition '{evt.condition}' is invalid: {cond_detail}"));
+                        if (!isValidConditionSyntax(condition: evt.condition, error_detail: out string cond_detail)) {
+                            results.Add(new ValidationResult(level: ValidationLevel.Error,
+                                message: $"Level '{level.id}' → event['{evt.id}'].condition '{evt.condition}' is invalid: {cond_detail}"));
                         }
                         // Rule 4: warn on undefined flags/counters keys.
-                        checkUndefinedKeyWarning(evt.condition, root.state, level.id, $"event['{evt.id}'].condition", results);
+                        checkUndefinedKeyWarning(condition: evt.condition, state: root.state, level_id: level.id, location: $"event['{evt.id}'].condition", results: results);
                     }
                 }
             }
@@ -203,7 +203,7 @@ namespace Germio {
         /// that is not present in the initial DataState dictionaries.
         /// </summary>
         static void checkUndefinedKeyWarning(
-            string? condition, DataState state, string levelId, string location,
+            string? condition, DataState state, string level_id, string location,
             List<ValidationResult> results) {
 
             if (string.IsNullOrWhiteSpace(condition)) { return; }
@@ -217,11 +217,11 @@ namespace Germio {
             string key    = lhs_parts[1];
 
             if (prefix == "flags" && !state.flags.ContainsKey(key)) {
-                results.Add(new ValidationResult(ValidationLevel.Warning,
-                    $"Level '{levelId}' → {location}: flag key '{key}' is not defined in initial state.flags."));
+                results.Add(new ValidationResult(level: ValidationLevel.Warning,
+                    message: $"Level '{level_id}' → {location}: flag key '{key}' is not defined in initial state.flags."));
             } else if (prefix == "counters" && !state.counters.ContainsKey(key)) {
-                results.Add(new ValidationResult(ValidationLevel.Warning,
-                    $"Level '{levelId}' → {location}: counter key '{key}' is not defined in initial state.counters."));
+                results.Add(new ValidationResult(level: ValidationLevel.Warning,
+                    message: $"Level '{level_id}' → {location}: counter key '{key}' is not defined in initial state.counters."));
             }
         }
     }

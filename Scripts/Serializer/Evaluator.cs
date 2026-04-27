@@ -33,12 +33,12 @@ namespace Germio {
         public static bool Evaluate(string? condition, DataState state) {
             if (string.IsNullOrWhiteSpace(condition)) { return true; }
 
-            var tokens = tokenize(condition.Trim());
+            var tokens = tokenize(condition: condition.Trim());
 
             return tokens.prefix switch {
-                "flags"     => evaluateFlag(tokens, state),
-                "counters"  => evaluateCounter(tokens, state),
-                "inventory" => evaluateInventory(tokens, state),
+                "flags"     => evaluateFlag(t: tokens, state: state),
+                "counters"  => evaluateCounter(t: tokens, state: state),
+                "inventory" => evaluateInventory(t: tokens, state: state),
                 _           => false
             };
         }

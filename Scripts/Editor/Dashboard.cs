@@ -57,6 +57,8 @@ namespace Germio {
             drawValidationSection();
             EditorGUILayout.Space(4);
             drawGrapherSection();
+            EditorGUILayout.Space(4);
+            drawExportButton();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ namespace Germio {
                 _current_root = JsonConvert.DeserializeObject<DataRoot>(json)
                     ?? throw new InvalidOperationException("Deserialized DataRoot is null.");
 
-                _validation_results = Validator.Validate(_current_root);
+                _validation_results = Validator.Validate(root: _current_root);
                 _is_config_loaded   = true;
                 _status_message     = $"Loaded: {config_path}";
                 _scroll_position    = Vector2.zero;
@@ -168,9 +170,39 @@ namespace Germio {
         void copyMermaidGraph() {
             if (_current_root == null) { return; }
 
-            string mermaid_text = Grapher.Export(_current_root);
+            string mermaid_text = Grapher.Export(root: _current_root);
             EditorGUIUtility.systemCopyBuffer = mermaid_text;
             Debug.Log("[Germio Dashboard] Mermaid graph copied to clipboard.");
+        }
+
+        /// <summary>
+        /// Renders the "Export Encrypted Config (.dat)" button.
+        /// </summary>
+        void drawExportButton() {
+            EditorGUILayout.LabelField("Encrypted Export", EditorStyles.boldLabel);
+            if (GUILayout.Button("Export Encrypted Config (.dat)", GUILayout.Height(28))) {
+                _ = export_encrypted_config_async();
+            }
+        }
+
+        /// <summary>
+        /// Saves the current DataRoot as an AES-encrypted .dat file to StreamingAssets.
+        /// Uses Vault for key material; shows an error status if Vault has no key configured.
+        /// </summary>
+        async System.Threading.Tasks.Task export_encrypted_config_async() {
+            if (_current_root == null) { return; }
+
+            try {
+                await Storage.SaveAsync(data: _current_root, encrypt: true, base_path: Application.streamingAssetsPath);
+                _status_message = "germio_config.dat exported.";
+                Debug.Log("[Germio Dashboard] germio_config.dat exported.");
+            }
+            catch (Exception ex) {
+                _status_message = $"Export failed: {ex.Message}";
+                Debug.LogError($"[Germio Dashboard] {_status_message}");
+            }
+
+            Repaint();
         }
     }
 }

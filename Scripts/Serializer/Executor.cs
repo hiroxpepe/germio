@@ -52,7 +52,7 @@ namespace Germio {
             }
 
             if (action.requestTransition != null) {
-                store.RequestTransition(action.requestTransition);
+                store.RequestTransition(target_id: action.requestTransition);
                 mutated = true;
             }
 
