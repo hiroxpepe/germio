@@ -27,16 +27,6 @@ namespace Germio
         const string JSON_PATH = "germio_config.json";
         const string ENC_PATH = "germio_config.dat";
 
-        /// <summary>
-        /// AES encryption key (should be securely managed in production).
-        /// </summary>
-        static readonly byte[] AES_KEY = new byte[32] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 };
-
-        /// <summary>
-        /// AES initialization vector (should be securely managed in production).
-        /// </summary>
-        static readonly byte[] AES_IV = new byte[16] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
         static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
@@ -51,9 +41,9 @@ namespace Germio
         /// Tries to load plain JSON first, then encrypted binary if not found.
         /// </summary>
         /// <returns>Deserialized <see cref="DataRoot"/> object, or null if not found.</returns>
-        public static async Task<DataRoot?> LoadAsync(string? basePath = null)
+        public static async Task<DataRoot?> LoadAsync(string? base_path = null)
         {
-            string dir      = basePath ?? Directory.GetCurrentDirectory();
+            string dir       = base_path ?? Directory.GetCurrentDirectory();
             string path_json = Path.Combine(dir, JSON_PATH);
             string path_enc  = Path.Combine(dir, ENC_PATH);
             if (File.Exists(path_json))
@@ -63,8 +53,9 @@ namespace Germio
             }
             else if (File.Exists(path_enc))
             {
-                byte[] enc = await File.ReadAllBytesAsync(path_enc);
-                string json = await DecryptAesAsync(enc, AES_KEY, AES_IV);
+                var (key, iv) = Vault.GetKey();
+                byte[] enc    = await File.ReadAllBytesAsync(path_enc);
+                string json   = await DecryptAesAsync(data: enc, key: key, iv: iv);
                 return JsonConvert.DeserializeObject<DataRoot>(json, _settings)!;
             }
             return null;
@@ -76,15 +67,16 @@ namespace Germio
         /// </summary>
         /// <param name="data">The <see cref="DataRoot"/> object to serialize and save.</param>
         /// <param name="encrypt">If true, saves as encrypted binary; otherwise, saves as plain JSON.</param>
-        public static async Task SaveAsync(DataRoot data, bool encrypt = false, string? basePath = null)
+        public static async Task SaveAsync(DataRoot data, bool encrypt = false, string? base_path = null)
         {
-            string dir      = basePath ?? Directory.GetCurrentDirectory();
+            string dir       = base_path ?? Directory.GetCurrentDirectory();
             string path_json = Path.Combine(dir, JSON_PATH);
             string path_enc  = Path.Combine(dir, ENC_PATH);
-            string json = JsonConvert.SerializeObject(data, _settings);
+            string json      = JsonConvert.SerializeObject(data, _settings);
             if (encrypt)
             {
-                byte[] enc = await EncryptAesAsync(json, AES_KEY, AES_IV);
+                var (key, iv) = Vault.GetKey();
+                byte[] enc    = await EncryptAesAsync(plain_text: json, key: key, iv: iv);
                 await File.WriteAllBytesAsync(path_enc, enc);
             }
             else
