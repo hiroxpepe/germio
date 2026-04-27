@@ -62,7 +62,7 @@ namespace Germio {
         /// </summary>
         public async Task InitializeAsync(string base_path) {
             _base_path = base_path;
-            var loaded = await Storage.LoadAsync(base_path);
+            var loaded = await Storage.LoadAsync(base_path: base_path);
             if (loaded != null) { _root = loaded; }
             _is_dirty = false;
         }
@@ -72,7 +72,7 @@ namespace Germio {
         /// </summary>
         public async Task SaveAsync(bool encrypt = false) {
             if (!_is_dirty) { return; }
-            await Storage.SaveAsync(_root, encrypt, _base_path);
+            await Storage.SaveAsync(data: _root, encrypt: encrypt, base_path: _base_path);
             _is_dirty = false;
         }
 
@@ -88,22 +88,22 @@ namespace Germio {
         /// Dispatches a trigger ID against the current scene's events.
         /// G2 once-guard: events with once=true fire at most once per DataState lifetime.
         /// </summary>
-        /// <param name="triggerId">The trigger identifier, e.g. "vol_goal".</param>
-        public void DispatchTrigger(string triggerId) {
-            var level = findLevel(_root.state.currentScene);
+        /// <param name="trigger_id">The trigger identifier, e.g. "vol_goal".</param>
+        public void DispatchTrigger(string trigger_id) {
+            var level = findLevel(level_id: _root.state.currentScene);
             if (level == null) { return; }
 
             foreach (var evt in level.events) {
-                if (evt.trigger != triggerId) { continue; }
+                if (evt.trigger != trigger_id) { continue; }
 
                 // G2 Layer 2: once-shot guard via firedEvents
                 if (evt.once && _root.state.firedEvents.Contains(evt.id)) { continue; }
 
                 // Condition guard
-                if (!Evaluator.Evaluate(evt.condition, _root.state)) { continue; }
+                if (!Evaluator.Evaluate(condition: evt.condition, state: _root.state)) { continue; }
 
                 // Execute action
-                Executor.Execute(evt.action, this);
+                Executor.Execute(action: evt.action, store: this);
 
                 // Record once-shot event
                 if (evt.once) { _root.state.firedEvents.Add(evt.id); }
@@ -115,12 +115,12 @@ namespace Germio {
         /// Returns null if no condition is met.
         /// </summary>
         public DataLevel? GetNextLevel(string current_level_id) {
-            var current = findLevel(current_level_id);
+            var current = findLevel(level_id: current_level_id);
             if (current == null) { return null; }
 
             foreach (var next in current.next) {
-                if (Evaluator.Evaluate(next.condition, _root.state)) {
-                    return findLevel(next.id);
+                if (Evaluator.Evaluate(condition: next.condition, state: _root.state)) {
+                    return findLevel(level_id: next.id);
                 }
             }
             return null;
