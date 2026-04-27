@@ -30,8 +30,8 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 {
   "state": {
     "flags": { "hasSword": false, "metVillager": false, "bossDefeated": false },
-    "inventory": { "gold": 100, "potions": 2 },
-    "turn": 1
+    "counters": { "gold": 100 },
+    "inventory": { "potions": 2 }
   },
   "worlds": [
     {
@@ -45,7 +45,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Town1",
           "next": [ { "id": "field1", "condition": "flags.metVillager" } ],
           "events": [
-            { "id": "meetVillager", "trigger": "onEnter", "action": { "setFlag": "metVillager" } }
+            { "id": "meetVillager", "trigger": "onEnter", "action": { "setFlag": { "key": "metVillager", "value": true } } }
           ]
         },
         {
@@ -54,7 +54,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Field1",
           "next": [ { "id": "dungeon1", "condition": "flags.hasSword" } ],
           "events": [
-            { "id": "findSword", "trigger": "onSearch", "action": { "setFlag": "hasSword" } }
+            { "id": "findSword", "trigger": "onSearch", "action": { "setFlag": { "key": "hasSword", "value": true } } }
           ]
         },
         {
@@ -63,7 +63,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Dungeon1",
           "next": [ { "id": "field1", "condition": "flags.bossDefeated" } ],
           "events": [
-            { "id": "bossBattle", "trigger": "onBossRoomEnter", "action": { "setFlag": "bossDefeated" } }
+            { "id": "bossBattle", "trigger": "onBossRoomEnter", "action": { "setFlag": { "key": "bossDefeated", "value": true } } }
           ]
         }
       ]
@@ -78,8 +78,8 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 {
   "state": {
     "flags": { "foundKey": false },
-    "inventory": { "items": [] },
-    "currentScene": "room1"
+    "counters": {},
+    "inventory": {}
   },
   "worlds": [
     {
@@ -93,7 +93,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Room1",
           "next": [ { "id": "hallway", "condition": "flags.foundKey" } ],
           "events": [
-            { "id": "findKey", "trigger": "onSearch", "action": { "setFlag": "foundKey" } }
+            { "id": "findKey", "trigger": "onSearch", "action": { "setFlag": { "key": "foundKey", "value": true } } }
           ]
         },
         {
@@ -114,9 +114,10 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "turn": 1,
-    "currentTeam": "player",
-    "flags": { "bossDefeated": false }
+    "flags": { "bossDefeated": false },
+    "counters": { "turn": 1 },
+    "inventory": {},
+    "currentTeam": "player"
   },
   "worlds": [
     {
@@ -130,7 +131,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Map1",
           "next": [ { "id": "map2", "condition": "flags.bossDefeated" } ],
           "events": [
-            { "id": "bossBattle", "trigger": "onBossDefeat", "action": { "setFlag": "bossDefeated" } }
+            { "id": "bossBattle", "trigger": "onBossDefeat", "action": { "setFlag": { "key": "bossDefeated", "value": true } } }
           ]
         },
         {
@@ -151,9 +152,9 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "flags": { "cleared1_1": false }
+    "flags": { "cleared1_1": false },
+    "counters": { "score": 0, "lives": 3 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -167,7 +168,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_1_1",
           "next": [ { "id": "1-2", "condition": "flags.cleared1_1" } ],
           "events": [
-            { "id": "goal", "trigger": "onGoal", "action": { "setFlag": "cleared1_1" } }
+            { "id": "goal", "trigger": "onGoal", "action": { "setFlag": { "key": "cleared1_1", "value": true } } }
           ]
         },
         {
@@ -188,9 +189,9 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "flags": { "clearedStage1": false }
+    "flags": { "clearedStage1": false },
+    "counters": { "score": 0, "lives": 3 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -204,7 +205,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Stage1",
           "next": [ { "id": "stage2", "condition": "flags.clearedStage1" } ],
           "events": [
-            { "id": "bossDefeat", "trigger": "onBossDefeat", "action": { "setFlag": "clearedStage1" } }
+            { "id": "bossDefeat", "trigger": "onBossDefeat", "action": { "setFlag": { "key": "clearedStage1", "value": true } } }
           ]
         },
         {
@@ -225,10 +226,9 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "bombs": 1,
-    "flags": { "clearedStage1": false }
+    "flags": { "clearedStage1": false },
+    "counters": { "score": 0, "lives": 3, "bombs": 1 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -242,7 +242,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_Bomberman_1",
           "next": [ { "id": "stage2", "condition": "flags.clearedStage1" } ],
           "events": [
-            { "id": "clear", "trigger": "onExit", "action": { "setFlag": "clearedStage1" } }
+            { "id": "clear", "trigger": "onExit", "action": { "setFlag": { "key": "clearedStage1", "value": true } } }
           ]
         },
         {
@@ -263,10 +263,9 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "powerUps": 0,
-    "flags": { "clearedRoom1": false }
+    "flags": { "clearedRoom1": false },
+    "counters": { "score": 0, "lives": 3, "powerUps": 0 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -280,7 +279,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_MBJ_1",
           "next": [ { "id": "room2", "condition": "flags.clearedRoom1" } ],
           "events": [
-            { "id": "clear", "trigger": "onGoal", "action": { "setFlag": "clearedRoom1" } }
+            { "id": "clear", "trigger": "onGoal", "action": { "setFlag": { "key": "clearedRoom1", "value": true } } }
           ]
         },
         {
@@ -301,10 +300,9 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ```json
 {
   "state": {
-    "score": 0,
-    "lives": 3,
-    "bombs": 1,
-    "flags": { "mission1Complete": false }
+    "flags": { "mission1Complete": false },
+    "counters": { "score": 0, "lives": 3, "bombs": 1 },
+    "inventory": {}
   },
   "worlds": [
     {
@@ -318,7 +316,7 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
           "scene": "Scene_SkyKid_1",
           "next": [ { "id": "mission2", "condition": "flags.mission1Complete" } ],
           "events": [
-            { "id": "missionComplete", "trigger": "onBombTarget", "action": { "setFlag": "mission1Complete" } }
+            { "id": "missionComplete", "trigger": "onBombTarget", "action": { "setFlag": { "key": "mission1Complete", "value": true } } }
           ]
         },
         {
@@ -339,24 +337,23 @@ Each level has `next` (transitions/conditions) and `events` (triggers/actions), 
 ### During Development
 
 1. Place plain JSON in `Assets/StreamingAssets/germio_config.json`
-2. Edit and test freely with a text editor or Germio editor
-3. During Unity runtime, load the JSON as is for testing
+2. Edit and test freely with a text editor or the Germio Dashboard (Unity menu: **Germio/Dashboard**)
+3. During Unity runtime, `Storage.LoadAsync()` auto-detects `.json` vs `.dat` and loads accordingly
 
 ### For Release
 
-1. Before build, encrypt the JSON with AES, etc., and convert to a binary like `germio_config.dat`
+1. Before build, encrypt the JSON with AES and convert to `germio_config.dat`
    + Conversion can be automated with a dedicated tool or Unity editor extension
 2. Include as `Assets/StreamingAssets/germio_config.dat` in the build
-3. On game launch, decrypt in-app and convert to JObject for use
-   + Decryption logic can be automated in C#
+3. On game launch, `Storage.LoadAsync()` decrypts and deserializes to `DataRoot` automatically
 4. Do not include plain JSON in the build output (or delete it)
 
 #### Notes
 
 + Use C# standard AES (System.Security.Cryptography) for encryption
-+ Manage keys/IV securely within the project
++ Manage keys/IV securely within the project (see `Vault.cs` for key storage hierarchy)
 + Effective as a countermeasure against cheating and tampering
-+ By using JSON during development and encrypted binaries for release, both user convenience and security are achieved
++ By using JSON during development and encrypted binaries for release, both convenience and security are achieved
 
 ## 5. Summary
 
