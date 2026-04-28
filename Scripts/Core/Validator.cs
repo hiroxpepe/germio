@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Germio {
+using Germio.Model;
+
+namespace Germio.Core {
     /// <summary>
     /// Severity level of a validation finding produced by <see cref="Validator"/>.
     /// </summary>
@@ -34,14 +36,14 @@ namespace Germio {
     }
 
     /// <summary>
-    /// Performs static analysis on a <see cref="DataRoot"/> and returns a list of
+    /// Performs static analysis on a <see cref="Scenario"/> and returns a list of
     /// <see cref="ValidationResult"/> items. An empty list means the data is structurally sound.
     /// <para>Rules enforced:</para>
     /// <list type="bullet">
     ///   <item><description>Error: worlds list is empty.</description></item>
-    ///   <item><description>Error: DataNext.id references a level that does not exist in the same world.</description></item>
-    ///   <item><description>Error: A condition string in DataNext or DataEvent has invalid syntax.</description></item>
-    ///   <item><description>Warning: A condition references a flags or counters key absent from initial DataState.</description></item>
+    ///   <item><description>Error: Next.id references a level that does not exist in the same world.</description></item>
+    ///   <item><description>Error: A condition string in Next or Rule has invalid syntax.</description></item>
+    ///   <item><description>Warning: A condition references a flags or counters key absent from initial State.</description></item>
     /// </list>
     /// G1 principle: condition parsing uses only string.Split — no Regex, no LINQ.
     /// </summary>
@@ -55,28 +57,28 @@ namespace Germio {
         // public static Methods [verb]
 
         /// <summary>
-        /// Validates the given DataRoot and returns all findings.
+        /// Validates the given Scenario and returns all findings.
         /// Returns an empty list when the data is structurally sound.
         /// </summary>
-        /// <param name="root">The DataRoot to validate.</param>
+        /// <param name="scenario">The Scenario to validate.</param>
         /// <returns>A list of ValidationResult items, possibly empty.</returns>
-        public static List<ValidationResult> Validate(DataRoot root) {
+        public static List<ValidationResult> Validate(Scenario scenario) {
             var results = new List<ValidationResult>();
 
             // Rule 1: worlds must not be null or empty.
-            if (root.worlds == null || root.worlds.Count == 0) {
+            if (scenario.worlds == null || scenario.worlds.Count == 0) {
                 results.Add(new ValidationResult(level: ValidationLevel.Error, message: "worlds list is empty."));
                 return results;
             }
 
-            foreach (var world in root.worlds) {
+            foreach (var world in scenario.worlds) {
                 // Build a set of all level IDs in this world for quick lookup.
                 var level_ids = new HashSet<string>();
                 foreach (var level in world.levels) { level_ids.Add(level.id); }
 
                 foreach (var level in world.levels) {
 
-                    // Validate all DataNext entries.
+                    // Validate all Next entries.
                     foreach (var next in level.next) {
                         // Rule 2: next.id must resolve to an existing level in the same world.
                         if (!level_ids.Contains(next.id)) {
@@ -89,18 +91,18 @@ namespace Germio {
                                 message: $"Level '{level.id}' → next['{next.id}'].condition '{next.condition}' is invalid: {cond_detail}"));
                         }
                         // Rule 4: warn on undefined flags/counters keys.
-                        checkUndefinedKeyWarning(condition: next.condition, state: root.state, level_id: level.id, location: "next.condition", results: results);
+                        checkUndefinedKeyWarning(condition: next.condition, state: scenario.state, level_id: level.id, location: "next.condition", results: results);
                     }
 
-                    // Validate all DataEvent entries.
-                    foreach (var evt in level.events) {
-                        // Rule 3: event condition syntax must be valid.
-                        if (!isValidConditionSyntax(condition: evt.condition, error_detail: out string cond_detail)) {
+                    // Validate all Rule entries.
+                    foreach (var rule in level.rules) {
+                        // Rule 3: rule condition syntax must be valid.
+                        if (!isValidConditionSyntax(condition: rule.condition, error_detail: out string cond_detail)) {
                             results.Add(new ValidationResult(level: ValidationLevel.Error,
-                                message: $"Level '{level.id}' → event['{evt.id}'].condition '{evt.condition}' is invalid: {cond_detail}"));
+                                message: $"Level '{level.id}' → rule['{rule.id}'].condition '{rule.condition}' is invalid: {cond_detail}"));
                         }
                         // Rule 4: warn on undefined flags/counters keys.
-                        checkUndefinedKeyWarning(condition: evt.condition, state: root.state, level_id: level.id, location: $"event['{evt.id}'].condition", results: results);
+                        checkUndefinedKeyWarning(condition: rule.condition, state: scenario.state, level_id: level.id, location: $"rule['{rule.id}'].condition", results: results);
                     }
                 }
             }
@@ -200,10 +202,10 @@ namespace Germio {
 
         /// <summary>
         /// Adds a Warning result if the condition references a flags or counters key
-        /// that is not present in the initial DataState dictionaries.
+        /// that is not present in the initial State dictionaries.
         /// </summary>
         static void checkUndefinedKeyWarning(
-            string? condition, DataState state, string level_id, string location,
+            string? condition, State state, string level_id, string location,
             List<ValidationResult> results) {
 
             if (string.IsNullOrWhiteSpace(condition)) { return; }

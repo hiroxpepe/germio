@@ -4,7 +4,9 @@
 using static System.Math;
 using UnityEngine;
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Players {
     /// <summary>
     /// Provides extension methods for the Human class.
     /// </summary>

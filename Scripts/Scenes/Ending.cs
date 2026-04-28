@@ -7,13 +7,14 @@ using UniRx;
 using UniRx.Triggers;
 
 using static Germio.Env;
+using Germio.Systems;
 
 namespace Germio {
     /// <summary>
     /// Manages the ending scene, providing navigation back to the title screen.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class Ending : InputMaper {
+    public class Ending : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

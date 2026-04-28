@@ -12,12 +12,15 @@ using UniRx.Triggers;
 using static Germio.Env;
 using static Germio.Utils;
 
-namespace Germio {
+using Germio;
+using Germio.Systems;
+
+namespace Germio.Players {
     /// <summary>
     /// Controls the Human player, including movement and interactions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public partial class Human : InputMaper {
+    public partial class Human : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +178,7 @@ namespace Germio {
                     _do_update.ready)
                 .Subscribe(onNext: _ => {
                     _simple_anime.Play(stateName: "Default");
-                    _sound_system.StopSEClip();
+                    _sound_system.StopSfxClip();
                     _do_fixed_update.Apply(type: FixedUpdate.Idol);
                 }).AddTo(gameObjectComponent: this);
 
@@ -196,7 +199,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     if (_do_update.grounded) { 
                         _simple_anime.Play(stateName: "Walk");
-                        _sound_system.Play(type: SEClip.Walk) ;
+                        _sound_system.Play(type: SfxClip.Walk) ;
                     }
                     _do_fixed_update.Apply(type: FixedUpdate.Walk);
                 }).AddTo(gameObjectComponent: this);
@@ -206,7 +209,7 @@ namespace Germio {
                     _do_fixed_update.walk && _acceleration.canWalk)
                 .Subscribe(onNext: _ => {
                     const float ADJUST_VALUE = 7.5f;
-                    rb.AddFor​​ce(force: transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
+                    rb.AddForce(force: transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
                     _do_fixed_update.Cancel(type: FixedUpdate.Walk);
                 }).AddTo(gameObjectComponent: this);
 
@@ -220,7 +223,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     if (_do_update.grounded && !_do_update.climbing) { 
                         _simple_anime.Play(stateName: "Run");
-                        _sound_system.Play(type: SEClip.Run);
+                        _sound_system.Play(type: SfxClip.Run);
                     }
                     _do_fixed_update.Apply(type: FixedUpdate.Run);
                 }).AddTo(gameObjectComponent: this);
@@ -230,7 +233,7 @@ namespace Germio {
                     _do_fixed_update.run && _acceleration.canRun)
                 .Subscribe(onNext: _ => {
                     const float ADJUST_VALUE = 7.5f;
-                    rb.AddFor​​ce(force: transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
+                    rb.AddForce(force: transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
                     _do_fixed_update.Cancel(type: FixedUpdate.Run);
                 }).AddTo(gameObjectComponent: this);
 
@@ -243,7 +246,7 @@ namespace Germio {
                     _do_update.ready)
                 .Subscribe(onNext: _ => {
                     _simple_anime.Play(stateName: "Walk");
-                    _sound_system.Play(type: SEClip.Walk);
+                    _sound_system.Play(type: SfxClip.Walk);
                     _do_fixed_update.Apply(type: FixedUpdate.Backward);
                 }).AddTo(gameObjectComponent: this);
 
@@ -252,7 +255,7 @@ namespace Germio {
                     _do_fixed_update.backward && _acceleration.canBackward)
                 .Subscribe(onNext: _ => {
                     const float ADJUST_VALUE = 7.5f;
-                    rb.AddFor​​ce(force: -transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
+                    rb.AddForce(force: -transform.forward * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
                     _do_fixed_update.Cancel(type: FixedUpdate.Backward);
                 }).AddTo(gameObjectComponent: this);
 
@@ -300,7 +303,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     _do_update.grounded = false;
                     _simple_anime.Play(stateName: "Jump");
-                    _sound_system.Play(type: SEClip.Jump);
+                    _sound_system.Play(type: SfxClip.Jump);
                     _do_fixed_update.Apply(type: FixedUpdate.Jump);
                 }).AddTo(gameObjectComponent: this);
 
@@ -310,7 +313,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     const float ADJUST_VALUE = 2.0f;
                     rb.useGravity = true;
-                    rb.AddRelativeFor​​ce(force: up * _acceleration.jumpPower * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
+                    rb.AddRelativeForce(force: up * _acceleration.jumpPower * ADD_FORCE_VALUE * ADJUST_VALUE, mode: ForceMode.Acceleration);
                     _do_fixed_update.Cancel(type: FixedUpdate.Jump);
                 }).AddTo(gameObjectComponent: this);
 
@@ -377,7 +380,7 @@ namespace Germio {
                     !gameObject.isHitSide(target: x.gameObject) && 
                     !_do_update.climbing)
                 .Subscribe(onNext: x => {
-                    _sound_system.Play(type: SEClip.Grounded);
+                    _sound_system.Play(type: SfxClip.Grounded);
                     _do_update.grounded = true;
                     rb.useGravity = true;
                     rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
@@ -404,7 +407,7 @@ namespace Germio {
                 .Subscribe(onNext: x => {
                     _do_update.grounded = true;
                     if (isUpOrDown()) {
-                        _sound_system.Play(type: SEClip.Grounded);
+                        _sound_system.Play(type: SfxClip.Grounded);
                         rb.useGravity = true;
                         rb.linearVelocity = new(x: 0f, y: 0f, z: 0f);
                         // Resets rotate.

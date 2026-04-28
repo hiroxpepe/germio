@@ -6,29 +6,30 @@ using UnityEngine;
 using static UnityEngine.GameObject;
 
 using static Germio.Env;
+using Germio;
 
-namespace Germio {
+namespace Germio.Systems {
     /// <summary>
     /// Attaches to a trigger collider in the scene.
-    /// When the player enters or exits, delegates to <see cref="TriggerHub"/>.
-    /// This component knows nothing about game logic — it only reports a trigger ID.
+    /// When the player enters or exits, delegates to <see cref="Bus"/>.
+    /// This component knows nothing about game logic — it only reports a zone ID.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class VolumeTrigger : MonoBehaviour {
+    public class Zone : MonoBehaviour {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Inspector Fields
 
         /// <summary>
-        /// The trigger identifier reported to TriggerHub, e.g. "vol_goal".
+        /// The zone identifier reported to Bus, e.g. "vol_goal".
         /// </summary>
-        [SerializeField] string _trigger_id = string.Empty;
+        [SerializeField] string _zone_id = string.Empty;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        TriggerHub? _trigger_hub;
+        Bus? _bus;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Unity lifecycle
@@ -36,18 +37,18 @@ namespace Germio {
         // Start is called before the first frame update (after all Awake calls).
         void Start() {
             /// <summary>
-            /// Retrieves the TriggerHub reference from GameSystem.
-            /// Using Start (not Awake) ensures GameSystem.Awake() has already initialised the hub.
+            /// Retrieves the Bus reference from GameSystem.
+            /// Using Start (not Awake) ensures GameSystem.Awake() has already initialised the bus.
             /// </summary>
-            _trigger_hub = Find(name: GAME_SYSTEM).Get<GameSystem>().triggerHub;
+            _bus = Find(name: GAME_SYSTEM).Get<GameSystem>().bus;
         }
 
         void OnTriggerEnter(Collider other) {
             /// <summary>
-            /// Notifies the hub when the player enters this volume.
+            /// Notifies the bus when the player enters this volume.
             /// </summary>
             if (other.gameObject.CompareTag(tag: PLAYER_TYPE)) {
-                _trigger_hub?.OnAreaEnter(_trigger_id);
+                _bus?.OnZoneEnter(_zone_id);
             }
         }
 
@@ -56,7 +57,7 @@ namespace Germio {
             /// Clears the G2 guard when the player exits this volume.
             /// </summary>
             if (other.gameObject.CompareTag(tag: PLAYER_TYPE)) {
-                _trigger_hub?.OnAreaExit(_trigger_id);
+                _bus?.OnZoneExit(_zone_id);
             }
         }
     }

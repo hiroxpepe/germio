@@ -3,13 +3,15 @@
 
 using System.Text;
 
-namespace Germio {
+using Germio.Model;
+
+namespace Germio.Core {
     /// <summary>
-    /// Generates a Mermaid.js <c>flowchart LR</c> string from a <see cref="DataRoot"/>.
+    /// Generates a Mermaid.js <c>flowchart LR</c> string from a <see cref="Scenario"/>.
     /// <para>
     /// Each world is rendered as a <c>subgraph</c>; each level as a node.
-    /// Transitions are extracted from both <see cref="DataNext"/> entries and
-    /// <see cref="DataEvent"/> entries whose <c>action.requestTransition</c> is set.
+    /// Transitions are extracted from both <see cref="Next"/> entries and
+    /// <see cref="Rule"/> entries whose <c>command.request_transition</c> is set.
     /// </para>
     /// <para>Node styling:</para>
     /// <list type="bullet">
@@ -28,11 +30,11 @@ namespace Germio {
         // public static Methods [verb]
 
         /// <summary>
-        /// Exports the DataRoot as a Mermaid flowchart LR string.
+        /// Exports the Scenario as a Mermaid flowchart LR string.
         /// </summary>
-        /// <param name="root">The DataRoot to render.</param>
+        /// <param name="scenario">The Scenario to render.</param>
         /// <returns>A Mermaid flowchart LR string ready for rendering.</returns>
-        public static string Export(DataRoot root) {
+        public static string Export(Scenario scenario) {
             var sb = new StringBuilder();
             sb.AppendLine("flowchart LR");
 
@@ -42,7 +44,7 @@ namespace Germio {
             sb.AppendLine("    classDef endNode fill:#D81159,stroke:#8F0031,color:#FFFFFF;");
 
             // Declare subgraphs — one per world, containing level nodes.
-            foreach (var world in root.worlds) {
+            foreach (var world in scenario.worlds) {
                 sb.AppendLine($"    subgraph {sanitize(id: world.id)} [\"{world.name}\"]");
                 foreach (var level in world.levels) {
                     string node_id   = sanitize(id: level.id);
@@ -56,11 +58,11 @@ namespace Germio {
             }
 
             // Declare edges after all nodes to avoid forward-reference issues.
-            foreach (var world in root.worlds) {
+            foreach (var world in scenario.worlds) {
                 foreach (var level in world.levels) {
                     string from = sanitize(id: level.id);
 
-                    // Edges from DataNext (condition-gated static transitions).
+                    // Edges from Next (condition-gated static transitions).
                     foreach (var next in level.next) {
                         string to = sanitize(id: next.id);
                         if (string.IsNullOrEmpty(next.condition)) {
@@ -70,13 +72,13 @@ namespace Germio {
                         }
                     }
 
-                    // Edges from DataEvent (event-driven transitions via requestTransition).
-                    foreach (var evt in level.events) {
-                        if (evt.action == null || evt.action.requestTransition == null) { continue; }
-                        string to    = sanitize(id: evt.action.requestTransition);
-                        string label = evt.trigger;
-                        if (!string.IsNullOrEmpty(evt.condition)) {
-                            label = $"{label}\\n({evt.condition})";
+                    // Edges from Rule (rule-driven transitions via request_transition).
+                    foreach (var rule in level.rules) {
+                        if (rule.command == null || rule.command.request_transition == null) { continue; }
+                        string to    = sanitize(id: rule.command.request_transition);
+                        string label = rule.trigger;
+                        if (!string.IsNullOrEmpty(rule.condition)) {
+                            label = $"{label}\\n({rule.condition})";
                         }
                         sb.AppendLine($"    {from} -->|\"{label}\"| {to}");
                     }

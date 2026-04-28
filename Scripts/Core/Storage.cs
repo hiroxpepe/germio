@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Germio
+using Germio.Model;
+
+namespace Germio.Core
 {
     /// <summary>
     /// Provides serialization and deserialization for game save data.
@@ -40,8 +42,8 @@ namespace Germio
         /// Asynchronously loads game save data from file.
         /// Tries to load plain JSON first, then encrypted binary if not found.
         /// </summary>
-        /// <returns>Deserialized <see cref="DataRoot"/> object, or null if not found.</returns>
-        public static async Task<DataRoot?> LoadAsync(string? base_path = null)
+        /// <returns>Deserialized <see cref="Scenario"/> object, or null if not found.</returns>
+        public static async Task<Scenario?> LoadAsync(string? base_path = null)
         {
             string dir       = base_path ?? Directory.GetCurrentDirectory();
             string path_json = Path.Combine(dir, JSON_PATH);
@@ -49,14 +51,14 @@ namespace Germio
             if (File.Exists(path_json))
             {
                 string json = await File.ReadAllTextAsync(path_json, Encoding.UTF8);
-                return JsonConvert.DeserializeObject<DataRoot>(json, _settings)!;
+                return JsonConvert.DeserializeObject<Scenario>(json, _settings)!;
             }
             else if (File.Exists(path_enc))
             {
                 var (key, iv) = Vault.GetKey();
                 byte[] enc    = await File.ReadAllBytesAsync(path_enc);
                 string json   = await DecryptAesAsync(data: enc, key: key, iv: iv);
-                return JsonConvert.DeserializeObject<DataRoot>(json, _settings)!;
+                return JsonConvert.DeserializeObject<Scenario>(json, _settings)!;
             }
             return null;
         }
@@ -65,9 +67,9 @@ namespace Germio
         /// Asynchronously saves game data to file.
         /// Writes as plain JSON in development, or as encrypted binary in production.
         /// </summary>
-        /// <param name="data">The <see cref="DataRoot"/> object to serialize and save.</param>
+        /// <param name="data">The <see cref="Scenario"/> object to serialize and save.</param>
         /// <param name="encrypt">If true, saves as encrypted binary; otherwise, saves as plain JSON.</param>
-        public static async Task SaveAsync(DataRoot data, bool encrypt = false, string? base_path = null)
+        public static async Task SaveAsync(Scenario data, bool encrypt = false, string? base_path = null)
         {
             string dir       = base_path ?? Directory.GetCurrentDirectory();
             string path_json = Path.Combine(dir, JSON_PATH);

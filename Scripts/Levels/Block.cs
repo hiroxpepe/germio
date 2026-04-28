@@ -12,7 +12,7 @@ using UniRx.Triggers;
 using static Germio.Env;
 using static Germio.Utils;
 
-namespace Germio {
+namespace Germio.Levels {
     /// <summary>
     /// Represents a block object in the game.
     /// </summary>

@@ -12,7 +12,9 @@ using UniRx.Triggers;
 using static Germio.Env;
 using static Germio.Utils;
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Systems {
     /// <summary>
     /// Manages game status notifications.
     /// </summary>

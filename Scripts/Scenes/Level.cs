@@ -8,14 +8,16 @@ using static UnityEngine.SceneManagement.SceneManager;
 using UniRx;
 using UniRx.Triggers;
 
+using Germio;
 using static Germio.Env;
+using Germio.Systems;
 
-namespace Germio {
+namespace Germio.Levels {
     /// <summary>
     /// Manages a level scene, including pause functionality and level transitions.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class Level : InputMaper {
+    public class Level : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,9 +68,9 @@ namespace Germio {
             /// When the game system returns home.
             /// </summary>
             _game_system.OnCameBackHome += () => {
-                _sound_system.Play(type: SEClip.Item);
+                _sound_system.Play(type: SfxClip.Item);
                 Time.timeScale = 0f;
-                _sound_system.Play(type: BGMClip.BeatLevel);
+                _sound_system.Play(type: MusicClip.BeatLevel);
             };
 
             /// <summary>

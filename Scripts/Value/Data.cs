@@ -13,7 +13,7 @@ namespace UnityEngine.Scripting {
 }
 #endif
 
-namespace Germio {
+namespace Germio.Model {
     /// <summary>
     /// Operation type for updating a numeric counter.
     /// Serialized as lowercase string in JSON ("add", "sub", "set").
@@ -27,13 +27,13 @@ namespace Germio {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
-    public class DataRoot {
+    public class Scenario {
 #nullable enable
         /// <summary>The current runtime state (flags, counters, inventory).</summary>
-        public DataState state { get; set; } = new DataState();
+        public State state { get; set; } = new State();
 
         /// <summary>List of all abstract worlds in the game.</summary>
-        public List<DataWorld> worlds { get; set; } = new List<DataWorld>();
+        public List<World> worlds { get; set; } = new List<World>();
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ namespace Germio {
     /// All quantifiable state values are expressed as named counters — no hardcoded numeric fields.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataState {
+    public class State {
 #nullable enable
         /// <summary>Boolean state flags. (e.g., flags["zone_a_cleared"] = true)</summary>
         public Dictionary<string, bool> flags { get; set; } = new Dictionary<string, bool>();
@@ -56,117 +56,117 @@ namespace Germio {
         public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
 
         /// <summary>ID of the currently active scene/level.</summary>
-        public string currentScene { get; set; } = string.Empty;
+        public string current_scene { get; set; } = string.Empty;
 
         /// <summary>
         /// Identifies the currently active decision-making agent in a sequential state machine.
         /// (e.g., player_a / player_b in a two-agent sequence; empty if not applicable)
         /// </summary>
-        public string currentTeam { get; set; } = string.Empty;
+        public string current_team { get; set; } = string.Empty;
 
         /// <summary>
-        /// G2: IDs of events that have already fired with once=true.
-        /// Persisted with save data so one-shot events survive save/load cycles.
+        /// G2: IDs of rules that have already fired with once=true.
+        /// Persisted with save data so one-shot rules survive save/load cycles.
         /// </summary>
-        public HashSet<string> firedEvents { get; set; } = new HashSet<string>();
+        public HashSet<string> fired_rules { get; set; } = new HashSet<string>();
     }
 
     /// <summary>
     /// Represents a world grouping multiple abstract levels.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataWorld {
+    public class World {
         public string id { get; set; } = string.Empty;
         public string name { get; set; } = string.Empty;
         public string scene { get; set; } = string.Empty;
-        public List<DataLevel> levels { get; set; } = new List<DataLevel>();
+        public List<Level> levels { get; set; } = new List<Level>();
     }
 
     /// <summary>
     /// Represents a level (or node) within a world.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataLevel {
+    public class Level {
         public string id { get; set; } = string.Empty;
         public string name { get; set; } = string.Empty;
         public string scene { get; set; } = string.Empty;
-        public List<DataNext> next { get; set; } = new List<DataNext>();
-        public List<DataEvent> events { get; set; } = new List<DataEvent>();
+        public List<Next> next { get; set; } = new List<Next>();
+        public List<Rule> rules { get; set; } = new List<Rule>();
     }
 
     /// <summary>
     /// Represents a conditional transition to another level.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataNext {
+    public class Next {
         public string id { get; set; } = string.Empty;
         public string condition { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// Represents an event triggered within a level based on specific conditions.
+    /// Represents a rule triggered within a level based on specific conditions.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataEvent {
+    public class Rule {
 #nullable enable
-        /// <summary>Unique event identifier.</summary>
+        /// <summary>Unique rule identifier.</summary>
         public string id { get; set; } = string.Empty;
 
         /// <summary>
-        /// Abstract trigger ID. Matches VolumeTrigger.triggerId or a signal ID
-        /// dispatched via TriggerHub.OnSignalReceived.
+        /// Abstract trigger ID. Matches Zone.zone_id or a signal ID
+        /// dispatched via Bus.Publish.
         /// </summary>
         public string trigger { get; set; } = string.Empty;
 
         /// <summary>
-        /// Optional condition evaluated before executing the action.
-        /// Uses the same syntax as DataNext.condition.
-        /// Empty string = unconditional (action always executes when trigger fires).
+        /// Optional condition evaluated before executing the command.
+        /// Uses the same syntax as Next.condition.
+        /// Empty string = unconditional (command always executes when trigger fires).
         /// Example: "counters.score >= 100" or "flags.zone_a_cleared"
         /// </summary>
         public string condition { get; set; } = string.Empty;
 
-        /// <summary>Action to execute when this event fires.</summary>
-        public DataAction action { get; set; } = new DataAction();
+        /// <summary>Command to execute when this rule fires.</summary>
+        public Command command { get; set; } = new Command();
 
         /// <summary>
-        /// If true (default), this event fires at most once per session.
-        /// Store blocks subsequent dispatches for the same event ID.
+        /// If true (default), this rule fires at most once per session.
+        /// Store blocks subsequent dispatches for the same rule ID.
         /// Set to false only for repeatable effects (e.g., ambient counters).
         /// </summary>
         public bool once { get; set; } = true;
     }
 
     /// <summary>
-    /// Represents a state mutation to be executed when an event fires.
-    /// Exactly one action field should be non-null per instance.
+    /// Represents a state mutation to be executed when a rule fires.
+    /// Exactly one command field should be non-null per instance.
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataAction {
+    public class Command {
 #nullable enable
-        /// <summary>Sets a boolean flag in DataState.flags.</summary>
-        public DataSetFlag? setFlag { get; set; }
+        /// <summary>Sets a boolean flag in State.flags.</summary>
+        public SetFlag? set_flag { get; set; }
 
-        /// <summary>Adds, subtracts, or assigns a value to DataState.counters.</summary>
-        public DataUpdateCounter? updateCounter { get; set; }
+        /// <summary>Adds, subtracts, or assigns a value to State.counters.</summary>
+        public UpdateCounter? update_counter { get; set; }
 
-        /// <summary>Adds or removes items from DataState.inventory.</summary>
-        public DataUpdateInventory? updateInventory { get; set; }
+        /// <summary>Adds or removes items from State.inventory.</summary>
+        public UpdateInventory? update_inventory { get; set; }
 
         /// <summary>Requests an immediate scene transition to the specified level ID.</summary>
-        public string? requestTransition { get; set; }
+        public string? request_transition { get; set; }
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataSetFlag {
+    public class SetFlag {
         public string key { get; set; } = string.Empty;
         public bool value { get; set; }
     }
 
     /// <summary>Updates a named counter by delta using the specified operation.</summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataUpdateCounter {
+    public class UpdateCounter {
         public string key { get; set; } = string.Empty;
         public float delta { get; set; }
         /// <summary>Operation: Add (default), Sub, or Set.</summary>
@@ -175,7 +175,7 @@ namespace Germio {
 
     /// <summary>Changes the quantity of a named inventory item.</summary>
     [UnityEngine.Scripting.Preserve]
-    public class DataUpdateInventory {
+    public class UpdateInventory {
         public string id { get; set; } = string.Empty;
         public int delta { get; set; }
     }

@@ -4,9 +4,11 @@
 using System;
 using System.Globalization;
 
-namespace Germio {
+using Germio.Model;
+
+namespace Germio.Core {
     /// <summary>
-    /// Parses and evaluates condition expressions against a DataState instance.
+    /// Parses and evaluates condition expressions against a State instance.
     /// G1 principle: uses only string.Split — no Regex, no LINQ, no heavy libraries.
     /// Supports:
     ///   flags.KEY              (implicit == true)
@@ -28,9 +30,9 @@ namespace Germio {
         /// Evaluates the given condition expression against the provided state.
         /// </summary>
         /// <param name="condition">Condition string, e.g. "counters.score >= 100".</param>
-        /// <param name="state">The current DataState to evaluate against.</param>
+        /// <param name="state">The current State to evaluate against.</param>
         /// <returns>True if the condition is satisfied or is null/empty; false otherwise.</returns>
-        public static bool Evaluate(string? condition, DataState state) {
+        public static bool Evaluate(string? condition, State state) {
             if (string.IsNullOrWhiteSpace(condition)) { return true; }
 
             var tokens = tokenize(condition: condition.Trim());
@@ -69,7 +71,7 @@ namespace Germio {
         /// Explicit: supports == and !=.
         /// </summary>
         static bool evaluateFlag(
-            (string prefix, string key, string op, string rhs) t, DataState state) {
+            (string prefix, string key, string op, string rhs) t, State state) {
             bool actual = state.flags.TryGetValue(t.key, out bool v) && v;
 
             if (string.IsNullOrEmpty(t.op)) { return actual; }
@@ -90,7 +92,7 @@ namespace Germio {
         /// Uses InvariantCulture to avoid locale-dependent decimal separators.
         /// </summary>
         static bool evaluateCounter(
-            (string prefix, string key, string op, string rhs) t, DataState state) {
+            (string prefix, string key, string op, string rhs) t, State state) {
             float actual = state.counters.TryGetValue(t.key, out float v) ? v : 0f;
 
             if (!float.TryParse(t.rhs, NumberStyles.Float, CultureInfo.InvariantCulture,
@@ -113,7 +115,7 @@ namespace Germio {
         /// Missing key is treated as 0.
         /// </summary>
         static bool evaluateInventory(
-            (string prefix, string key, string op, string rhs) t, DataState state) {
+            (string prefix, string key, string op, string rhs) t, State state) {
             int actual = state.inventory.TryGetValue(t.key, out int v) ? v : 0;
 
             if (string.IsNullOrEmpty(t.op)) { return actual > 0; }
