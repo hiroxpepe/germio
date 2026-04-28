@@ -7,13 +7,14 @@ using UniRx;
 using UniRx.Triggers;
 
 using static Germio.Env;
+using Germio.Systems;
 
 namespace Germio {
     /// <summary>
     /// Manages the title scene, including navigation to other scenes.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class Title : InputMaper {
+    public class Title : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,11 @@ using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
-namespace Germio {
+using Germio.Model;
+using Germio.Core;
+using ValidationLevel = Germio.Core.ValidationLevel;
+
+namespace Germio.Editor {
     /// <summary>
     /// Germio Dashboard: a Unity Editor window that loads germio_config.json,
     /// runs the Validator to surface errors/warnings, and copies the Mermaid
@@ -23,7 +27,7 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
-        DataRoot?              _current_root;
+        Scenario?              _current_scenario;
         List<ValidationResult> _validation_results = new();
         Vector2                _scroll_position;
         string                 _status_message  = string.Empty;
@@ -78,7 +82,7 @@ namespace Germio {
 
         /// <summary>
         /// Renders the "Load Config" button.
-        /// Reads germio_config.json from StreamingAssets and deserializes it into DataRoot.
+        /// Reads germio_config.json from StreamingAssets and deserializes it into Scenario.
         /// </summary>
         void drawLoadButton() {
             EditorGUILayout.Space(4);
@@ -129,7 +133,7 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Reads germio_config.json from StreamingAssets, parses it into DataRoot,
+        /// Reads germio_config.json from StreamingAssets, parses it into Scenario,
         /// then runs the Validator and caches the results.
         /// </summary>
         void loadConfig() {
@@ -144,10 +148,10 @@ namespace Germio {
 
             try {
                 string json = File.ReadAllText(config_path);
-                _current_root = JsonConvert.DeserializeObject<DataRoot>(json)
-                    ?? throw new InvalidOperationException("Deserialized DataRoot is null.");
+                _current_scenario = JsonConvert.DeserializeObject<Scenario>(json)
+                    ?? throw new InvalidOperationException("Deserialized Scenario is null.");
 
-                _validation_results = Validator.Validate(root: _current_root);
+                _validation_results = Validator.Validate(scenario: _current_scenario);
                 _is_config_loaded   = true;
                 _status_message     = $"Loaded: {config_path}";
                 _scroll_position    = Vector2.zero;
@@ -165,12 +169,12 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Exports the Mermaid flowchart for the current DataRoot and copies it to clipboard.
+        /// Exports the Mermaid flowchart for the current Scenario and copies it to clipboard.
         /// </summary>
         void copyMermaidGraph() {
-            if (_current_root == null) { return; }
+            if (_current_scenario == null) { return; }
 
-            string mermaid_text = Grapher.Export(root: _current_root);
+            string mermaid_text = Grapher.Export(scenario: _current_scenario);
             EditorGUIUtility.systemCopyBuffer = mermaid_text;
             Debug.Log("[Germio Dashboard] Mermaid graph copied to clipboard.");
         }
@@ -186,14 +190,14 @@ namespace Germio {
         }
 
         /// <summary>
-        /// Saves the current DataRoot as an AES-encrypted .dat file to StreamingAssets.
+        /// Saves the current Scenario as an AES-encrypted .dat file to StreamingAssets.
         /// Uses Vault for key material; shows an error status if Vault has no key configured.
         /// </summary>
         async System.Threading.Tasks.Task export_encrypted_config_async() {
-            if (_current_root == null) { return; }
+            if (_current_scenario == null) { return; }
 
             try {
-                await Storage.SaveAsync(data: _current_root, encrypt: true, base_path: Application.streamingAssetsPath);
+                await Storage.SaveAsync(data: _current_scenario, encrypt: true, base_path: Application.streamingAssetsPath);
                 _status_message = "germio_config.dat exported.";
                 Debug.Log("[Germio Dashboard] germio_config.dat exported.");
             }

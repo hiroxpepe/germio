@@ -12,7 +12,9 @@ using UniRx.Triggers;
 using static Germio.Env;
 using static Germio.Utils;
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Levels {
     /// <summary>
     /// Provides shared functionality for common game objects.
     /// </summary>

@@ -3,15 +3,17 @@
 
 using System;
 
-namespace Germio {
+using Germio.Core;
+
+namespace Germio.Systems {
     /// <summary>
     /// Listens for transition requests from the Store and loads the corresponding scene.
     /// Uses an injected <see cref="Action{String}"/> for the actual load call so that
     /// the class is fully testable without a Unity runtime.
     ///
     /// Responsibilities:
-    ///   1. Resolve the target level's <c>scene</c> name from <see cref="DataRoot"/>.
-    ///   2. Update <see cref="DataState.currentScene"/> to the new level ID.
+    ///   1. Resolve the target level's <c>scene</c> name from <see cref="Scenario"/>.
+    ///   2. Update <see cref="State.current_scene"/> to the new level ID.
     ///   3. Mark state dirty so the next save persists the updated current scene.
     ///   4. Invoke the injected load delegate (Unity: SceneManager.LoadScene).
     ///
@@ -34,7 +36,7 @@ namespace Germio {
         /// <summary>
         /// Constructs a SceneLoader and subscribes to <see cref="Store.OnTransitionRequested"/>.
         /// </summary>
-        /// <param name="store">The Store whose root provides level-to-scene mapping.</param>
+        /// <param name="store">The Store whose scenario provides level-to-scene mapping.</param>
         /// <param name="load_scene">
         /// Delegate invoked with the resolved scene name when a transition is requested.
         /// In Unity production code: <c>name =&gt; SceneManager.LoadScene(name)</c>.
@@ -71,21 +73,21 @@ namespace Germio {
             string? scene_name = findSceneName(level_id: target_level_id);
             // Guard: skip unknown levels and levels with empty scene names
             if (string.IsNullOrEmpty(scene_name)) { return; }
-            _store.state.currentScene = target_level_id;
+            _store.state.current_scene = target_level_id;
             _store.MarkDirty();
             _load_scene(scene_name);
         }
 
         /// <summary>
-        /// Searches all worlds in the current DataRoot for a level matching <paramref name="level_id"/>
+        /// Searches all worlds in the current Scenario for a level matching <paramref name="level_id"/>
         /// and returns its <c>scene</c> field.
-        /// Uses <see cref="Store.root"/> (not a cached reference) so that data loaded
+        /// Uses <see cref="Store.scenario"/> (not a cached reference) so that data loaded
         /// asynchronously after construction is always reflected.
         /// </summary>
         /// <param name="level_id">The level ID to search for.</param>
         /// <returns>The scene name, or null if not found.</returns>
         string? findSceneName(string level_id) {
-            foreach (var world in _store.root.worlds) {
+            foreach (var world in _store.scenario.worlds) {
                 foreach (var level in world.levels) {
                     if (level.id == level_id) {
                         return string.IsNullOrEmpty(level.scene) ? null : level.scene;

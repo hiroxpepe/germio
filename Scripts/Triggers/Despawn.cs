@@ -10,11 +10,14 @@ using UniRx.Triggers;
 
 using static Germio.Env;
 
-namespace Germio {
+using Germio;
+using Germio.Systems;
+
+namespace Germio.Triggers {
     /// <summary>
     /// Handles player despawn logic.
     /// Directly reloads the active scene (original behavior retained as primary fallback),
-    /// and also emits "sig_despawn" to <see cref="TriggerHub"/> so that
+    /// and also emits "sig_despawn" to <see cref="Bus"/> so that
     /// Store can update counters/flags as needed (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
@@ -63,7 +66,7 @@ namespace Germio {
                 .Subscribe(onNext: _ => {
                     OnDespawn?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
-                    _game_system.triggerHub?.OnSignalReceived("sig_despawn");
+                    _game_system.bus?.Publish("sig_despawn");
                 }).AddTo(gameObjectComponent: this);
         }
     }

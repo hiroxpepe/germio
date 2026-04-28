@@ -8,7 +8,7 @@ using UnityEngine;
 using System.IO;
 #endif
 
-namespace Germio {
+namespace Germio.Core {
     /// <summary>
     /// Provides AES key material for Storage encryption.
     /// Key source priority (first available wins):
