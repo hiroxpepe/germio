@@ -4,7 +4,9 @@
 using System;
 using UnityEngine;
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Systems {
     /// <summary>
     /// Manages sound effects and background music.
     /// </summary>
@@ -56,7 +58,7 @@ namespace Germio {
         /// <summary>
         /// Gets the currently playing sound effect type.
         /// </summary>
-        SEClip _now_playing_clip_se1;
+        SfxClip _now_playing_clip_se1;
 
         /// <summary>
         /// Gets the audio source for sound effects.
@@ -75,62 +77,62 @@ namespace Germio {
         /// Plays the specified sound effect clip.
         /// </summary>
         /// <param name="type">Type of sound effect to play.</param>
-        public void Play(SEClip type) {
+        public void Play(SfxClip type) {
             switch (type) {
-                case SEClip.Item:
+                case SfxClip.Item:
                     if (_audio_source_se1.isPlaying) {
                         _audio_source_se1.Stop();
                     }
                     _audio_source_se1.PlayOneShot(clip: _se_item_clip, volumeScale: 2.5f);
-                    _now_playing_clip_se1 = SEClip.Item;
+                    _now_playing_clip_se1 = SfxClip.Item;
                     break;
-                case SEClip.Jump:
+                case SfxClip.Jump:
                     if (_audio_source_se1.isPlaying) {
                         _audio_source_se1.Stop();
                     }
                     _audio_source_se1.PlayOneShot(clip: _se_jump_clip);
-                    _now_playing_clip_se1 = SEClip.Jump;
+                    _now_playing_clip_se1 = SfxClip.Jump;
                     break;
-                case SEClip.Climb:
-                    if (_now_playing_clip_se1 != SEClip.Climb) {
+                case SfxClip.Climb:
+                    if (_now_playing_clip_se1 != SfxClip.Climb) {
                         _audio_source_se1.Stop();
                     }
                     if (!_audio_source_se1.isPlaying) {
                         _audio_source_se1.clip = _se_climb_clip;
                         _audio_source_se1.Play();
-                        _now_playing_clip_se1 = SEClip.Climb;
+                        _now_playing_clip_se1 = SfxClip.Climb;
                     }
                     break;
-                case SEClip.Walk:
-                    if (_now_playing_clip_se1 != SEClip.Walk && 
-                        _now_playing_clip_se1 != SEClip.Grounded && 
-                        _now_playing_clip_se1 != SEClip.Item) {
+                case SfxClip.Walk:
+                    if (_now_playing_clip_se1 != SfxClip.Walk && 
+                        _now_playing_clip_se1 != SfxClip.Grounded && 
+                        _now_playing_clip_se1 != SfxClip.Item) {
                         _audio_source_se1.Stop();
                     }
                     if (!_audio_source_se1.isPlaying) {
                         _audio_source_se1.clip = _se_walk_clip;
                         _audio_source_se1.Play();
-                        _now_playing_clip_se1 = SEClip.Walk;
+                        _now_playing_clip_se1 = SfxClip.Walk;
                     }
                     break;
-                case SEClip.Run:
-                    if (_now_playing_clip_se1 != SEClip.Run && 
-                        _now_playing_clip_se1 != SEClip.Grounded && 
-                        _now_playing_clip_se1 != SEClip.Item) {
+                case SfxClip.Run:
+                    if (_now_playing_clip_se1 != SfxClip.Run && 
+                        _now_playing_clip_se1 != SfxClip.Grounded && 
+                        _now_playing_clip_se1 != SfxClip.Item) {
                         _audio_source_se1.Stop();
                     }
                     if (!_audio_source_se1.isPlaying) {
                         _audio_source_se1.clip = _se_run_clip;
                         _audio_source_se1.Play();
-                        _now_playing_clip_se1 = SEClip.Run;
+                        _now_playing_clip_se1 = SfxClip.Run;
                     }
                     break;
-                case SEClip.Grounded:
+                case SfxClip.Grounded:
                     if (_audio_source_se1.isPlaying) {
                         _audio_source_se1.Stop();
                     }
                     _audio_source_se1.PlayOneShot(clip: _se_grounded_clip, volumeScale: 0.65f);
-                    _now_playing_clip_se1 = SEClip.Grounded;
+                    _now_playing_clip_se1 = SfxClip.Grounded;
                     break;
             }
         }
@@ -139,9 +141,9 @@ namespace Germio {
         /// Plays the specified background music clip.
         /// </summary>
         /// <param name="type">Type of background music to play.</param>
-        public void Play(BGMClip type) {
+        public void Play(MusicClip type) {
             switch (type) {
-                case BGMClip.BeatLevel:
+                case MusicClip.BeatLevel:
                     _audio_source_bgm.Stop();
                     _audio_source_bgm.clip = _bgm_beat_level_clip;
                     _audio_source_bgm.Play();
@@ -152,8 +154,8 @@ namespace Germio {
         /// <summary>
         /// Stops the currently playing sound effect clip.
         /// </summary>
-        public void StopSEClip() {
-            if (_now_playing_clip_se1 != SEClip.Grounded && _now_playing_clip_se1 != SEClip.Item) {
+        public void StopSfxClip() {
+            if (_now_playing_clip_se1 != SfxClip.Grounded && _now_playing_clip_se1 != SfxClip.Item) {
                 _audio_source_se1.Stop();
             }
         }
@@ -171,7 +173,7 @@ namespace Germio {
     /// <summary>
     /// Specifies the types of sound effects.
     /// </summary>
-    public enum SEClip {
+    public enum SfxClip {
         /// <summary>
         /// Represents the sound effect for item interaction.
         /// </summary>
@@ -211,7 +213,7 @@ namespace Germio {
     /// <summary>
     /// Specifies the types of background music.
     /// </summary>
-    public enum BGMClip {
+    public enum MusicClip {
         /// <summary>
         /// Represents the background music for level beat.
         /// </summary>

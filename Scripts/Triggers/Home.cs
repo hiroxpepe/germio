@@ -10,10 +10,13 @@ using UniRx.Triggers;
 
 using static Germio.Env;
 
-namespace Germio {
+using Germio;
+using Germio.Systems;
+
+namespace Germio.Triggers {
     /// <summary>
     /// Represents a home object in the game and manages player and vehicle interactions.
-    /// On contact, emits the "vol_home" signal to <see cref="TriggerHub"/>
+    /// On contact, emits the "vol_home" signal to <see cref="Bus"/>
     /// so that scene transitions are driven by the JSON config (Strangler Fig Pattern).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
@@ -85,11 +88,11 @@ namespace Germio {
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     // OnCameBack fires first so Level.cs can react (e.g. play sound).
-                    // OnSignalReceived fires second so SceneLoader resets
+                    // Publish fires second so SceneLoader resets
                     // Time.timeScale=1f before LoadScene, preventing the next scene
                     // from starting frozen.
                     OnCameBack?.Invoke();
-                    _game_system.triggerHub?.OnSignalReceived("vol_home");
+                    _game_system.bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -100,7 +103,7 @@ namespace Germio {
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.triggerHub?.OnSignalReceived("vol_home");
+                    _game_system.bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -112,7 +115,7 @@ namespace Germio {
                     _game_system.beat)
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.triggerHub?.OnSignalReceived("vol_home");
+                    _game_system.bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
     }
