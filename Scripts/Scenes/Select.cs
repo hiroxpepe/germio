@@ -11,13 +11,14 @@ using UniRx.Triggers;
 
 using static Germio.Env;
 using static Germio.Utils;
+using Germio.Systems;
 
 namespace Germio {
     /// <summary>
     /// Manages the select scene, including mode selection and navigation.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class Select : InputMaper {
+    public class Select : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

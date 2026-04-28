@@ -1,12 +1,14 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the GPL v2.0 license. See LICENSE text in the project root for license information.
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Players {
     /// <summary>
     /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public partial class Human : InputMaper {
+    public partial class Human : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

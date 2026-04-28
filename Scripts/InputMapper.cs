@@ -13,7 +13,7 @@ namespace Germio {
     /// Maps physical gamepad inputs.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class InputMaper : MonoBehaviour {
+    public class InputMapper : MonoBehaviour {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

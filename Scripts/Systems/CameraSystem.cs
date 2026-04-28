@@ -10,12 +10,14 @@ using UniRx.Triggers;
 
 using static Germio.Env;
 
-namespace Germio {
+using Germio;
+
+namespace Germio.Systems {
     /// <summary>
     /// Controls the camera system, including rotation and transparency effects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
-    public class CameraSystem : InputMaper {
+    public class CameraSystem : InputMapper {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
