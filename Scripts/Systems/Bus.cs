@@ -73,5 +73,14 @@ namespace Germio.Systems {
         public void Publish(string signal_id) {
             _store.Dispatch(trigger_id: signal_id);
         }
+
+        /// <summary>
+        /// Clears the active zones guard set.
+        /// Call this on scene transitions to prevent stale zone IDs from suppressing
+        /// re-entry events in the new scene (P5-T3).
+        /// </summary>
+        public void ClearActiveZones() {
+            _active_zones.Clear();
+        }
     }
 }

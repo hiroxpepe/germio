@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 using Germio.Model;
 
@@ -51,14 +52,18 @@ namespace Germio.Core
             if (File.Exists(path_json))
             {
                 string json = await File.ReadAllTextAsync(path_json, Encoding.UTF8);
-                return JsonConvert.DeserializeObject<Scenario>(json, _settings)!;
+                var raw     = JObject.Parse(json);
+                raw         = Migrator.Migrate(raw: raw);
+                return raw.ToObject<Scenario>(JsonSerializer.Create(_settings))!;
             }
             else if (File.Exists(path_enc))
             {
                 var (key, iv) = Vault.GetKey();
                 byte[] enc    = await File.ReadAllBytesAsync(path_enc);
                 string json   = await DecryptAesAsync(data: enc, key: key, iv: iv);
-                return JsonConvert.DeserializeObject<Scenario>(json, _settings)!;
+                var raw       = JObject.Parse(json);
+                raw           = Migrator.Migrate(raw: raw);
+                return raw.ToObject<Scenario>(JsonSerializer.Create(_settings))!;
             }
             return null;
         }
