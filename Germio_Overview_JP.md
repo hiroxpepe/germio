@@ -2,15 +2,30 @@
 
 ## 1. Germio とは
 
-Germio は「Blender 等の DCC ツールで 3D モデルやレベル（シーン）を作成し、ゲームの進行・構成・分岐・イベントを JSON（または Mermaid）で記述するだけで、本格的な 3D ゲームがノンプログラミングで作れる」ことを目指した新しいゲーム開発フレームワークです。
+Germio は **LLM-Native なゲーム進行フレームワーク** です。Claude / GPT / Gemini などの LLM が自然言語の指示から正しい `germio_config.json` を生成できるよう、データモデルと DSL を一から設計しています。
 
-### 特徴
+> 人間が書きやすい JSON ではなく、**LLM が書きやすい JSON** で Unity ゲームの進行を記述する。
 
-+ 3D モデル・レベル制作は Blender 等で自由に
-+ ゲーム進行・ワールド構成・イベントは JSON（または Mermaid）で直感的に設計
-+ Unity や C# の知識がなくても、ゲームのロジックや分岐をデータで管理できる
-+ FW 側でバリデーション・可視化・エラー検出もサポート
-+ クリエイターが本当に作りたいゲーム体験に集中できる
+### 4 つの概念
+
+| 概念 | C# クラス | 役割 |
+|------|----------|------|
+| `State` | `Germio.Model.State` | すべての実行時値（フラグ・カウンター・インベントリ） |
+| `Rule` | `Germio.Model.Rule` | トリガー駆動の状態変更（条件付き） |
+| `Command` | `Germio.Model.Command` | Rule が実行するアクション |
+| `Next` | `Germio.Model.Next` | 次レベルへの条件付き遷移 |
+
+### LLM-Native の特徴
+
++ `snake_case` で統一 — C# プロパティ名と JSON キーが 1:1 で一致
++ 公開 JSON Schema (`schemas/germio_config.schema.json`) — プロンプトに埋め込み可能
++ 静的バリデーション V001–V012 — `ToLlmReadable()` で LLM に直接貼れる自己修正可能形式
++ 最小閉じた DSL — 3 プレフィックス・6 演算子のみ（ハルシネーション発生面積ゼロ）
++ Mermaid 双方向可視化 — シナリオをフローチャートとしてエクスポート
+
+### 設計原則
+
+詳細は [`docs/llm_first_design.md`](../../../../../../docs/llm_first_design.md) を参照（G9〜G18 原則）。
 
 ## 2. Germio 標準 JSON 構造
 
