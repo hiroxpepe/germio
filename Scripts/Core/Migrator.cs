@@ -66,6 +66,7 @@ namespace Germio.Core
             }
 
             // Rename level.events → level.rules in every world/level
+            // Also rename update_inventory.id → update_inventory.key
             var worlds = raw["worlds"] as JArray;
             if (worlds != null)
             {
@@ -82,6 +83,22 @@ namespace Germio.Core
                         {
                             level_obj["rules"] = events;
                             level_obj.Remove("events");
+                        }
+                        // Rename update_inventory.id → update_inventory.key in rule commands
+                        var rules = level_obj["rules"] as JArray;
+                        if (rules == null) continue;
+                        foreach (var rule in rules)
+                        {
+                            var cmd = rule["command"] as JObject;
+                            if (cmd == null) continue;
+                            var ui = cmd["update_inventory"] as JObject;
+                            if (ui == null) continue;
+                            var old_id = ui["id"];
+                            if (old_id != null)
+                            {
+                                ui["key"] = old_id;
+                                ui.Remove("id");
+                            }
                         }
                     }
                 }

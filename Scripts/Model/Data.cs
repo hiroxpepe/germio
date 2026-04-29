@@ -77,9 +77,10 @@ namespace Germio.Model {
         /// <summary>
         /// Arbitrary key-value persistence store.
         /// Survives scene transitions and save/load cycles.
-        /// (e.g., persistence["save_slot"] = "slot_2")
+        /// Values are always strings for predictable JSON round-trip behaviour (G9 LLM-First).
+        /// (e.g., persistence["save_slot"] = "slot_2", persistence["coins"] = "100")
         /// </summary>
-        public Dictionary<string, object> persistence { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, string> persistence { get; set; } = new Dictionary<string, string>();
     }
 
     /// <summary>
@@ -190,7 +191,7 @@ namespace Germio.Model {
     /// <summary>Changes the quantity of a named inventory item.</summary>
     [UnityEngine.Scripting.Preserve]
     public class UpdateInventory {
-        public string id { get; set; } = string.Empty;
+        public string key { get; set; } = string.Empty;
         public int delta { get; set; }
     }
 
@@ -199,6 +200,6 @@ namespace Germio.Model {
     public class SetPersistence {
 #nullable enable
         public string key   { get; set; } = string.Empty;
-        public object value { get; set; } = string.Empty;
+        public string value { get; set; } = string.Empty;
     }
 }

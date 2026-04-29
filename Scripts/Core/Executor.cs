@@ -43,12 +43,12 @@ namespace Germio.Core {
 
             if (command.update_inventory != null) {
                 var ui = command.update_inventory;
-                int current = store.state.inventory.TryGetValue(ui.id, out int v) ? v : 0;
+                int current = store.state.inventory.TryGetValue(ui.key, out int v) ? v : 0;
                 int next    = current + ui.delta;
                 if (next <= 0) {
-                    store.state.inventory.Remove(ui.id);
+                    store.state.inventory.Remove(ui.key);
                 } else {
-                    store.state.inventory[ui.id] = next;
+                    store.state.inventory[ui.key] = next;
                 }
                 mutated = true;
             }

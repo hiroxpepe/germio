@@ -43,11 +43,8 @@ namespace Germio.Core {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class ValidationResult {
 #nullable enable
-        /// <summary>Severity: Error halts integrity; Warning flags potential data issues.</summary>
-        public ValidationLevel level { get; }
-
-        /// <summary>Alias for level — G12 naming preference.</summary>
-        public ValidationLevel severity => level;
+        /// <summary>Severity: Error halts integrity; Warning flags potential data issues. (G17: single name)</summary>
+        public ValidationLevel severity { get; }
 
         /// <summary>Rule identifier: V001 – V012.</summary>
         public string rule_id { get; }
@@ -76,7 +73,7 @@ namespace Germio.Core {
             string          fix_suggestion,
             string          suggested_json = "",
             Location?       location       = null) {
-            this.level          = level;
+            this.severity       = level;
             this.rule_id        = rule_id;
             this.message        = message;
             this.cause_detail   = cause_detail;
@@ -90,7 +87,7 @@ namespace Germio.Core {
         /// Equivalent to ValidationResult(level, "LEGACY", message, "", "").
         /// </summary>
         public ValidationResult(ValidationLevel level, string message) {
-            this.level          = level;
+            this.severity       = level;
             this.rule_id        = "LEGACY";
             this.message        = message;
             this.cause_detail   = string.Empty;
@@ -105,7 +102,7 @@ namespace Germio.Core {
         /// </summary>
         public string ToLlmReadable() {
             var sb = new StringBuilder();
-            sb.Append($"[{rule_id}][{level}] {message}");
+            sb.Append($"[{rule_id}][{severity}] {message}");
             if (!string.IsNullOrEmpty(location.json_path)) {
                 sb.Append($"\nPath: {location.json_path}");
                 if (location.line > 0) {
@@ -125,7 +122,7 @@ namespace Germio.Core {
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"[{rule_id}][{level}] {message}";
+        public override string ToString() => $"[{rule_id}][{severity}] {message}";
     }
 
     /// <summary>
