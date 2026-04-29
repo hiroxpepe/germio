@@ -58,6 +58,11 @@ namespace Germio.Core {
                 mutated = true;
             }
 
+            if (command.set_persistence != null) {
+                store.state.persistence[command.set_persistence.key] = command.set_persistence.value;
+                mutated = true;
+            }
+
             if (mutated) { store.MarkDirty(); }
         }
     }

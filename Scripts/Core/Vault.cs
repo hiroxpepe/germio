@@ -14,7 +14,7 @@ namespace Germio.Core {
     /// Key source priority (first available wins):
     ///   1. Environment variable GERMIO_AES_KEY (Base64, 48 bytes: 32 key + 16 IV) [testable]
     ///   2. StreamingAssets/germio_key.bin (Unity only)
-    ///   3. PlayerPrefs "germio_key" (Unity only, fallback for mobile)
+    /// PlayerPrefs fallback removed in v2.2 (G6: no PlayerPrefs in framework layer).
     /// Throws InvalidOperationException if no source is available or material is too short.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
@@ -49,14 +49,6 @@ namespace Germio.Core {
                 string path = Path.Combine(Application.streamingAssetsPath, "germio_key.bin");
                 if (File.Exists(path)) {
                     material = File.ReadAllBytes(path);
-                }
-            }
-
-            // Priority 3: PlayerPrefs (mobile fallback)
-            if (material == null) {
-                string? prefs_value = PlayerPrefs.GetString("germio_key", null);
-                if (!string.IsNullOrEmpty(prefs_value)) {
-                    material = Convert.FromBase64String(prefs_value);
                 }
             }
 #endif
