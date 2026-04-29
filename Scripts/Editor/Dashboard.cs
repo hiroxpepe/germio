@@ -112,7 +112,7 @@ namespace Germio.Editor {
                 foreach (var result in _validation_results) {
                     var entry_style = new GUIStyle(EditorStyles.label);
                     entry_style.wordWrap = true;
-                    entry_style.normal.textColor = result.level == ValidationLevel.Error
+                    entry_style.normal.textColor = result.severity == ValidationLevel.Error
                         ? new Color(0.9f, 0.2f, 0.2f)   // red
                         : new Color(0.9f, 0.75f, 0.0f);  // yellow
                     EditorGUILayout.LabelField(result.ToString(), entry_style);
