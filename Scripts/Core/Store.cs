@@ -107,8 +107,10 @@ namespace Germio.Core {
                 // Execute command
                 Executor.Execute(command: rule.command, store: this);
 
-                // Record once-shot rule
-                if (rule.once) { _scenario.state.fired_rules.Add(rule.id); }
+                // Record once-shot rule (guard against duplicates for List<string>)
+                if (rule.once && !_scenario.state.fired_rules.Contains(rule.id)) {
+                    _scenario.state.fired_rules.Add(rule.id);
+                }
             }
         }
 

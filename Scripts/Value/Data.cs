@@ -29,6 +29,9 @@ namespace Germio.Model {
     [UnityEngine.Scripting.Preserve]
     public class Scenario {
 #nullable enable
+        /// <summary>JSON schema version. Used by Migrator for V0→V1 migration.</summary>
+        public int schema_version { get; set; } = 1;
+
         /// <summary>The current runtime state (flags, counters, inventory).</summary>
         public State state { get; set; } = new State();
 
@@ -65,10 +68,18 @@ namespace Germio.Model {
         public string current_team { get; set; } = string.Empty;
 
         /// <summary>
-        /// G2: IDs of rules that have already fired with once=true.
+        /// G2: IDs of rules that have already fired with once=true, in dispatch order.
+        /// List (not HashSet) to guarantee insertion order (G5).
         /// Persisted with save data so one-shot rules survive save/load cycles.
         /// </summary>
-        public HashSet<string> fired_rules { get; set; } = new HashSet<string>();
+        public List<string> fired_rules { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Arbitrary key-value persistence store.
+        /// Survives scene transitions and save/load cycles.
+        /// (e.g., persistence["save_slot"] = "slot_2")
+        /// </summary>
+        public Dictionary<string, object> persistence { get; set; } = new Dictionary<string, object>();
     }
 
     /// <summary>
@@ -155,6 +166,9 @@ namespace Germio.Model {
 
         /// <summary>Requests an immediate scene transition to the specified level ID.</summary>
         public string? request_transition { get; set; }
+
+        /// <summary>Sets an arbitrary key-value entry in State.persistence.</summary>
+        public SetPersistence? set_persistence { get; set; }
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>
@@ -178,5 +192,13 @@ namespace Germio.Model {
     public class UpdateInventory {
         public string id { get; set; } = string.Empty;
         public int delta { get; set; }
+    }
+
+    /// <summary>Sets an arbitrary persistence value under the given key in State.persistence.</summary>
+    [UnityEngine.Scripting.Preserve]
+    public class SetPersistence {
+#nullable enable
+        public string key   { get; set; } = string.Empty;
+        public object value { get; set; } = string.Empty;
     }
 }

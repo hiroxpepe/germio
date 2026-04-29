@@ -28,6 +28,7 @@ namespace Germio.Systems {
 
         readonly Store _store;
         readonly Action<string> _load_scene;
+        readonly Bus? _bus;
         bool _disposed;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,9 +43,14 @@ namespace Germio.Systems {
         /// In Unity production code: <c>name =&gt; SceneManager.LoadScene(name)</c>.
         /// In tests: any capture lambda.
         /// </param>
-        public SceneLoader(Store store, Action<string> load_scene) {
+        /// <param name="bus">
+        /// Optional Bus instance. When provided, <see cref="Bus.ClearActiveZones"/> is called
+        /// on each scene transition to prevent stale zone IDs from persisting (P5-T3).
+        /// </param>
+        public SceneLoader(Store store, Action<string> load_scene, Bus? bus = null) {
             _store      = store;
             _load_scene = load_scene;
+            _bus        = bus;
             _store.OnTransitionRequested += handleTransition;
         }
 
@@ -70,6 +76,8 @@ namespace Germio.Systems {
         /// </summary>
         /// <param name="target_level_id">The target level ID to transition to.</param>
         void handleTransition(string target_level_id) {
+            // Clear stale active zones before entering the new scene (P5-T3)
+            _bus?.ClearActiveZones();
             string? scene_name = findSceneName(level_id: target_level_id);
             // Guard: skip unknown levels and levels with empty scene names
             if (string.IsNullOrEmpty(scene_name)) { return; }
