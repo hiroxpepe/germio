@@ -16,8 +16,9 @@ using ValidationLevel = Germio.Core.ValidationLevel;
 
 namespace Germio.Editor {
     /// <summary>
-    /// Germio Dashboard: a Unity Editor window that loads germio_config.json,
-    /// runs the Validator to surface errors/warnings, and copies the Mermaid
+    /// Germio Dashboard: LLM-Native game progression editor for Unity.
+    /// Loads germio_config.json, runs the Validator to surface V001–V012
+    /// errors/warnings in LLM-readable format, and copies the Mermaid
     /// transition graph to the clipboard via the Grapher.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
