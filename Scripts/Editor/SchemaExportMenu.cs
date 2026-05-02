@@ -12,7 +12,7 @@ namespace Germio.Editor {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     /// <summary>
     /// Unity Editor menu: Tools > Germio > Export Schema.
-    /// Copies the germio_config JSON Schema to the system clipboard for LLM prompt injection.
+    /// Copies the germio JSON Schema to the system clipboard for LLM prompt injection.
     /// </summary>
     public static class SchemaExportMenu {
 

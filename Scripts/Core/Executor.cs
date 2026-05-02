@@ -26,14 +26,14 @@ namespace Germio.Core {
             bool mutated = false;
 
             if (command.set_flag != null) {
-                store.state.flags[command.set_flag.key] = command.set_flag.value;
+                store.scenario.initial_state.flags[command.set_flag.key] = command.set_flag.value;
                 mutated = true;
             }
 
             if (command.update_counter != null) {
                 var uc = command.update_counter;
-                float current = store.state.counters.TryGetValue(uc.key, out float v) ? v : 0f;
-                store.state.counters[uc.key] = uc.op switch {
+                float current = store.scenario.initial_state.counters.TryGetValue(uc.key, out float v) ? v : 0f;
+                store.scenario.initial_state.counters[uc.key] = uc.op switch {
                     CounterOp.Sub => current - uc.delta,
                     CounterOp.Set => uc.delta,
                     _             => current + uc.delta  // CounterOp.Add (default)
@@ -43,12 +43,12 @@ namespace Germio.Core {
 
             if (command.update_inventory != null) {
                 var ui = command.update_inventory;
-                int current = store.state.inventory.TryGetValue(ui.key, out int v) ? v : 0;
+                int current = store.scenario.initial_state.inventory.TryGetValue(ui.key, out int v) ? v : 0;
                 int next    = current + ui.delta;
                 if (next <= 0) {
-                    store.state.inventory.Remove(ui.key);
+                    store.scenario.initial_state.inventory.Remove(ui.key);
                 } else {
-                    store.state.inventory[ui.key] = next;
+                    store.scenario.initial_state.inventory[ui.key] = next;
                 }
                 mutated = true;
             }
@@ -59,7 +59,15 @@ namespace Germio.Core {
             }
 
             if (command.set_persistence != null) {
-                store.state.persistence[command.set_persistence.key] = command.set_persistence.value;
+                store.scenario.initial_state.persistence[command.set_persistence.key] = command.set_persistence.value;
+                mutated = true;
+            }
+
+            if (command.record_event != null) {
+                store.RecordHistoryEvent(
+                    kind: command.record_event.kind,
+                    target_id: command.record_event.target_id
+                );
                 mutated = true;
             }
 

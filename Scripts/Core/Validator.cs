@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Germio.Model;
@@ -14,7 +15,7 @@ namespace Germio.Core {
     public enum ValidationLevel { Error, Warning }
 
     /// <summary>
-    /// Source location within a germio_config JSON document.
+    /// Source location within a germio JSON document.
     /// json_path is the primary LLM-facing field (MCP / prompt injection).
     /// line and column default to 0 when source-position tracking is not available.
     /// </summary>
@@ -22,7 +23,7 @@ namespace Germio.Core {
     public class Location {
 #nullable enable
         /// <summary>JSONPath expression pointing to the offending JSON node.
-        /// Example: "$.worlds[w1].levels[lv1].next[0].condition"</summary>
+        /// Example: "$.root.children[0].next[0].condition"</summary>
         public string json_path       { get; set; } = string.Empty;
 
         /// <summary>1-based source line number. 0 when not available.</summary>
@@ -46,7 +47,7 @@ namespace Germio.Core {
         /// <summary>Severity: Error halts integrity; Warning flags potential data issues. (G17: single name)</summary>
         public ValidationLevel severity { get; }
 
-        /// <summary>Rule identifier: V001 – V012.</summary>
+        /// <summary>Rule identifier: V001 – V026.</summary>
         public string rule_id { get; }
 
         /// <summary>Human-readable short description of the finding.</summary>
@@ -129,19 +130,25 @@ namespace Germio.Core {
     /// Performs static analysis on a <see cref="Scenario"/> and returns a list of
     /// <see cref="ValidationResult"/> items. An empty list means the data is sound.
     ///
-    /// Rules enforced (V001 – V012):
+    /// Rules enforced (V001 – V026):
     ///   V001: condition references a flag key absent from initial state.flags (Warning)
     ///   V002: condition references a counter key absent from initial state.counters (Warning)
     ///   V003: condition references an inventory key absent from initial state.inventory (Warning)
-    ///   V004: duplicate level.id within a world (Error)
-    ///   V005: duplicate rule.id within a level (Error)
-    ///   V006: Next.id references a level that does not exist in the same world (Error)
+    ///   V004: Node.id must be globally unique in Scenario (Error)
+    ///   V005: duplicate rule.id within a node (Error)
+    ///   V006: Next.id references a node that does not exist in the Scenario (Error)
     ///   V007: rule.condition is empty — rule always fires (Warning)
     ///   V008: once=false with set_flag command — infinite-loop risk (Warning)
     ///   V009: condition DSL parse error (Error)
     ///   V010: command has no fields set — rule has no effect (Error)
-    ///   V011: level has no rules and no next entries — dead end (Warning)
+    ///   V011: node has no rules and no next entries — dead end (Warning)
     ///   V012: circular transition chain detected via DFS (Error)
+    ///   V020: Scenario全体で Node.scene がユニーク (空文字列を除く) (Error)
+    ///   V021: 葉ノード (children 空) は scene 必須 (Error)
+    ///   V023: 完全に空のノード (children も scene も空) は禁止 (Error)
+    ///   V024: ノード階層が MAX_NODE_DEPTH を超過 (Error)
+    ///   V025: ノード階層が warning_node_depth を超過 (Warning)
+    ///   V026: 循環参照 (children に祖先 ID を含む) (Error)
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validator {
@@ -159,139 +166,89 @@ namespace Germio.Core {
         public static List<ValidationResult> Validate(Scenario scenario) {
             var results = new List<ValidationResult>();
 
-            // Early-exit rule: worlds must not be null or empty.
-            if (scenario.worlds == null || scenario.worlds.Count == 0) {
+            // Early-exit rule: root must not be null.
+            if (scenario.root == null) {
                 results.Add(new ValidationResult(
                     level:          ValidationLevel.Error,
-                    rule_id:        "V006",  // covered as "worlds empty" structural error
-                    message:        "worlds list is empty.",
-                    cause_detail:   "The scenario has no worlds defined, so no levels can be loaded.",
-                    fix_suggestion: "Add at least one world with one level to the worlds array."));
+                    rule_id:        "V000",
+                    message:        "root node is null.",
+                    cause_detail:   "The scenario has no root node defined.",
+                    fix_suggestion: "Add a root node to the scenario."));
                 return results;
             }
 
-            foreach (var world in scenario.worlds) {
-                // Build level-id → level map for quick lookup.
-                var level_map = new Dictionary<string, Level>();
-                var level_ids_seen = new HashSet<string>();
+            // Collect all nodes for uniqueness checks and circular reference detection.
+            var all_nodes = new List<Node>();
+            collectNodesRecursive(node: scenario.root, nodes: all_nodes);
 
-                // V004: duplicate level.id
-                foreach (var level in world.levels) {
-                    if (!level_ids_seen.Add(level.id)) {
+            // V004: Node.id must be globally unique
+            var node_ids_seen = new HashSet<string>();
+            var node_map = new Dictionary<string, Node>();
+            foreach (var node in all_nodes) {
+                if (!node_ids_seen.Add(node.id)) {
+                    results.Add(new ValidationResult(
+                        level:          ValidationLevel.Error,
+                        rule_id:        "V004",
+                        message:        $"Duplicate node.id '{node.id}' in scenario.",
+                        cause_detail:   $"Two nodes share the same id '{node.id}'. Node IDs must be globally unique within the scenario.",
+                        fix_suggestion: $"Rename one of the duplicate nodes to a unique id.",
+                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                } else {
+                    node_map[node.id] = node;
+                }
+            }
+
+            // V020: Node.scene must be unique (excluding empty strings).
+            var scene_to_node = new Dictionary<string, Node>();
+            foreach (var node in all_nodes) {
+                if (!string.IsNullOrEmpty(node.scene)) {
+                    if (scene_to_node.TryGetValue(node.scene, out var other)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Error,
-                            rule_id:        "V004",
-                            message:        $"Duplicate level.id '{level.id}' in world '{world.id}'.",
-                            cause_detail:   $"Two levels share the same id '{level.id}'. IDs must be unique within a world.",
-                            fix_suggestion: $"Rename one of the duplicate levels to a unique id.",
-                            location:       new Location { json_path = $"$.worlds[{world.id}].levels" }));
+                            rule_id:        "V020",
+                            message:        $"Duplicate node.scene '{node.scene}' (node ids: '{other.id}' and '{node.id}').",
+                            cause_detail:   $"Two nodes reference the same scene '{node.scene}'. Scene names must be unique.",
+                            fix_suggestion: $"Rename one of the nodes' scene or update the node id.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].scene" }));
                     } else {
-                        level_map[level.id] = level;
-                    }
-                }
-
-                // V012: circular transition detection via DFS
-                detectCycles(world: world, level_map: level_map, results: results);
-
-                foreach (var level in world.levels) {
-
-                    // V011: dead end — no rules and no next
-                    if ((level.rules == null || level.rules.Count == 0) &&
-                        (level.next  == null || level.next.Count  == 0)) {
-                        results.Add(new ValidationResult(
-                            level:          ValidationLevel.Warning,
-                            rule_id:        "V011",
-                            message:        $"Level '{level.id}' in world '{world.id}' has no rules and no next entries (dead end).",
-                            cause_detail:   "The player can arrive at this level but nothing will happen and they cannot progress.",
-                            fix_suggestion: "Add at least one next entry or a rule with a request_transition command.",
-                            location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}]" }));
-                    }
-
-                    // Validate Next entries
-                    if (level.next != null) {
-                        for (int n_idx = 0; n_idx < level.next.Count; n_idx++) {
-                            var next = level.next[n_idx];
-                            // V006: dangling next.id
-                            if (!level_map.ContainsKey(next.id)) {
-                                results.Add(new ValidationResult(
-                                    level:          ValidationLevel.Error,
-                                    rule_id:        "V006",
-                                    message:        $"Level '{level.id}' → next.id '{next.id}' does not exist in world '{world.id}'.",
-                                    cause_detail:   $"No level with id '{next.id}' was found in world '{world.id}'.{suggestSimilar(next.id, level_map.Keys)}",
-                                    fix_suggestion: $"Add a level with id '{next.id}' to world '{world.id}', or correct the typo.",
-                                    location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}].next[{n_idx}].id" }));
-                            }
-                            // V009 / V001 / V002 / V003: validate condition
-                            validateCondition(
-                                condition: next.condition, state: scenario.state,
-                                world_id: world.id, level_id: level.id,
-                                json_path: $"$.worlds[{world.id}].levels[{level.id}].next[{n_idx}].condition",
-                                results: results);
-                        }
-                    }
-
-                    // Validate Rule entries
-                    if (level.rules != null) {
-                        var rule_ids_seen = new HashSet<string>();
-                        foreach (var rule in level.rules) {
-                            // V005: duplicate rule.id
-                            if (!rule_ids_seen.Add(rule.id)) {
-                                results.Add(new ValidationResult(
-                                    level:          ValidationLevel.Error,
-                                    rule_id:        "V005",
-                                    message:        $"Duplicate rule.id '{rule.id}' in level '{level.id}'.",
-                                    cause_detail:   $"Two rules in level '{level.id}' share id '{rule.id}'. Rule IDs must be unique within a level.",
-                                    fix_suggestion: $"Rename one of the duplicate rules to a unique id.",
-                                    location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}].rules" }));
-                            }
-
-                            // V007: empty condition (always fires)
-                            if (string.IsNullOrWhiteSpace(rule.condition)) {
-                                results.Add(new ValidationResult(
-                                    level:          ValidationLevel.Warning,
-                                    rule_id:        "V007",
-                                    message:        $"Rule '{rule.id}' in level '{level.id}' has an empty condition — it fires unconditionally.",
-                                    cause_detail:   "A rule with no condition fires every time its trigger is received, regardless of state.",
-                                    fix_suggestion: "Add a condition if the rule should only fire under specific circumstances.",
-                                    location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}].rules[{rule.id}].condition" }));
-                            } else {
-                                // V009 / V001 / V002 / V003
-                                validateCondition(
-                                    condition: rule.condition, state: scenario.state,
-                                    world_id: world.id, level_id: level.id,
-                                    json_path: $"$.worlds[{world.id}].levels[{level.id}].rules[{rule.id}].condition",
-                                    results: results);
-                            }
-
-                            // V008: once=false with set_flag
-                            if (!rule.once && rule.command?.set_flag != null) {
-                                results.Add(new ValidationResult(
-                                    level:          ValidationLevel.Warning,
-                                    rule_id:        "V008",
-                                    message:        $"Rule '{rule.id}' in level '{level.id}' has once=false with a set_flag command — infinite-loop risk.",
-                                    cause_detail:   "Setting a flag repeatedly without a once guard can cause the rule to fire every tick.",
-                                    fix_suggestion: "Set once=true unless you intentionally want the flag set on every trigger.",
-                                    location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}].rules[{rule.id}]" }));
-                            }
-
-                            // V010: command has no effect
-                            if (rule.command == null ||
-                                (rule.command.set_flag        == null &&
-                                 rule.command.update_counter  == null &&
-                                 rule.command.update_inventory == null &&
-                                 rule.command.request_transition == null)) {
-                                results.Add(new ValidationResult(
-                                    level:          ValidationLevel.Error,
-                                    rule_id:        "V010",
-                                    message:        $"Rule '{rule.id}' in level '{level.id}' has an empty command — it has no effect.",
-                                    cause_detail:   "The command object has no fields set (set_flag, update_counter, update_inventory, request_transition are all null).",
-                                    fix_suggestion: "Add at least one command field to give the rule an effect.",
-                                    location:       new Location { json_path = $"$.worlds[{world.id}].levels[{level.id}].rules[{rule.id}].command" }));
-                            }
-                        }
+                        scene_to_node[node.scene] = node;
                     }
                 }
             }
+
+            // V021 & V023: Leaf nodes must have a scene, and no node should be completely empty.
+            foreach (var node in all_nodes) {
+                bool is_leaf = node.children == null || node.children.Count == 0;
+                bool has_scene = !string.IsNullOrEmpty(node.scene);
+
+                if (is_leaf && !has_scene) {
+                    results.Add(new ValidationResult(
+                        level:          ValidationLevel.Error,
+                        rule_id:        "V021",
+                        message:        $"Leaf node '{node.id}' has no scene defined.",
+                        cause_detail:   "A leaf node (no children) must correspond to a Unity scene.",
+                        fix_suggestion: $"Add a scene name to node '{node.id}'.",
+                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].scene" }));
+                }
+            }
+
+            // V024 & V025: Check node depth constraints.
+            checkNodeDepthConstraints(node: scenario.root, depth: 0, results: results);
+
+            // V026: Circular reference detection (children referencing ancestors).
+            checkCircularReferences(node: scenario.root, ancestors: new List<string>(), results: results);
+
+            // V012: Circular transition chain detection (via next[]).
+            checkCircularTransitions(
+                node_map: node_map,
+                results: results);
+
+            // Traverse tree and validate each node.
+            validateNodeRecursive(
+                node: scenario.root,
+                node_map: node_map,
+                state: scenario.initial_state,
+                results: results);
 
             return results;
         }
@@ -300,10 +257,142 @@ namespace Germio.Core {
         // private static Methods [verb]
 
         /// <summary>
+        /// Recursively collects all nodes from the scenario tree.
+        /// </summary>
+        static void collectNodesRecursive(Node node, List<Node> nodes) {
+            nodes.Add(item: node);
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    collectNodesRecursive(node: child, nodes: nodes);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Recursively validates a node and all its descendants.
+        /// </summary>
+        static void validateNodeRecursive(
+            Node node, Dictionary<string, Node> node_map, State state,
+            List<ValidationResult> results) {
+
+            // V011: dead end — no rules and no next
+            if ((node.rules == null || node.rules.Count == 0) &&
+                (node.next == null || node.next.Count == 0)) {
+                if (node.children == null || node.children.Count == 0) {
+                    // This is a leaf with no rules and no transitions
+                    results.Add(new ValidationResult(
+                        level:          ValidationLevel.Warning,
+                        rule_id:        "V011",
+                        message:        $"Node '{node.id}' is a dead end (no rules, no next transitions, no children).",
+                        cause_detail:   "The player can arrive at this node but nothing will happen and they cannot progress.",
+                        fix_suggestion: "Add at least one next entry or a rule with a request_transition command.",
+                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                }
+            }
+
+            // Validate Next entries
+            if (node.next != null) {
+                for (int n_idx = 0; n_idx < node.next.Count; n_idx++) {
+                    var next = node.next[n_idx];
+                    // V006: dangling next.id
+                    if (!node_map.ContainsKey(next.id)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Error,
+                            rule_id:        "V006",
+                            message:        $"Node '{node.id}' → next.id '{next.id}' does not exist in scenario.",
+                            cause_detail:   $"No node with id '{next.id}' was found.{suggestSimilar(next.id, node_map.Keys)}",
+                            fix_suggestion: $"Add a node with id '{next.id}', or correct the typo.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].next[{n_idx}].id" }));
+                    }
+                    // V009 / V001 / V002 / V003: validate condition
+                    validateCondition(
+                        condition: next.condition, state: state,
+                        node_id: node.id,
+                        json_path: $"$.root..[?(@.id='{node.id}')].next[{n_idx}].condition",
+                        results: results);
+                }
+            }
+
+            // Validate Rule entries
+            if (node.rules != null) {
+                var rule_ids_seen = new HashSet<string>();
+                foreach (var rule in node.rules) {
+                    // V005: duplicate rule.id
+                    if (!rule_ids_seen.Add(rule.id)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Error,
+                            rule_id:        "V005",
+                            message:        $"Duplicate rule.id '{rule.id}' in node '{node.id}'.",
+                            cause_detail:   $"Two rules in node '{node.id}' share id '{rule.id}'. Rule IDs must be unique within a node.",
+                            fix_suggestion: $"Rename one of the duplicate rules to a unique id.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules" }));
+                    }
+
+                    // V007: empty condition (always fires)
+                    if (string.IsNullOrWhiteSpace(rule.condition)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Warning,
+                            rule_id:        "V007",
+                            message:        $"Rule '{rule.id}' in node '{node.id}' has an empty condition — it fires unconditionally.",
+                            cause_detail:   "A rule with no condition fires every time its trigger is received, regardless of state.",
+                            fix_suggestion: "Add a condition if the rule should only fire under specific circumstances.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].condition" }));
+                    } else {
+                        // V009 / V001 / V002 / V003
+                        validateCondition(
+                            condition: rule.condition, state: state,
+                            node_id: node.id,
+                            json_path: $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].condition",
+                            results: results);
+                    }
+
+                    // V008: once=false with set_flag
+                    if (!rule.once && rule.command?.set_flag != null) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Warning,
+                            rule_id:        "V008",
+                            message:        $"Rule '{rule.id}' in node '{node.id}' has once=false with a set_flag command — infinite-loop risk.",
+                            cause_detail:   "Setting a flag repeatedly without a once guard can cause the rule to fire every tick.",
+                            fix_suggestion: "Set once=true unless you intentionally want the flag set on every trigger.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}]" }));
+                    }
+
+                    // V010: command has no effect
+                    if (rule.command == null ||
+                        (rule.command.set_flag        == null &&
+                         rule.command.update_counter  == null &&
+                         rule.command.update_inventory == null &&
+                         rule.command.request_transition == null &&
+                         rule.command.set_persistence == null &&
+                         rule.command.record_event == null)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Error,
+                            rule_id:        "V010",
+                            message:        $"Rule '{rule.id}' in node '{node.id}' has an empty command — it has no effect.",
+                            cause_detail:   "The command object has no fields set.",
+                            fix_suggestion: "Add at least one command field to give the rule an effect.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command" }));
+                    }
+                }
+            }
+
+            // Recursively validate child nodes
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    validateNodeRecursive(
+                        node: child,
+                        node_map: node_map,
+                        state: state,
+                        results: results);
+                }
+            }
+        }
+
+        /// <summary>
         /// Validates a condition string: V009 (parse error), V001/V002/V003 (undefined keys).
         /// </summary>
         static void validateCondition(
-            string? condition, State state, string world_id, string level_id, string json_path,
+            string? condition, State state, string node_id, string json_path,
             List<ValidationResult> results) {
 
             if (string.IsNullOrWhiteSpace(condition)) { return; }
@@ -319,7 +408,7 @@ namespace Germio.Core {
                     results.Add(new ValidationResult(
                         level:          ValidationLevel.Error,
                         rule_id:        "V009",
-                        message:        $"Level '{level_id}' → {json_path} '{condition}': {semantic_err}",
+                        message:        $"Node '{node_id}' → {json_path} '{condition}': {semantic_err}",
                         cause_detail:   semantic_err,
                         fix_suggestion: "Use only 'flags', 'counters', or 'inventory' as prefixes. Counters require comparison operators. Flags support == and != only. Inventory values are integers.",
                         location:       new Location { json_path = json_path }));
@@ -329,7 +418,7 @@ namespace Germio.Core {
                 results.Add(new ValidationResult(
                     level:          ValidationLevel.Error,
                     rule_id:        "V009",
-                    message:        $"Level '{level_id}' → {json_path} '{condition}' has a DSL syntax error: {ex.Message}",
+                    message:        $"Node '{node_id}' → {json_path} '{condition}' has a DSL syntax error: {ex.Message}",
                     cause_detail:   $"The condition could not be parsed. Column: {ex.Column}.",
                     fix_suggestion: "Check the condition DSL syntax. Valid forms: 'flags.KEY', 'counters.KEY >= N', 'inventory.KEY', combined with &&, ||, !.",
                     location:       new Location { json_path = json_path, column = ex.Column }));
@@ -339,7 +428,7 @@ namespace Germio.Core {
             // V001/V002/V003: check for undefined keys (walk the token stream directly)
             checkUndefinedKeyWarnings(
                 condition: condition, state: state,
-                world_id: world_id, level_id: level_id, json_path: json_path,
+                node_id: node_id, json_path: json_path,
                 results: results);
         }
 
@@ -347,7 +436,7 @@ namespace Germio.Core {
         /// Walks the token stream to find all accessor nodes and warn on undefined keys.
         /// </summary>
         static void checkUndefinedKeyWarnings(
-            string condition, State state, string world_id, string level_id, string json_path,
+            string condition, State state, string node_id, string json_path,
             List<ValidationResult> results) {
 
             List<Token> tokens;
@@ -366,25 +455,25 @@ namespace Germio.Core {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
                             rule_id:        "V001",
-                            message:        $"Level '{level_id}' → {json_path}: flag key '{key}' is not defined in initial state.flags.",
-                            cause_detail:   $"The condition references flags.{key} but this key is absent from scenario.state.flags.{suggestSimilar(key, state.flags.Keys)}",
-                            fix_suggestion: $"Add '\"{ key }\": false' to scenario.state.flags, or fix the key name.",
+                            message:        $"Node '{node_id}' → {json_path}: flag key '{key}' is not defined in initial state.flags.",
+                            cause_detail:   $"The condition references flags.{key} but this key is absent from scenario.initial_state.flags.{suggestSimilar(key, state.flags.Keys)}",
+                            fix_suggestion: $"Add '\"{ key }\": false' to scenario.initial_state.flags, or fix the key name.",
                             location:       new Location { json_path = json_path }));
                     } else if (prefix == "counters" && !state.counters.ContainsKey(key)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
                             rule_id:        "V002",
-                            message:        $"Level '{level_id}' → {json_path}: counter key '{key}' is not defined in initial state.counters.",
-                            cause_detail:   $"The condition references counters.{key} but this key is absent from scenario.state.counters.{suggestSimilar(key, state.counters.Keys)}",
-                            fix_suggestion: $"Add '\"{ key }\": 0' to scenario.state.counters, or fix the key name.",
+                            message:        $"Node '{node_id}' → {json_path}: counter key '{key}' is not defined in initial state.counters.",
+                            cause_detail:   $"The condition references counters.{key} but this key is absent from scenario.initial_state.counters.{suggestSimilar(key, state.counters.Keys)}",
+                            fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.counters, or fix the key name.",
                             location:       new Location { json_path = json_path }));
                     } else if (prefix == "inventory" && !state.inventory.ContainsKey(key)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
                             rule_id:        "V003",
-                            message:        $"Level '{level_id}' → {json_path}: inventory key '{key}' is not defined in initial state.inventory.",
-                            cause_detail:   $"The condition references inventory.{key} but this key is absent from scenario.state.inventory.{suggestSimilar(key, state.inventory.Keys)}",
-                            fix_suggestion: $"Add '\"{ key }\": 0' to scenario.state.inventory, or fix the key name.",
+                            message:        $"Node '{node_id}' → {json_path}: inventory key '{key}' is not defined in initial state.inventory.",
+                            cause_detail:   $"The condition references inventory.{key} but this key is absent from scenario.initial_state.inventory.{suggestSimilar(key, state.inventory.Keys)}",
+                            fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.inventory, or fix the key name.",
                             location:       new Location { json_path = json_path }));
                     }
                     i += 2;  // skip past the dot and key we just processed
@@ -413,8 +502,8 @@ namespace Germio.Core {
                 bool is_rhs = (i > 0) && isComparisonOpKind(kind: tokens[i-1].kind);
 
                 // Unknown prefix
-                if (prefix != "flags" && prefix != "counters" && prefix != "inventory") {
-                    return $"Unknown condition prefix '{prefix}'. Valid prefixes are: flags, counters, inventory.";
+                if (prefix != "flags" && prefix != "counters" && prefix != "inventory" && prefix != "history" && prefix != "now") {
+                    return $"Unknown condition prefix '{prefix}'. Valid prefixes are: flags, counters, inventory, history, now.";
                 }
 
                 // counters.KEY used standalone (no comparison op before or after)
@@ -454,66 +543,148 @@ namespace Germio.Core {
             kind == TokenKind.GtEq || kind == TokenKind.LtEq;
 
         /// <summary>
-        /// V012: DFS cycle detection across Next transitions.
-        /// One ValidationResult per detected cycle.
+        /// V024 & V025: Check node depth constraints.
         /// </summary>
-        static void detectCycles(
-            World world, Dictionary<string, Level> level_map,
-            List<ValidationResult> results) {
+        static void checkNodeDepthConstraints(
+            Node node, int depth, List<ValidationResult> results) {
 
-            var visited  = new HashSet<string>();
-            var in_stack = new HashSet<string>();
+            if (depth > Env.MAX_NODE_DEPTH) {
+                results.Add(new ValidationResult(
+                    level:          ValidationLevel.Error,
+                    rule_id:        "V024",
+                    message:        $"Node '{node.id}' at depth {depth} exceeds MAX_NODE_DEPTH ({Env.MAX_NODE_DEPTH}).",
+                    cause_detail:   $"The node tree is deeper than {Env.MAX_NODE_DEPTH} levels.",
+                    fix_suggestion: "Restructure the node hierarchy to reduce depth, or increase MAX_NODE_DEPTH if appropriate.",
+                    location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+            } else if (depth > Env.warning_node_depth) {
+                results.Add(new ValidationResult(
+                    level:          ValidationLevel.Warning,
+                    rule_id:        "V025",
+                    message:        $"Node '{node.id}' at depth {depth} exceeds warning_node_depth ({Env.warning_node_depth}).",
+                    cause_detail:   $"The node tree reaches {depth} levels, approaching the soft limit of {Env.warning_node_depth}.",
+                    fix_suggestion: "Consider restructuring for better performance, or increase warning_node_depth if intentional.",
+                    location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+            }
 
-            foreach (var level in world.levels) {
-                if (!visited.Contains(level.id)) {
-                    var path = new List<string>();
-                    dfsCycles(
-                        level_id: level.id, world: world,
-                        level_map: level_map, visited: visited,
-                        in_stack: in_stack, path: path,
-                        results: results);
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    checkNodeDepthConstraints(node: child, depth: depth + 1, results: results);
                 }
             }
         }
 
-        static void dfsCycles(
-            string level_id, World world, Dictionary<string, Level> level_map,
-            HashSet<string> visited, HashSet<string> in_stack,
-            List<string> path, List<ValidationResult> results) {
+        /// <summary>
+        /// V026: Circular reference detection (children referencing ancestors).
+        /// </summary>
+        static void checkCircularReferences(
+            Node node, List<string> ancestors, List<ValidationResult> results) {
 
-            visited.Add(level_id);
-            in_stack.Add(level_id);
-            path.Add(level_id);
-
-            if (level_map.TryGetValue(level_id, out var level) && level.next != null) {
-                foreach (var next in level.next) {
-                    if (!level_map.ContainsKey(next.id)) { continue; }  // dangling — V006 handles it
-
-                    if (!visited.Contains(next.id)) {
-                        dfsCycles(
-                            level_id: next.id, world: world,
-                            level_map: level_map, visited: visited,
-                            in_stack: in_stack, path: path,
-                            results: results);
-                    } else if (in_stack.Contains(next.id)) {
-                        // Found a cycle
-                        int cycle_start = path.IndexOf(next.id);
-                        var cycle_path  = path.GetRange(cycle_start, path.Count - cycle_start);
-                        cycle_path.Add(next.id);
-                        string path_str = string.Join(" → ", cycle_path);
+            // Check if any child id matches an ancestor id
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    if (ancestors.Contains(child.id)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Error,
-                            rule_id:        "V012",
-                            message:        $"Circular transition detected in world '{world.id}': {path_str}.",
-                            cause_detail:   $"The transition chain forms a cycle: {path_str}. This will cause an infinite loop.",
-                            fix_suggestion: "Break the cycle by removing one of the transition entries or adding a condition that stops firing.",
-                            location:       new Location { json_path = $"$.worlds[{world.id}].levels[{next.id}].next" }));
+                            rule_id:        "V026",
+                            message:        $"Circular reference detected: node '{child.id}' references ancestor.",
+                            cause_detail:   $"Node '{child.id}' appears in the children of node '{node.id}', but '{child.id}' is an ancestor of '{node.id}'.",
+                            fix_suggestion: $"Remove the child node '{child.id}' from node '{node.id}', or restructure the hierarchy.",
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].children" }));
                     }
                 }
             }
 
-            in_stack.Remove(level_id);
-            path.RemoveAt(path.Count - 1);
+            // Traverse deeper
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    var new_ancestors = new List<string>(ancestors);
+                    new_ancestors.Add(node.id);
+                    checkCircularReferences(node: child, ancestors: new_ancestors, results: results);
+                }
+            }
+        }
+
+        /// <summary>
+        /// V012: Circular transition chain detection via DFS.
+        /// Detects cycles in the next[] transition graph.
+        /// </summary>
+        static void checkCircularTransitions(
+            Dictionary<string, Node> node_map,
+            List<ValidationResult> results) {
+
+            var visited = new HashSet<string>();
+            var rec_stack = new HashSet<string>();
+
+            foreach (var node_id in node_map.Keys) {
+                if (!visited.Contains(node_id)) {
+                    if (hasCycle(
+                        current_id: node_id,
+                        node_map: node_map,
+                        visited: visited,
+                        rec_stack: rec_stack,
+                        path: new List<string>(),
+                        results: results)) {
+                        // Cycle found and reported
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// DFS helper: detects if there's a cycle from current_id through next[] transitions.
+        /// Returns true if cycle is found, false otherwise.
+        /// </summary>
+        static bool hasCycle(
+            string current_id,
+            Dictionary<string, Node> node_map,
+            HashSet<string> visited,
+            HashSet<string> rec_stack,
+            List<string> path,
+            List<ValidationResult> results) {
+
+            visited.Add(current_id);
+            rec_stack.Add(current_id);
+            path.Add(current_id);
+
+            if (node_map.ContainsKey(current_id)) {
+                var node = node_map[current_id];
+                if (node.next != null) {
+                    foreach (var next_entry in node.next) {
+                        if (!node_map.ContainsKey(next_entry.id)) {
+                            // V006 already caught this
+                            continue;
+                        }
+
+                        if (!visited.Contains(next_entry.id)) {
+                            if (hasCycle(
+                                current_id: next_entry.id,
+                                node_map: node_map,
+                                visited: visited,
+                                rec_stack: rec_stack,
+                                path: path,
+                                results: results)) {
+                                return true;
+                            }
+                        } else if (rec_stack.Contains(next_entry.id)) {
+                            // Cycle detected
+                            int cycle_start = path.IndexOf(next_entry.id);
+                            string cycle_path = string.Join(" → ", path.Skip(cycle_start).Append(next_entry.id));
+
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V012",
+                                message:        $"Circular transition chain detected: {cycle_path}",
+                                cause_detail:   $"The transition chain forms a loop: {cycle_path}. The player can get stuck in an infinite loop between these nodes.",
+                                fix_suggestion: $"Remove or modify one of the next[] entries to break the cycle, or add a condition to ensure the cycle is eventually exited.",
+                                location:       new Location { json_path = $"$.root..[?(@.id='{current_id}')].next[?(@.id='{next_entry.id}')]" }));
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            rec_stack.Remove(current_id);
+            return false;
         }
 
         /// <summary>

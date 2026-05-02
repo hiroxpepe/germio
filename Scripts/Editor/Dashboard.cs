@@ -17,7 +17,7 @@ using ValidationLevel = Germio.Core.ValidationLevel;
 namespace Germio.Editor {
     /// <summary>
     /// Germio Dashboard: LLM-Native game progression editor for Unity.
-    /// Loads germio_config.json, runs the Validator to surface V001–V012
+    /// Loads germio.json, runs the Validator to surface V001–V012
     /// errors/warnings in LLM-readable format, and copies the Mermaid
     /// transition graph to the clipboard via the Grapher.
     /// </summary>
@@ -34,7 +34,7 @@ namespace Germio.Editor {
         string                 _status_message  = string.Empty;
         bool                   _is_config_loaded = false;
 
-        static readonly string CONFIG_FILE = "germio_config.json";
+        static readonly string CONFIG_FILE = "germio.json";
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // MenuItem
@@ -83,7 +83,7 @@ namespace Germio.Editor {
 
         /// <summary>
         /// Renders the "Load Config" button.
-        /// Reads germio_config.json from StreamingAssets and deserializes it into Scenario.
+        /// Reads germio.json from StreamingAssets and deserializes it into Scenario.
         /// </summary>
         void drawLoadButton() {
             EditorGUILayout.Space(4);
@@ -134,7 +134,7 @@ namespace Germio.Editor {
         }
 
         /// <summary>
-        /// Reads germio_config.json from StreamingAssets, parses it into Scenario,
+        /// Reads germio.json from StreamingAssets, parses it into Scenario,
         /// then runs the Validator and caches the results.
         /// </summary>
         void loadConfig() {
@@ -199,8 +199,8 @@ namespace Germio.Editor {
 
             try {
                 await Storage.SaveAsync(data: _current_scenario, encrypt: true, base_path: Application.streamingAssetsPath);
-                _status_message = "germio_config.dat exported.";
-                Debug.Log("[Germio Dashboard] germio_config.dat exported.");
+                _status_message = "germio.dat exported.";
+                Debug.Log("[Germio Dashboard] germio.dat exported.");
             }
             catch (Exception ex) {
                 _status_message = $"Export failed: {ex.Message}";
