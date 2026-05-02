@@ -81,7 +81,7 @@ namespace Germio.Triggers {
 
             /// <summary>
             /// When the player collides with this object, emit "vol_home" signal.
-            /// Store resolves the transition from germio_config.json.
+            /// Store resolves the transition from germio.json.
             /// </summary>
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x =>

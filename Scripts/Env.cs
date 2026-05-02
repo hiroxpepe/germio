@@ -193,9 +193,20 @@ namespace Germio {
         public const string COLOR_WHITE = "#FFFFFF";
         /// <summary>
         /// Gets the PlayerPrefs key used to persist current_scene across scene reloads.
-        /// Required because StateManager re-reads germio_config.json on each scene load,
+        /// Required because StateManager re-reads germio.json on each scene load,
         /// which would reset current_scene to the JSON's initial value.
         /// </summary>
         public const string CURRENT_SCENE_KEY = "germio_current_scene";
+
+        /// <summary>
+        /// Maximum node depth in the scenario tree (hard limit).
+        /// </summary>
+        public const int MAX_NODE_DEPTH = 10;
+
+        /// <summary>
+        /// Warning threshold for node depth in the scenario tree.
+        /// Can be configured. Default: 5 layers.
+        /// </summary>
+        public static int warning_node_depth = 5;
     }
 }

@@ -20,7 +20,7 @@ namespace Germio.Systems {
     /// <summary>
     /// Manages the game system, including levels, home interactions, and the JSON-driven state machine.
     /// Initialises <see cref="Store"/>, <see cref="Bus"/>,
-    /// and <see cref="SceneLoader"/> from <c>StreamingAssets/germio_config.json</c>.
+    /// and <see cref="SceneLoader"/> from <c>StreamingAssets/germio.json</c>.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class GameSystem : MonoBehaviour {
@@ -101,9 +101,9 @@ namespace Germio.Systems {
             _scene_loader = new SceneLoader(
                 store:     _store,
                 load_scene: name => {
-                    // Bridge: persist current_scene to PlayerPrefs so it survives the scene reload.
+                    // Bridge: persist current_node to PlayerPrefs so it survives the scene reload.
                     // When the new scene's GameSystem reads InitializeAsync, it restores this value.
-                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _store.state.current_scene);
+                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _store.scenario.initial_state.current_node);
                     PlayerPrefs.Save();
                     // Reset time scale so the next scene does not start frozen.
                     // Level.cs's OnCameBackHome handler sets timeScale=0f; this undoes that
@@ -162,7 +162,7 @@ namespace Germio.Systems {
         // Start is called before the first frame update.
         void Start() {
             /// <summary>
-            /// Loads germio_config.json asynchronously from StreamingAssets.
+            /// Loads germio.json asynchronously from StreamingAssets.
             /// The coroutine waits until the Task completes so the JSON state is ready
             /// before any trigger fires.
             /// </summary>
@@ -185,14 +185,14 @@ namespace Germio.Systems {
             var task = _store.InitializeAsync(Application.streamingAssetsPath);
             while (!task.IsCompleted) { yield return null; }
             if (task.IsFaulted) {
-                Debug.LogError($"[Germio] Failed to load germio_config.json: {task.Exception}");
+                Debug.LogError($"[Germio] Failed to load germio.json: {task.Exception}");
             }
-            // Bridge: restore current_scene from PlayerPrefs if a prior scene set it.
+            // Bridge: restore current_node from PlayerPrefs if a prior scene set it.
             // This fixes the "die in Level 2 → restart Level 1" bug caused by the
-            // JSON on disk still having the initial current_scene after LoadScene.
+            // JSON on disk still having the initial current_node after LoadScene.
             string bridged = PlayerPrefs.GetString(key: CURRENT_SCENE_KEY, defaultValue: string.Empty);
             if (!string.IsNullOrEmpty(bridged)) {
-                _store.state.current_scene = bridged;
+                _store.scenario.initial_state.current_node = bridged;
             }
         }
 

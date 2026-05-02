@@ -1,4 +1,3 @@
-
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the GPL v2.0 license. See LICENSE text in the project root for license information.
 
@@ -14,138 +13,112 @@ namespace UnityEngine.Scripting {
 #endif
 
 namespace Germio.Model {
+
+    ///////////////////////////////////////////////////////////////////////
+    // Enums
+
     /// <summary>
     /// Operation type for updating a numeric counter.
     /// Serialized as lowercase string in JSON ("add", "sub", "set").
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
+    [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
     public enum CounterOp { Add, Sub, Set }
 
+    ///////////////////////////////////////////////////////////////////////
+    // Static-side classes (LLM-edited, persisted in germio.json)
+
     /// <summary>
-    /// Root data class for Germio runtime data.
-    /// Contains the overall game state and all abstract worlds.
+    /// Root data class for Germio static configuration.
+    /// Contains the scenario tree structure and initial state.
+    /// Loaded from germio.json (development) or germio.dat (production, AES-encrypted).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Scenario {
 #nullable enable
-        /// <summary>JSON schema version. Used by Migrator for V0→V1 migration.</summary>
+        /// <summary>JSON schema version. Stays at 1 (schema not yet published).</summary>
         public int schema_version { get; set; } = 1;
 
-        /// <summary>The current runtime state (flags, counters, inventory).</summary>
-        public State state { get; set; } = new State();
+        /// <summary>The initial state at game start.</summary>
+        public State initial_state { get; set; } = new State();
 
-        /// <summary>List of all abstract worlds in the game.</summary>
-        public List<World> worlds { get; set; } = new List<World>();
+        /// <summary>The root node of the scenario tree.</summary>
+        public Node root { get; set; } = new Node();
     }
 
     /// <summary>
-    /// Represents the player's runtime state.
-    /// All quantifiable state values are expressed as named counters — no hardcoded numeric fields.
+    /// A node in the scenario graph. Represents a Unity scene or a logical grouping.
+    /// Recursive structure: a node may contain child nodes.
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
-    public class State {
+    public class Node {
 #nullable enable
-        /// <summary>Boolean state flags. (e.g., flags["zone_a_cleared"] = true)</summary>
-        public Dictionary<string, bool> flags { get; set; } = new Dictionary<string, bool>();
-
-        /// <summary>
-        /// Generic numeric counters for any quantifiable state.
-        /// (e.g., counters["score"] = 100f, counters["elapsed_time"] = 0f, counters["depth"] = 3f)
-        /// </summary>
-        public Dictionary<string, float> counters { get; set; } = new Dictionary<string, float>();
-
-        /// <summary>Item inventory with quantity. (e.g., inventory["key_01"] = 1)</summary>
-        public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
-
-        /// <summary>ID of the currently active scene/level.</summary>
-        public string current_scene { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Identifies the currently active decision-making agent in a sequential state machine.
-        /// (e.g., player_a / player_b in a two-agent sequence; empty if not applicable)
-        /// </summary>
-        public string current_team { get; set; } = string.Empty;
-
-        /// <summary>
-        /// G2: IDs of rules that have already fired with once=true, in dispatch order.
-        /// List (not HashSet) to guarantee insertion order (G5).
-        /// Persisted with save data so one-shot rules survive save/load cycles.
-        /// </summary>
-        public List<string> fired_rules { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Arbitrary key-value persistence store.
-        /// Survives scene transitions and save/load cycles.
-        /// Values are always strings for predictable JSON round-trip behaviour (G9 LLM-First).
-        /// (e.g., persistence["save_slot"] = "slot_2", persistence["coins"] = "100")
-        /// </summary>
-        public Dictionary<string, string> persistence { get; set; } = new Dictionary<string, string>();
-    }
-
-    /// <summary>
-    /// Represents a world grouping multiple abstract levels.
-    /// </summary>
-    [UnityEngine.Scripting.Preserve]
-    public class World {
+        /// <summary>Unique identifier within the entire Scenario.</summary>
         public string id { get; set; } = string.Empty;
-        public string name { get; set; } = string.Empty;
-        public string scene { get; set; } = string.Empty;
-        public List<Level> levels { get; set; } = new List<Level>();
-    }
 
-    /// <summary>
-    /// Represents a level (or node) within a world.
-    /// </summary>
-    [UnityEngine.Scripting.Preserve]
-    public class Level {
-        public string id { get; set; } = string.Empty;
+        /// <summary>Human-readable name (display purposes).</summary>
         public string name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Free-form kind label. Conventional values: "world", "region", "title",
+        /// "select", "setting", "level", "map", "shop", "boss", "bonus", "ending".
+        /// Custom values are allowed.
+        /// </summary>
+        public string kind { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Unity Scene name (used by SceneManager.LoadScene).
+        /// Empty for internal nodes that don't correspond to a Unity Scene.
+        /// </summary>
         public string scene { get; set; } = string.Empty;
+
+        /// <summary>Child nodes. Empty list = leaf node.</summary>
+        public List<Node> children { get; set; } = new List<Node>();
+
+        /// <summary>Conditional transitions to other nodes.</summary>
         public List<Next> next { get; set; } = new List<Next>();
+
+        /// <summary>Rules triggered within this node.</summary>
         public List<Rule> rules { get; set; } = new List<Rule>();
     }
 
     /// <summary>
-    /// Represents a conditional transition to another level.
+    /// Represents a conditional transition to another node.
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Next {
+#nullable enable
+        /// <summary>Target node id.</summary>
         public string id { get; set; } = string.Empty;
+
+        /// <summary>DSL expression for the transition condition.</summary>
         public string condition { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// Represents a rule triggered within a level based on specific conditions.
+    /// Represents a rule triggered within a node based on specific conditions.
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Rule {
 #nullable enable
         /// <summary>Unique rule identifier.</summary>
         public string id { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Abstract trigger ID. Matches Zone.zone_id or a signal ID
-        /// dispatched via Bus.Publish.
-        /// </summary>
+        /// <summary>Abstract trigger ID. Matches Zone.zone_id or Bus signal.</summary>
         public string trigger { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Optional condition evaluated before executing the command.
-        /// Uses the same syntax as Next.condition.
-        /// Empty string = unconditional (command always executes when trigger fires).
-        /// Example: "counters.score >= 100" or "flags.zone_a_cleared"
-        /// </summary>
+        /// <summary>DSL expression evaluated before executing the command.</summary>
         public string condition { get; set; } = string.Empty;
 
         /// <summary>Command to execute when this rule fires.</summary>
         public Command command { get; set; } = new Command();
 
-        /// <summary>
-        /// If true (default), this rule fires at most once per session.
-        /// Store blocks subsequent dispatches for the same rule ID.
-        /// Set to false only for repeatable effects (e.g., ambient counters).
-        /// </summary>
+        /// <summary>If true (default), this rule fires at most once per session.</summary>
         public bool once { get; set; } = true;
     }
 
@@ -153,6 +126,7 @@ namespace Germio.Model {
     /// Represents a state mutation to be executed when a rule fires.
     /// Exactly one command field should be non-null per instance.
     /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Command {
 #nullable enable
@@ -165,41 +139,149 @@ namespace Germio.Model {
         /// <summary>Adds or removes items from State.inventory.</summary>
         public UpdateInventory? update_inventory { get; set; }
 
-        /// <summary>Requests an immediate scene transition to the specified level ID.</summary>
+        /// <summary>Requests an immediate scene transition to the specified node ID.</summary>
         public string? request_transition { get; set; }
 
         /// <summary>Sets an arbitrary key-value entry in State.persistence.</summary>
         public SetPersistence? set_persistence { get; set; }
+
+        /// <summary>Records a custom event into the History.</summary>
+        public RecordEvent? record_event { get; set; }
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class SetFlag {
+#nullable enable
         public string key { get; set; } = string.Empty;
         public bool value { get; set; }
     }
 
     /// <summary>Updates a named counter by delta using the specified operation.</summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class UpdateCounter {
+#nullable enable
         public string key { get; set; } = string.Empty;
         public float delta { get; set; }
-        /// <summary>Operation: Add (default), Sub, or Set.</summary>
         public CounterOp op { get; set; } = CounterOp.Add;
     }
 
     /// <summary>Changes the quantity of a named inventory item.</summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class UpdateInventory {
+#nullable enable
         public string key { get; set; } = string.Empty;
         public int delta { get; set; }
     }
 
-    /// <summary>Sets an arbitrary persistence value under the given key in State.persistence.</summary>
+    /// <summary>Sets an arbitrary persistence value under the given key.</summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class SetPersistence {
 #nullable enable
-        public string key   { get; set; } = string.Empty;
+        public string key { get; set; } = string.Empty;
         public string value { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Records a custom event into the History.
+    /// Used by Rule.command to log gameplay events for later DSL queries.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class RecordEvent {
+#nullable enable
+        /// <summary>Event kind (e.g., "node_clear", "node_fail", custom).</summary>
+        public string kind { get; set; } = string.Empty;
+
+        /// <summary>Target identifier (e.g., node id).</summary>
+        public string target_id { get; set; } = string.Empty;
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    // Dynamic-side classes (runtime-managed, persisted in snapshot_*.json)
+
+    /// <summary>
+    /// Root data class for Germio runtime snapshot.
+    /// Contains the current dynamic state and event history.
+    /// Loaded from snapshot_N.json (development) or snapshot_N.dat (production, AES-encrypted).
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class Snapshot {
+#nullable enable
+        /// <summary>JSON schema version.</summary>
+        public int schema_version { get; set; } = 1;
+
+        /// <summary>The current dynamic state.</summary>
+        public State state { get; set; } = new State();
+
+        /// <summary>The event history.</summary>
+        public History history { get; set; } = new History();
+    }
+
+    /// <summary>
+    /// Represents the player's runtime state.
+    /// All quantifiable state values are expressed as named counters.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class State {
+#nullable enable
+        /// <summary>Boolean state flags.</summary>
+        public Dictionary<string, bool> flags { get; set; } = new Dictionary<string, bool>();
+
+        /// <summary>Generic numeric counters for any quantifiable state.</summary>
+        public Dictionary<string, float> counters { get; set; } = new Dictionary<string, float>();
+
+        /// <summary>Item inventory with quantity.</summary>
+        public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>ID of the currently active node in the Scenario tree.</summary>
+        public string current_node { get; set; } = string.Empty;
+
+        /// <summary>Identifies the currently active decision-making agent.</summary>
+        public string current_team { get; set; } = string.Empty;
+
+        /// <summary>Arbitrary key-value persistence store. Survives transitions and save/load.</summary>
+        public Dictionary<string, string> persistence { get; set; } = new Dictionary<string, string>();
+    }
+
+    /// <summary>
+    /// Event log for the gameplay session. Used for history-dependent rules and DSL queries.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class History {
+#nullable enable
+        /// <summary>Chronologically ordered event log.</summary>
+        public List<HistoryEntry> entries { get; set; } = new List<HistoryEntry>();
+
+        /// <summary>Maximum number of entries retained. Default 1000.</summary>
+        public int max_entries { get; set; } = 1000;
+    }
+
+    /// <summary>
+    /// A single event in the History log.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class HistoryEntry {
+#nullable enable
+        /// <summary>
+        /// Event kind. Standard values:
+        ///   "node_enter", "node_exit", "rule_fire"
+        /// Custom values via Command.RecordEvent are allowed.
+        /// </summary>
+        public string kind { get; set; } = string.Empty;
+
+        /// <summary>Target identifier (node id, rule id, custom).</summary>
+        public string target_id { get; set; } = string.Empty;
+
+        /// <summary>In-game elapsed time in seconds since session start.</summary>
+        public float timestamp { get; set; }
     }
 }

@@ -22,6 +22,8 @@ namespace Germio.Core {
         LParen,      // (
         RParen,      // )
         Dot,         // .
+        Comma,       // ,
+        Equals,      // =
         EOF          // end-of-input sentinel
     }
 
@@ -125,6 +127,8 @@ namespace Germio.Core {
                     '(' => TokenKind.LParen,
                     ')' => TokenKind.RParen,
                     '.' => TokenKind.Dot,
+                    ',' => TokenKind.Comma,
+                    '=' => TokenKind.Equals,
                     _   => null
                 };
                 if (one_kind.HasValue) {

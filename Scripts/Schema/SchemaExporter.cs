@@ -19,7 +19,7 @@ namespace Germio.Schema {
 
     /// <author>h.adachi (STUDIO MeowToon)</author>
     /// <summary>
-    /// Provides the germio_config JSON Schema for LLM prompt injection and tooling.
+    /// Provides the germio JSON Schema for LLM prompt injection and tooling.
     /// In non-Unity contexts (tests, dotnet CLI): dynamically generates schema from C# types
     /// using NJsonSchema so the schema always reflects the current model.
     /// In Unity contexts: reads the pre-generated static schema file via GetSchemaJson().
@@ -31,17 +31,17 @@ namespace Germio.Schema {
         // Constants
 
         /// <summary>The schema file name shared across all export methods.</summary>
-        public const string SCHEMA_FILE_NAME = "germio_config.schema.json";
+        public const string SCHEMA_FILE_NAME = "germio.schema.json";
 
         const string DRAFT_2020_12_URI = "https://json-schema.org/draft/2020-12/schema";
-        const string SCHEMA_ID = "https://germio.dev/schemas/germio_config.schema.json";
+        const string SCHEMA_ID = "https://germio.dev/schemas/germio.schema.json";
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
 #if !UNITY_5_3_OR_NEWER
         /// <summary>
-        /// Dynamically generates the germio_config JSON Schema from the C# model types.
+        /// Dynamically generates the germio JSON Schema from the C# model types.
         /// Uses NJsonSchema reflection on <see cref="Scenario"/> and related types.
         /// Output is post-processed to conform to JSON Schema Draft 2020-12 ($defs, $schema URI).
         /// </summary>
@@ -64,7 +64,7 @@ namespace Germio.Schema {
         }
 
         /// <summary>
-        /// Generates the schema and writes it to <paramref name="output_dir"/>/germio_config.schema.json.
+        /// Generates the schema and writes it to <paramref name="output_dir"/>/germio.schema.json.
         /// Call this to regenerate the committed schema file after model changes.
         /// </summary>
         public static void SaveToFile(string output_dir) {
@@ -106,7 +106,7 @@ namespace Germio.Schema {
 #endif
 
         /// <summary>
-        /// Reads and returns the germio_config.schema.json content from the given directory.
+        /// Reads and returns the germio.schema.json content from the given directory.
         /// Useful in Unity (read the pre-generated committed file from StreamingAssets)
         /// or in tests that want to verify the on-disk committed schema.
         /// </summary>
