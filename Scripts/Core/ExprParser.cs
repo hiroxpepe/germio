@@ -124,16 +124,247 @@ namespace Germio.Core {
                 return parseComparisonOrAccessor();
             }
 
-            // comparison_or_accessor = accessor (op rhs)?
+            // comparison_or_accessor = history_or_accessor (op rhs)?
             ExprAst parseComparisonOrAccessor() {
-                var left = parseAccessor();
+                // Check if this is a history function call (history.*)
+                ExprAst left;
+                if (current.kind == TokenKind.Identifier && current.value == "history" &&
+                    _pos + 1 < _tokens.Count && _tokens[_pos + 1].kind == TokenKind.Dot) {
+                    left = parseHistoryFunction();
+                } else {
+                    left = parseAccessor();
+                }
+
                 var op_kind = current.kind;
                 if (!isComparisonOp(kind: op_kind)) { return left; }
 
+                // For history nodes, we need a more generic comparison node
+                // Since ComparisonNode only accepts AccessorNode, wrap it in a way that works
                 string op  = current.value;
                 consume();
                 var right = parseRhs();
-                return new ComparisonNode(left: left, op: op, right: right);
+                
+                if (left is AccessorNode accessor_left) {
+                    return new ComparisonNode(left: accessor_left, op: op, right: right);
+                } else {
+                    // For history nodes, create a generic comparison wrapper
+                    return new GenericComparisonNode(left: left, op: op, right: right);
+                }
+            }
+
+            // history_function = history.COUNT | history.HAS | history.LAST | history.TIME_SINCE | history.SESSION_COUNT | history.TOTAL_PLAY_TIME
+            ExprAst parseHistoryFunction() {
+                int col = current.column;
+                consume(); // consume "history"
+                
+                if (current.kind != TokenKind.Dot) {
+                    throw new ExprParseException(
+                        message: "Expected '.' after 'history'.",
+                        column: current.column);
+                }
+                consume(); // consume "."
+
+                if (current.kind != TokenKind.Identifier) {
+                    throw new ExprParseException(
+                        message: "Expected function name after 'history.'.",
+                        column: current.column);
+                }
+                string func_name = consume().value;
+
+                // Parse function call based on function name
+                return func_name switch {
+                    "count" => parseHistoryCount(col: col),
+                    "has" => parseHistoryHas(col: col),
+                    "last" => parseHistoryLast(col: col),
+                    "time_since" => parseHistoryTimeSince(col: col),
+                    "session_count" => parseHistorySessionCount(col: col),
+                    "total_play_time" => parseHistoryTotalPlayTime(col: col),
+                    _ => throw new ExprParseException(
+                        message: $"Unknown history function: history.{func_name}",
+                        column: col)
+                };
+            }
+
+            // history.count(kind=..., target_id=...)
+            ExprAst parseHistoryCount(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.count'.",
+                        column: current.column);
+                }
+                consume();
+
+                string kind = parseNamedParam(param_name: "kind");
+                string? target_id = null;
+
+                if (current.kind == TokenKind.Comma) {
+                    consume();
+                    target_id = parseNamedParam(param_name: "target_id");
+                }
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after history.count parameters.",
+                        column: current.column);
+                }
+                consume();
+
+                return new HistoryCountNode(kind: kind, target_id: target_id);
+            }
+
+            // history.has(kind=..., target_id=...)
+            ExprAst parseHistoryHas(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.has'.",
+                        column: current.column);
+                }
+                consume();
+
+                string kind = parseNamedParam(param_name: "kind");
+                string? target_id = null;
+
+                if (current.kind == TokenKind.Comma) {
+                    consume();
+                    target_id = parseNamedParam(param_name: "target_id");
+                }
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after history.has parameters.",
+                        column: current.column);
+                }
+                consume();
+
+                return new HistoryHasNode(kind: kind, target_id: target_id);
+            }
+
+            // history.last(kind=..., target_id=...).property
+            ExprAst parseHistoryLast(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.last'.",
+                        column: current.column);
+                }
+                consume();
+
+                string kind = parseNamedParam(param_name: "kind");
+                string? target_id = null;
+
+                if (current.kind == TokenKind.Comma) {
+                    consume();
+                    target_id = parseNamedParam(param_name: "target_id");
+                }
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after history.last parameters.",
+                        column: current.column);
+                }
+                consume();
+
+                string? property = null;
+                if (current.kind == TokenKind.Dot) {
+                    consume();
+                    if (current.kind != TokenKind.Identifier) {
+                        throw new ExprParseException(
+                            message: "Expected property name after '.' in history.last.",
+                            column: current.column);
+                    }
+                    property = consume().value;
+                }
+
+                return new HistoryLastNode(kind: kind, target_id: target_id, property: property);
+            }
+
+            // history.time_since(kind=..., target_id=...)
+            ExprAst parseHistoryTimeSince(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.time_since'.",
+                        column: current.column);
+                }
+                consume();
+
+                string kind = parseNamedParam(param_name: "kind");
+                string? target_id = null;
+
+                if (current.kind == TokenKind.Comma) {
+                    consume();
+                    target_id = parseNamedParam(param_name: "target_id");
+                }
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after history.time_since parameters.",
+                        column: current.column);
+                }
+                consume();
+
+                return new HistoryTimeSinceNode(kind: kind, target_id: target_id);
+            }
+
+            // history.session_count()
+            ExprAst parseHistorySessionCount(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.session_count'.",
+                        column: current.column);
+                }
+                consume();
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after 'history.session_count()'.",
+                        column: current.column);
+                }
+                consume();
+
+                return new HistorySessionCountNode();
+            }
+
+            // history.total_play_time()
+            ExprAst parseHistoryTotalPlayTime(int col) {
+                if (current.kind != TokenKind.LParen) {
+                    throw new ExprParseException(
+                        message: "Expected '(' after 'history.total_play_time'.",
+                        column: current.column);
+                }
+                consume();
+
+                if (current.kind != TokenKind.RParen) {
+                    throw new ExprParseException(
+                        message: "Expected ')' after 'history.total_play_time()'.",
+                        column: current.column);
+                }
+                consume();
+
+                return new HistoryTotalPlayTimeNode();
+            }
+
+            // Parse named parameter: name=value
+            string parseNamedParam(string param_name) {
+                if (current.kind != TokenKind.Identifier || current.value != param_name) {
+                    throw new ExprParseException(
+                        message: $"Expected '{param_name}='.",
+                        column: current.column);
+                }
+                consume();
+
+                if (current.kind != TokenKind.Equals) {
+                    throw new ExprParseException(
+                        message: $"Expected '=' after '{param_name}'.",
+                        column: current.column);
+                }
+                consume();
+
+                if (current.kind != TokenKind.Identifier) {
+                    throw new ExprParseException(
+                        message: "Expected identifier value after '='.",
+                        column: current.column);
+                }
+                string value = consume().value;
+                return value;
             }
 
             // rhs = accessor | literal

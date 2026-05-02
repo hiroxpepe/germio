@@ -12,9 +12,9 @@ namespace Germio.Systems {
     /// the class is fully testable without a Unity runtime.
     ///
     /// Responsibilities:
-    ///   1. Resolve the target level's <c>scene</c> name from <see cref="Scenario"/>.
-    ///   2. Update <see cref="State.current_scene"/> to the new level ID.
-    ///   3. Mark state dirty so the next save persists the updated current scene.
+    ///   1. Resolve the target node's <c>scene</c> name from the Node tree.
+    ///   2. Update <see cref="State.current_node"/> to the new node ID.
+    ///   3. Mark state dirty so the next save persists the updated current node.
     ///   4. Invoke the injected load delegate (Unity: SceneManager.LoadScene).
     ///
     /// Call <see cref="Dispose"/> to unsubscribe from the Store event.
@@ -37,7 +37,7 @@ namespace Germio.Systems {
         /// <summary>
         /// Constructs a SceneLoader and subscribes to <see cref="Store.OnTransitionRequested"/>.
         /// </summary>
-        /// <param name="store">The Store whose scenario provides level-to-scene mapping.</param>
+        /// <param name="store">The Store whose scenario provides node-to-scene mapping.</param>
         /// <param name="load_scene">
         /// Delegate invoked with the resolved scene name when a transition is requested.
         /// In Unity production code: <c>name =&gt; SceneManager.LoadScene(name)</c>.
@@ -72,37 +72,31 @@ namespace Germio.Systems {
 
         /// <summary>
         /// Handles the <see cref="Store.OnTransitionRequested"/> event.
-        /// Looks up the scene name, updates state, and invokes the load delegate.
+        /// Looks up the scene name from the target node, updates state, and invokes the load delegate.
         /// </summary>
-        /// <param name="target_level_id">The target level ID to transition to.</param>
-        void handleTransition(string target_level_id) {
+        /// <param name="target_node_id">The target node ID to transition to.</param>
+        void handleTransition(string target_node_id) {
             // Clear stale active zones before entering the new scene (P5-T3)
             _bus?.ClearActiveZones();
-            string? scene_name = findSceneName(level_id: target_level_id);
-            // Guard: skip unknown levels and levels with empty scene names
+            string? scene_name = findSceneName(node_id: target_node_id);
+            // Guard: skip unknown nodes and nodes with empty scene names
             if (string.IsNullOrEmpty(scene_name)) { return; }
-            _store.state.current_scene = target_level_id;
+            _store.scenario.initial_state.current_node = target_node_id;
             _store.MarkDirty();
             _load_scene(scene_name);
         }
 
         /// <summary>
-        /// Searches all worlds in the current Scenario for a level matching <paramref name="level_id"/>
+        /// Searches the Node tree for a node matching <paramref name="node_id"/>
         /// and returns its <c>scene</c> field.
-        /// Uses <see cref="Store.scenario"/> (not a cached reference) so that data loaded
-        /// asynchronously after construction is always reflected.
+        /// Uses <see cref="Store.FindNode"/> to search the entire tree.
         /// </summary>
-        /// <param name="level_id">The level ID to search for.</param>
+        /// <param name="node_id">The node ID to search for.</param>
         /// <returns>The scene name, or null if not found.</returns>
-        string? findSceneName(string level_id) {
-            foreach (var world in _store.scenario.worlds) {
-                foreach (var level in world.levels) {
-                    if (level.id == level_id) {
-                        return string.IsNullOrEmpty(level.scene) ? null : level.scene;
-                    }
-                }
-            }
-            return null;
+        string? findSceneName(string node_id) {
+            var node = _store.FindNode(node_id: node_id);
+            if (node == null) { return null; }
+            return string.IsNullOrEmpty(node.scene) ? null : node.scene;
         }
     }
 }

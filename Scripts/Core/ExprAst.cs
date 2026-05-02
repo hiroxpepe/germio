@@ -179,4 +179,136 @@ namespace Germio.Core {
             return diff <= EPSILON * scale;
         }
     }
+
+    /// <summary>
+    /// Generic comparison node that can compare any two ExprAst nodes.
+    /// Supports history nodes on the left side.
+    /// </summary>
+    public class GenericComparisonNode : ExprAst {
+#nullable enable
+        const double EPSILON = 1e-6;
+
+        readonly ExprAst _left;
+        readonly string  _op;
+        readonly ExprAst _right;
+
+        public ExprAst left => _left;
+        public string op => _op;
+        public ExprAst right => _right;
+
+        public GenericComparisonNode(ExprAst left, string op, ExprAst right) {
+            _left = left;
+            _op = op;
+            _right = right;
+        }
+
+        public override bool Evaluate(State state) {
+            // This will fail for history nodes, but that's expected.
+            // The Evaluator should use evaluateWithHistory for this.
+            throw new InvalidOperationException("GenericComparisonNode requires History context for evaluation if left side is a history node.");
+        }
+
+        static bool relativeEqual(double a, double b) {
+            if (double.IsNaN(a) || double.IsNaN(b))         { return false; }
+            if (double.IsInfinity(a) || double.IsInfinity(b)) { return a == b; }
+            double diff  = Math.Abs(a - b);
+            double scale = Math.Max(Math.Max(Math.Abs(a), Math.Abs(b)), 1.0);
+            return diff <= EPSILON * scale;
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // History function nodes
+
+    /// <summary>
+    /// AST node for history.count(kind=..., target_id=...) function call.
+    /// </summary>
+    public class HistoryCountNode : ExprAst {
+#nullable enable
+        public string kind { get; }
+        public string? target_id { get; }
+
+        public HistoryCountNode(string kind, string? target_id = null) {
+            this.kind = kind;
+            this.target_id = target_id;
+        }
+
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistoryCountNode requires History context for evaluation.");
+
+        public override double GetNumeric(State state) => throw new InvalidOperationException("HistoryCountNode requires History context for evaluation.");
+    }
+
+    /// <summary>
+    /// AST node for history.has(kind=..., target_id=...) function call.
+    /// </summary>
+    public class HistoryHasNode : ExprAst {
+#nullable enable
+        public string kind { get; }
+        public string? target_id { get; }
+
+        public HistoryHasNode(string kind, string? target_id = null) {
+            this.kind = kind;
+            this.target_id = target_id;
+        }
+
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistoryHasNode requires History context for evaluation.");
+    }
+
+    /// <summary>
+    /// AST node for history.last(kind=..., target_id=...).property function call.
+    /// </summary>
+    public class HistoryLastNode : ExprAst {
+#nullable enable
+        public string kind { get; }
+        public string? target_id { get; }
+        public string? property { get; }
+
+        public HistoryLastNode(string kind, string? target_id = null, string? property = null) {
+            this.kind = kind;
+            this.target_id = target_id;
+            this.property = property;
+        }
+
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistoryLastNode requires History context for evaluation.");
+
+        public override double GetNumeric(State state) => throw new InvalidOperationException("HistoryLastNode requires History context for evaluation.");
+    }
+
+    /// <summary>
+    /// AST node for history.time_since(kind=..., target_id=...) function call.
+    /// </summary>
+    public class HistoryTimeSinceNode : ExprAst {
+#nullable enable
+        public string kind { get; }
+        public string? target_id { get; }
+
+        public HistoryTimeSinceNode(string kind, string? target_id = null) {
+            this.kind = kind;
+            this.target_id = target_id;
+        }
+
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistoryTimeSinceNode requires History context for evaluation.");
+
+        public override double GetNumeric(State state) => throw new InvalidOperationException("HistoryTimeSinceNode requires History context for evaluation.");
+    }
+
+    /// <summary>
+    /// AST node for history.session_count() function call.
+    /// </summary>
+    public class HistorySessionCountNode : ExprAst {
+#nullable enable
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistorySessionCountNode requires History context for evaluation.");
+
+        public override double GetNumeric(State state) => throw new InvalidOperationException("HistorySessionCountNode requires History context for evaluation.");
+    }
+
+    /// <summary>
+    /// AST node for history.total_play_time() function call.
+    /// </summary>
+    public class HistoryTotalPlayTimeNode : ExprAst {
+#nullable enable
+        public override bool Evaluate(State state) => throw new InvalidOperationException("HistoryTotalPlayTimeNode requires History context for evaluation.");
+
+        public override double GetNumeric(State state) => throw new InvalidOperationException("HistoryTotalPlayTimeNode requires History context for evaluation.");
+    }
 }
