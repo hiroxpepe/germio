@@ -104,16 +104,14 @@ namespace Germio.Systems {
             /// Handles the event when a new level starts.
             /// </summary>
             _game_system.OnStartLevel += () => {
-                switch (GetActiveScene().name) {
-                    case SCENE_LEVEL_1:
-                        _message_text.text = SCENE_LEVEL_1;
-                        break;
-                    case SCENE_LEVEL_2:
-                        _message_text.text = SCENE_LEVEL_2;
-                        break;
-                    case SCENE_LEVEL_3:
-                        _message_text.text = SCENE_LEVEL_3;
-                        break;
+                // Phase 5.13: Changed from switching based on the Unity Scene name (e.g., "Level_1")
+                // to displaying the 'name' property of the node in germio.json (e.g., "Level 1").
+                // Decoupled the Unity Scene filename from the display name (the human-readable string shown in the UI).
+                // Looking up the Node using the current_node id and displaying its name.
+                string current_id = _game_system.store.scenario.initial_state.current_node;
+                Germio.Model.Node? node = _game_system.store.FindNode(node_id: current_id);
+                if (node != null) {
+                    _message_text.text = node.name;
                 }
                 // Waits 1.5 seconds, then shows the start message.
                 Observable.Timer(TimeSpan.FromSeconds(1.5))

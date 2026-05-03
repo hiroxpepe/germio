@@ -26,18 +26,6 @@ namespace Germio {
         /// </summary>
         public const string SCENE_SELECT = "Select";
         /// <summary>
-        /// Gets the scene name for level 1.
-        /// </summary>
-        public const string SCENE_LEVEL_1 = "Level 1";
-        /// <summary>
-        /// Gets the scene name for level 2.
-        /// </summary>
-        public const string SCENE_LEVEL_2 = "Level 2";
-        /// <summary>
-        /// Gets the scene name for level 3.
-        /// </summary>
-        public const string SCENE_LEVEL_3 = "Level 3";
-        /// <summary>
         /// Gets the scene name for the ending screen.
         /// </summary>
         public const string SCENE_ENDING = "Ending";
