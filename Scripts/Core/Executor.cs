@@ -71,6 +71,24 @@ namespace Germio.Core {
                 mutated = true;
             }
 
+            // Reset commands (Phase 5.8 v2 fix6 extension).
+            // Typically used with trigger="_on_enter_node" on title/menu nodes
+            // to start a fresh session.
+            if (command.reset_flags) {
+                store.scenario.initial_state.flags.Clear();
+                mutated = true;
+            }
+
+            if (command.reset_counters) {
+                store.scenario.initial_state.counters.Clear();
+                mutated = true;
+            }
+
+            if (command.reset_inventory) {
+                store.scenario.initial_state.inventory.Clear();
+                mutated = true;
+            }
+
             if (mutated) { store.MarkDirty(); }
         }
     }

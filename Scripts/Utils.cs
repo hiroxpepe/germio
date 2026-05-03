@@ -150,10 +150,11 @@ namespace Germio {
         #region has the component.
 
         /// <summary>
-        /// Determines whether a level component exists in the scene.
+        /// Determines whether a scene-controller GameObject exists.
+        /// (Renamed from HasLevel as part of Phase 5.8 v2 fix6.)
         /// </summary>
-        public static bool HasLevel() {
-            GameObject game_object = Find(name: LEVEL_TYPE);
+        public static bool HasScene() {
+            GameObject game_object = Find(name: SCENE_TYPE);
             return game_object is not null;
         }
 

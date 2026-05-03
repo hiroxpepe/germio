@@ -149,6 +149,12 @@ namespace Germio.Core {
     ///   V024: ノード階層が MAX_NODE_DEPTH を超過 (Error)
     ///   V025: ノード階層が warning_node_depth を超過 (Warning)
     ///   V026: 循環参照 (children に祖先 ID を含む) (Error)
+    /// 
+    /// Phase 5.8 v2 fix6 changes:
+    ///   - V010 now also recognises reset_flags / reset_counters / reset_inventory
+    ///     as valid command effects.
+    ///   - The reserved trigger '_on_enter_node' is auto-fired by SceneLoader on
+    ///     every transition (no Validator change required; trigger ids are free-form).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validator {
@@ -364,7 +370,10 @@ namespace Germio.Core {
                          rule.command.update_inventory == null &&
                          rule.command.request_transition == null &&
                          rule.command.set_persistence == null &&
-                         rule.command.record_event == null)) {
+                         rule.command.record_event == null &&
+                         !rule.command.reset_flags &&
+                         !rule.command.reset_counters &&
+                         !rule.command.reset_inventory)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Error,
                             rule_id:        "V010",

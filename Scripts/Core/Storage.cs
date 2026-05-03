@@ -128,6 +128,24 @@ namespace Germio.Core
         }
 
         /// <summary>
+        /// Synchronously saves a runtime snapshot to the specified slot.
+        /// Writes plaintext only (no encryption). Used by SceneLoader.handleTransition
+        /// to guarantee the snapshot file is fully written before SceneManager.LoadScene
+        /// triggers the new scene's GameSystem to read it. (Phase 5.8 v2 fix6 hotfix7)
+        ///
+        /// The async variant is fire-and-forget by callers, which races with the new
+        /// scene's LoadSnapshotAsync — that race causes current_node to revert to the
+        /// initial value from germio.json. The sync variant prevents this.
+        /// </summary>
+        public static void SaveSnapshot(Snapshot snapshot, int slot) {
+            string base_dir = getStreamingAssetsPath();
+            string text = JsonConvert.SerializeObject(value: snapshot, settings: _settings);
+            string plain_path = string.Format(SNAPSHOT_PATH_TEMPLATE, slot);
+            string plain_full = Path.Combine(base_dir, plain_path);
+            File.WriteAllText(plain_full, text);
+        }
+
+        /// <summary>
         /// Returns true if a snapshot exists for the specified slot (plaintext or encrypted).
         /// </summary>
         public static Task<bool> SnapshotExistsAsync(int slot) {

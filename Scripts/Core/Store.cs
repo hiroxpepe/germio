@@ -78,6 +78,36 @@ namespace Germio.Core {
         /// </summary>
         public void SetSnapshot(Snapshot snapshot) {
             _snapshot = snapshot;
+            Germio.GermioLog.Write(message: $"[Germio Store] SetSnapshot: snapshot.state.current_node='{snapshot?.state?.current_node ?? "<null>"}'");
+            // Phase 5.8 v2 fix6 hotfix8: mirror snapshot.state INTO scenario.initial_state.
+            // Evaluator/SceneLoader/Scene all read scenario.initial_state, so without this
+            // mirror the loaded snapshot has no effect on rule evaluation or handler dispatch.
+            if (snapshot?.state != null && _scenario?.initial_state != null) {
+                // hotfix9: current_node is NOT mirrored — Unity Scene is the single
+                // source of truth (set by GameSystem from SceneManager.GetActiveScene
+                // after this method returns). current_team is also Unity-context info,
+                // so it is left to be set by the application layer rather than restored.
+                // flags / counters / inventory / persistence ARE mirrored because they
+                // are domain state that should survive scene reloads (Phase 5.8 v2 intent).
+
+                _scenario.initial_state.flags.Clear();
+                foreach (var kv in snapshot.state.flags) {
+                    _scenario.initial_state.flags[kv.Key] = kv.Value;
+                }
+                _scenario.initial_state.counters.Clear();
+                foreach (var kv in snapshot.state.counters) {
+                    _scenario.initial_state.counters[kv.Key] = kv.Value;
+                }
+                _scenario.initial_state.inventory.Clear();
+                foreach (var kv in snapshot.state.inventory) {
+                    _scenario.initial_state.inventory[kv.Key] = kv.Value;
+                }
+                _scenario.initial_state.persistence.Clear();
+                foreach (var kv in snapshot.state.persistence) {
+                    _scenario.initial_state.persistence[kv.Key] = kv.Value;
+                }
+                Germio.GermioLog.Write(message: $"[Germio Store] SetSnapshot mirrored flags=[{string.Join(",", _scenario.initial_state.flags.Keys)}] to scenario.initial_state (current_node NOT mirrored — Unity Scene is truth)");
+            }
         }
 
         /// <summary>
@@ -103,33 +133,45 @@ namespace Germio.Core {
         /// </summary>
         /// <param name="trigger_id">The trigger identifier, e.g. "vol_goal".</param>
         public void DispatchTrigger(string trigger_id) {
-            var node = FindNode(node_id: _scenario.initial_state.current_node);
-            if (node == null) { return; }
+            string current_id = _scenario.initial_state.current_node;
+            var node = FindNode(node_id: current_id);
+            if (node == null) {
+                Germio.GermioLog.Write(message: $"[Germio Store] DispatchTrigger('{trigger_id}'): node '{current_id}' not found");
+                return;
+            }
+            Germio.GermioLog.Write(message: $"[Germio Store] DispatchTrigger('{trigger_id}') on '{current_id}' ({node.rules.Count} rules)");
 
+            int matched = 0;
             foreach (var rule in node.rules) {
                 if (rule.trigger != trigger_id) { continue; }
+                matched++;
 
-                // G2 Layer-2 once-guard: check if this rule has already fired (once=true)
                 if (rule.once) {
-                    // Check if rule_fire event for this rule_id already exists in history
                     if (_snapshot != null) {
                         bool already_fired = _snapshot.history.entries.Any(
                             entry => entry.kind == "rule_fire" && entry.target_id == rule.id
                         );
-                        if (already_fired) { continue; }  // Skip this rule
+                        if (already_fired) {
+                            Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' skipped (once + already fired)");
+                            continue;
+                        }
                     }
                 }
 
-                // Condition guard
-                if (!Evaluator.Evaluate(condition: rule.condition, state: _scenario.initial_state)) { continue; }
+                bool condition_ok = Evaluator.Evaluate(condition: rule.condition, state: _scenario.initial_state);
+                Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' trigger matched, condition='{rule.condition}' → {condition_ok}");
+                if (!condition_ok) { continue; }
 
-                // Execute command
+                Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' executing command (request_transition='{rule.command?.request_transition}')");
                 Executor.Execute(command: rule.command, store: this);
 
-                // Record once-shot rule firing to history
                 if (rule.once) {
                     RecordHistoryEvent(kind: "rule_fire", target_id: rule.id);
                 }
+            }
+
+            if (matched == 0) {
+                Germio.GermioLog.Write(message: $"[Germio Store]   no rules with trigger='{trigger_id}'");
             }
         }
 

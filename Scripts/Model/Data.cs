@@ -147,6 +147,23 @@ namespace Germio.Model {
 
         /// <summary>Records a custom event into the History.</summary>
         public RecordEvent? record_event { get; set; }
+
+        /// <summary>
+        /// Clears all entries from <c>State.flags</c>. (Phase 5.8 v2 fix6 extension)
+        /// Typically combined with <c>trigger="_on_enter_node"</c> on a title/menu node
+        /// to start a fresh session.
+        /// </summary>
+        public bool reset_flags { get; set; } = false;
+
+        /// <summary>
+        /// Clears all entries from <c>State.counters</c>. (Phase 5.8 v2 fix6 extension)
+        /// </summary>
+        public bool reset_counters { get; set; } = false;
+
+        /// <summary>
+        /// Clears all entries from <c>State.inventory</c>. (Phase 5.8 v2 fix6 extension)
+        /// </summary>
+        public bool reset_inventory { get; set; } = false;
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>

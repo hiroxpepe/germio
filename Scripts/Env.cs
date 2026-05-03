@@ -115,9 +115,9 @@ namespace Germio {
         /// </summary>
         public const string HOME_TYPE = "Home";
         /// <summary>
-        /// Gets the level type string.
+        /// Gets the scene-controller GameObject name (replaces legacy "Level" naming as of Phase 5.8 v2 fix6).
         /// </summary>
-        public const string LEVEL_TYPE = "Level";
+        public const string SCENE_TYPE = "Scene";
         /// <summary>
         /// Gets the despawn type string.
         /// </summary>
@@ -191,12 +191,6 @@ namespace Germio {
         /// Gets the color code for white.
         /// </summary>
         public const string COLOR_WHITE = "#FFFFFF";
-        /// <summary>
-        /// Gets the PlayerPrefs key used to persist current_scene across scene reloads.
-        /// Required because StateManager re-reads germio.json on each scene load,
-        /// which would reset current_scene to the JSON's initial value.
-        /// </summary>
-        public const string CURRENT_SCENE_KEY = "germio_current_scene";
 
         /// <summary>
         /// Maximum node depth in the scenario tree (hard limit).

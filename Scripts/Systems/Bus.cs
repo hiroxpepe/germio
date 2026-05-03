@@ -51,7 +51,11 @@ namespace Germio.Systems {
         /// <param name="zone_id">The zone identifier assigned to the volume, e.g. "vol_goal".</param>
         public void OnZoneEnter(string zone_id) {
             // G2 Layer-1: HashSet.Add returns false if already present → suppress duplicate
-            if (!_active_zones.Add(zone_id)) { return; }
+            if (!_active_zones.Add(zone_id)) {
+                Germio.GermioLog.Write(message: $"[Germio Bus] OnZoneEnter('{zone_id}') de-duplicated");
+                return;
+            }
+            Germio.GermioLog.Write(message: $"[Germio Bus] OnZoneEnter('{zone_id}')");
             _store.DispatchTrigger(trigger_id: zone_id);
         }
 
@@ -71,6 +75,7 @@ namespace Germio.Systems {
         /// </summary>
         /// <param name="signal_id">The signal identifier, e.g. "sig_despawn".</param>
         public void Publish(string signal_id) {
+            Germio.GermioLog.Write(message: $"[Germio Bus] Publish('{signal_id}')");
             _store.DispatchTrigger(trigger_id: signal_id);
         }
 
