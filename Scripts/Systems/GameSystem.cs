@@ -12,9 +12,10 @@ using static Germio.Utils;
 
 using Germio;
 using Germio.Core;
-using Germio.Levels;
 using Germio.Triggers;
+using Germio.Model;
 using Scenario = Germio.Model.Scenario;
+using Snapshot = Germio.Model.Snapshot;
 
 namespace Germio.Systems {
     /// <summary>
@@ -46,20 +47,72 @@ namespace Germio.Systems {
         /// </summary>
         public string mode { get => Status.mode; set => Status.mode = value; }
 
+        bool _home;
+
         /// <summary>
         /// Gets or sets a value indicating whether the player is at home.
+        /// Setter mirrors to flags.player_at_home so DSL rules can read it.
         /// </summary>
-        public bool home { get; set; }
+        public bool home {
+            get => _home;
+            set {
+                _home = value;
+                if (_store?.scenario?.initial_state?.flags != null) {
+                    _store.scenario.initial_state.flags["player_at_home"] = value;
+                    GermioLog.Write(message: $"[Germio GameSystem] home={value}, flags.player_at_home={value}");
+                } else {
+                    GermioLog.Write(message: $"[Germio GameSystem] home={value} BUT flags dict is null");
+                }
+            }
+        }
+
+        bool _beat;
 
         /// <summary>
         /// Gets or sets a value indicating whether the level is beaten.
+        /// Setter mirrors to flags.is_beat so DSL rules can read it.
         /// </summary>
-        public bool beat { get; set; }
+        public bool beat {
+            get => _beat;
+            set {
+                _beat = value;
+                if (_store?.scenario?.initial_state?.flags != null) {
+                    _store.scenario.initial_state.flags["is_beat"] = value;
+                    GermioLog.Write(message: $"[Germio GameSystem] beat={value}, flags.is_beat={value}");
+                } else {
+                    GermioLog.Write(message: $"[Germio GameSystem] beat={value} BUT flags dict is null");
+                }
+            }
+        }
+
+        /// <summary>Exposes the Store for use by Scene base class.</summary>
+        public Store store => _store;
+
+        /// <summary>Indicates whether async initialization has completed.</summary>
+        public bool isReady { get; private set; } = false;
 
         /// <summary>
         /// Exposes the Bus for use by Zone, Home, and Despawn.
         /// </summary>
         public Bus? bus => _bus;
+
+        /// <summary>Fires the OnPauseOn event. Called by application Scene controllers.</summary>
+        public void firePauseOn() {
+            GermioLog.Write(message: "[Germio GameSystem] firePauseOn relay");
+            OnPauseOn?.Invoke();
+        }
+
+        /// <summary>Fires the OnPauseOff event.</summary>
+        public void firePauseOff() {
+            GermioLog.Write(message: "[Germio GameSystem] firePauseOff relay");
+            OnPauseOff?.Invoke();
+        }
+
+        /// <summary>Fires the OnStartLevel event.</summary>
+        public void fireStartLevel() {
+            GermioLog.Write(message: "[Germio GameSystem] fireStartLevel relay");
+            OnStartLevel?.Invoke();
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
@@ -89,6 +142,7 @@ namespace Germio.Systems {
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
+            GermioLog.Write(message: "[Germio GameSystem] Awake start");
             // Sets the frame rate.
             Application.targetFrameRate = FPS;
 
@@ -101,38 +155,15 @@ namespace Germio.Systems {
             _scene_loader = new SceneLoader(
                 store:     _store,
                 load_scene: name => {
-                    // Bridge: persist current_node to PlayerPrefs so it survives the scene reload.
-                    // When the new scene's GameSystem reads InitializeAsync, it restores this value.
-                    PlayerPrefs.SetString(key: CURRENT_SCENE_KEY, value: _store.scenario.initial_state.current_node);
-                    PlayerPrefs.Save();
-                    // Reset time scale so the next scene does not start frozen.
-                    // Level.cs's OnCameBackHome handler sets timeScale=0f; this undoes that
-                    // before Unity commits the scene load at end-of-frame.
+                    GermioLog.Write(message: $"[Germio GameSystem] LoadScene('{name}'), resetting timeScale=1");
                     Time.timeScale = 1f;
                     LoadScene(sceneName: name);
                 }
             );
             // -----------------------------------------------
 
-            if (HasLevel()) {
-                // Gets the level by name.
-                Level level = Find(name: LEVEL_TYPE).Get<Level>();
-
-                /// <summary>
-                /// Invokes the pause event when the level is paused.
-                /// </summary>
-                level.OnPauseOn += () => { OnPauseOn?.Invoke(); };
-
-                /// <summary>
-                /// Invokes the resume event when the level is unpaused.
-                /// </summary>
-                level.OnPauseOff += () => { OnPauseOff?.Invoke(); };
-
-                /// <summary>
-                /// Invokes the start event when the level starts.
-                /// </summary>
-                level.OnStart += () => { OnStartLevel?.Invoke(); };
-            }
+            // hotfix1: Push reversal — Scene-side controllers call firePauseOn / firePauseOff /
+            // fireStartLevel relay methods directly. GameSystem (Germio) does not import Stemic types.
 
             if (HasHome()) {
                 // Gets the home.
@@ -143,9 +174,11 @@ namespace Germio.Systems {
                 /// </summary>
                 this.home = false;
                 home.OnCameBack += () => {
+                    GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack fired");
                     this.home = true;
                     OnCameBackHome?.Invoke();
                 };
+                GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack subscription registered");
             }
 
             /// <summary>
@@ -182,18 +215,49 @@ namespace Germio.Systems {
         /// update loop without blocking the main thread.
         /// </summary>
         IEnumerator initializeStateCoroutine() {
-            var task = _store.InitializeAsync(Application.streamingAssetsPath);
-            while (!task.IsCompleted) { yield return null; }
-            if (task.IsFaulted) {
-                Debug.LogError($"[Germio] Failed to load germio.json: {task.Exception}");
+            GermioLog.Write(message: "[Germio GameSystem] initializeStateCoroutine start");
+
+            // Step 1: Load germio.json
+            GermioLog.Write(message: "[Germio GameSystem]   step1: loading germio.json...");
+            var scenario_task = _store.InitializeAsync(Application.streamingAssetsPath);
+            while (!scenario_task.IsCompleted) { yield return null; }
+            if (scenario_task.IsFaulted) {
+                GermioLog.Write(message: $"[Germio GameSystem]   step1 FAULTED: {scenario_task.Exception}");
+            } else {
+                GermioLog.Write(message: $"[Germio GameSystem]   step1 done; scenario.initial_state.current_node='{_store.scenario.initial_state.current_node}'");
             }
-            // Bridge: restore current_node from PlayerPrefs if a prior scene set it.
-            // This fixes the "die in Level 2 → restart Level 1" bug caused by the
-            // JSON on disk still having the initial current_node after LoadScene.
-            string bridged = PlayerPrefs.GetString(key: CURRENT_SCENE_KEY, defaultValue: string.Empty);
-            if (!string.IsNullOrEmpty(bridged)) {
-                _store.scenario.initial_state.current_node = bridged;
+
+            // Step 2: Load Snapshot
+            GermioLog.Write(message: "[Germio GameSystem]   step2: loading snapshot slot 0...");
+            var snapshot_task = Storage.LoadSnapshotAsync(slot: 0);
+            while (!snapshot_task.IsCompleted) { yield return null; }
+            Snapshot loaded = snapshot_task.Result;
+            if (loaded == null) {
+                GermioLog.Write(message: "[Germio GameSystem]   step2 done; no snapshot file (creating fresh)");
+            } else {
+                string ld = loaded.state == null ? "<null>" : loaded.state.current_node;
+                GermioLog.Write(message: $"[Germio GameSystem]   step2 done; snapshot.state.current_node='{ld}'");
             }
+            Snapshot snapshot = loaded ?? new Snapshot { state = _store.scenario.initial_state };
+
+            GermioLog.Write(message: "[Germio GameSystem]   step3: SetSnapshot...");
+            _store.SetSnapshot(snapshot: snapshot);
+
+            // hotfix9: Unity Scene is the single source of truth for current_node.
+            // Override whatever value came from snapshot/germio.json with the result of
+            // resolving the active Unity Scene name through ScenarioNavigator.
+            string scene_name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            string? resolved = ScenarioNavigator.FindNodeIdBySceneName(
+                root: _store.scenario.root, scene_name: scene_name);
+            if (resolved != null) {
+                _store.scenario.initial_state.current_node = resolved;
+                GermioLog.Write(message: $"[Germio GameSystem]   step4: Unity scene '{scene_name}' → current_node='{resolved}'");
+            } else {
+                GermioLog.Write(message: $"[Germio GameSystem]   step4: WARN active scene '{scene_name}' not in germio.json; current_node left at '{_store.scenario.initial_state.current_node}'");
+            }
+
+            isReady = true;
+            GermioLog.Write(message: $"[Germio GameSystem] init complete; current_node='{_store.scenario.initial_state.current_node}', isReady=true");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

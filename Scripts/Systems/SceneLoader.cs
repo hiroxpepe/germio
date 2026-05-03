@@ -4,6 +4,7 @@
 using System;
 
 using Germio.Core;
+using Germio.Model;
 
 namespace Germio.Systems {
     /// <summary>
@@ -81,8 +82,32 @@ namespace Germio.Systems {
             string? scene_name = findSceneName(node_id: target_node_id);
             // Guard: skip unknown nodes and nodes with empty scene names
             if (string.IsNullOrEmpty(scene_name)) { return; }
+
+            // Update current_node in both Scenario.initial_state (legacy compatibility)
+            // and Snapshot.state (the source of truth as of Phase 5.8 v2 fix6).
             _store.scenario.initial_state.current_node = target_node_id;
+            if (_store.snapshot != null) {
+                _store.snapshot.state.current_node = target_node_id;
+            }
             _store.MarkDirty();
+
+            // Persist the snapshot so the next scene can resume from this current_node.
+            // SYNCHRONOUS write: the next scene's GameSystem will start reading the
+            // snapshot file immediately after LoadScene returns, so we must guarantee
+            // the file is fully written before SceneManager.LoadScene is invoked.
+            // (fix6 hotfix7: was async fire-and-forget, which raced with the new
+            // scene's LoadSnapshotAsync and caused current_node to revert to the
+            // germio.json initial value, breaking all scene-to-scene transitions.)
+            if (_store.snapshot != null) {
+                Storage.SaveSnapshot(snapshot: _store.snapshot, slot: 0);
+            }
+
+            // Auto-fire _on_enter_node trigger so DSL rules can react to node entry
+            // (e.g. reset_flags on title entry). This is the symmetric counterpart to
+            // external triggers (vol_*, sig_*, signal_btn_*) — internal state changes
+            // also flow through the same Bus/Store dispatch mechanism.
+            _store.DispatchTrigger(trigger_id: "_on_enter_node");
+
             _load_scene(scene_name);
         }
 
