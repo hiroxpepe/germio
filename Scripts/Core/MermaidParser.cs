@@ -93,7 +93,7 @@ namespace Germio.Core {
             var stack = new Stack<Node>();
             stack.Push(item: synthetic_root);
 
-            var node_lookup = new Dictionary<string, Node>();
+            var node_lookup = new Map<string, Node>();
             node_lookup[synthetic_root.id] = synthetic_root;
 
             // Deferred edges — resolved after all nodes are collected.

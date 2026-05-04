@@ -189,7 +189,7 @@ namespace Germio.Core {
 
             // V004: Node.id must be globally unique
             var node_ids_seen = new HashSet<string>();
-            var node_map = new Dictionary<string, Node>();
+            var node_map = new Map<string, Node>();
             foreach (var node in all_nodes) {
                 if (!node_ids_seen.Add(node.id)) {
                     results.Add(new ValidationResult(
@@ -205,7 +205,7 @@ namespace Germio.Core {
             }
 
             // V020: Node.scene must be unique (excluding empty strings).
-            var scene_to_node = new Dictionary<string, Node>();
+            var scene_to_node = new Map<string, Node>();
             foreach (var node in all_nodes) {
                 if (!string.IsNullOrEmpty(node.scene)) {
                     if (scene_to_node.TryGetValue(node.scene, out var other)) {
@@ -278,7 +278,7 @@ namespace Germio.Core {
         /// Recursively validates a node and all its descendants.
         /// </summary>
         static void validateNodeRecursive(
-            Node node, Dictionary<string, Node> node_map, State state,
+            Node node, Map<string, Node> node_map, State state,
             List<ValidationResult> results) {
 
             // V011: dead end — no rules and no next
@@ -618,7 +618,7 @@ namespace Germio.Core {
         /// Detects cycles in the next[] transition graph.
         /// </summary>
         static void checkCircularTransitions(
-            Dictionary<string, Node> node_map,
+            Map<string, Node> node_map,
             List<ValidationResult> results) {
 
             var visited = new HashSet<string>();
@@ -645,7 +645,7 @@ namespace Germio.Core {
         /// </summary>
         static bool hasCycle(
             string current_id,
-            Dictionary<string, Node> node_map,
+            Map<string, Node> node_map,
             HashSet<string> visited,
             HashSet<string> rec_stack,
             List<string> path,
