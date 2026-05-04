@@ -18,19 +18,6 @@ namespace Germio {
         public const int FPS = 120; // 30fps
 
         /// <summary>
-        /// Gets the scene name for the title screen.
-        /// </summary>
-        public const string SCENE_TITLE = "Title";
-        /// <summary>
-        /// Gets the scene name for the select screen.
-        /// </summary>
-        public const string SCENE_SELECT = "Select";
-        /// <summary>
-        /// Gets the scene name for the ending screen.
-        /// </summary>
-        public const string SCENE_ENDING = "Ending";
-
-        /// <summary>
         /// Gets the string for easy game mode.
         /// </summary>
         public const string MODE_EASY = "easy";
