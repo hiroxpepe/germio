@@ -143,12 +143,12 @@ namespace Germio.Core {
     ///   V010: command has no fields set — rule has no effect (Error)
     ///   V011: node has no rules and no next entries — dead end (Warning)
     ///   V012: circular transition chain detected via DFS (Error)
-    ///   V020: Scenario全体で Node.scene がユニーク (空文字列を除く) (Error)
-    ///   V021: 葉ノード (children 空) は scene 必須 (Error)
-    ///   V023: 完全に空のノード (children も scene も空) は禁止 (Error)
-    ///   V024: ノード階層が MAX_NODE_DEPTH を超過 (Error)
-    ///   V025: ノード階層が warning_node_depth を超過 (Warning)
-    ///   V026: 循環参照 (children に祖先 ID を含む) (Error)
+    ///   V020: Node.scene must be unique across the entire Scenario (empty strings excluded) (Error)
+    ///   V021: Leaf nodes (empty children) must have a scene (Error)
+    ///   V023: Completely empty nodes (both children and scene empty) are forbidden (Error)
+    ///   V024: Node hierarchy exceeds MAX_NODE_DEPTH (Error)
+    ///   V025: Node hierarchy exceeds warning_node_depth (Warning)
+    ///   V026: Circular reference detected (children contain an ancestor ID) (Error)
     /// 
     /// Phase 5.8 v2 fix6 changes:
     ///   - V010 now also recognises reset_flags / reset_counters / reset_inventory
