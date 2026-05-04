@@ -249,13 +249,13 @@ namespace Germio.Model {
     public class State {
 #nullable enable
         /// <summary>Boolean state flags.</summary>
-        public Dictionary<string, bool> flags { get; set; } = new Dictionary<string, bool>();
+        public Map<string, bool> flags { get; set; } = new Map<string, bool>();
 
         /// <summary>Generic numeric counters for any quantifiable state.</summary>
-        public Dictionary<string, float> counters { get; set; } = new Dictionary<string, float>();
+        public Map<string, float> counters { get; set; } = new Map<string, float>();
 
         /// <summary>Item inventory with quantity.</summary>
-        public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
+        public Map<string, int> inventory { get; set; } = new Map<string, int>();
 
         /// <summary>ID of the currently active node in the Scenario tree.</summary>
         public string current_node { get; set; } = string.Empty;
@@ -264,7 +264,7 @@ namespace Germio.Model {
         public string current_team { get; set; } = string.Empty;
 
         /// <summary>Arbitrary key-value persistence store. Survives transitions and save/load.</summary>
-        public Dictionary<string, string> persistence { get; set; } = new Dictionary<string, string>();
+        public Map<string, string> persistence { get; set; } = new Map<string, string>();
     }
 
     /// <summary>
