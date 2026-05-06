@@ -144,7 +144,8 @@ flowchart TD
     end
 
     subgraph SAVE[Save]
-        STORE --> SNAP[Snapshot\nsnapshot_{slot}.json]
+        STORE --> SNAP[Snapshot
+snapshot_N.json]
     end
 
     STORE --> TICK
