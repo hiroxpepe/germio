@@ -4,7 +4,7 @@ A simple 3D mobile game framework for Unity.
 
 ## Features
 
-+ Data-driven 3D game logic and event system
++ LLM-Native 3D game logic and event system (declarative `germio.json`)
 + Easy integration with Unity projects
 + Mobile-friendly controls and input support (requires Input System)
 + Modular and extensible architecture
@@ -17,7 +17,7 @@ A simple 3D mobile game framework for Unity.
 
 ## Folder Structure
 
-+ `Scripts/` — Core framework scripts (Cores, Levels, Players, Scenes, Systems, etc.)
++ `Scripts/` — Core framework scripts (Core, Editor, Levels, Model, Players, Schema, Scene, Systems, Triggers)
 + `Shaders/` — Shader files for rendering
 
 ## License
