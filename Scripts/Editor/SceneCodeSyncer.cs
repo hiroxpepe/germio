@@ -1,5 +1,5 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
-// Licensed under the GPL v2.0 license. See LICENSE text in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #if UNITY_EDITOR
 
@@ -337,7 +337,7 @@ namespace Germio.Editor {
         static string build_skeleton(ExpectedNode expected) {
             var sb = new StringBuilder();
             sb.Append(value: "// Copyright (c) STUDIO MeowToon. All rights reserved.\n");
-            sb.Append(value: "// Licensed under the GPL v2.0 license. See LICENSE text in the project root for license information.\n");
+            sb.Append(value: "// Licensed under the MIT License. See LICENSE in the project root for license information.\n");
             sb.Append(value: "\n");
             sb.Append(value: "using Germio;\n");
             sb.Append(value: "\n");
