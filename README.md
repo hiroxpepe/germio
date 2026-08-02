@@ -4,7 +4,8 @@
 > Describe your game in natural language. Let an LLM author the logic. Ship it.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
-[![Version](https://img.shields.io/badge/version-v0.5.19--alpha-orange)]()
+[![Phase](https://img.shields.io/badge/phase-5-blue)]()
+[![Version](https://img.shields.io/badge/version-v0.5.48-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
