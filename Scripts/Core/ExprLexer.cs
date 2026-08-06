@@ -1,9 +1,14 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
+
     /// <summary>Identifies the kind of a single lexical token produced by <see cref="ExprLexer"/>.</summary>
     public enum TokenKind {
         Identifier,  // flags, counters, inventory, key names
@@ -19,31 +24,45 @@ namespace Germio.Core {
         And,         // &&
         Or,          // ||
         Not,         // !
-        LParen,      // (
-        RParen,      // )
+        LeftParen,      // (
+        RightParen,      // )
         Dot,         // .
         Comma,       // ,
         Equals,      // =
         EOF          // end-of-input sentinel
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>A single lexical token produced by <see cref="ExprLexer"/>.</summary>
     public class Token {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
         readonly TokenKind _kind;
         readonly string    _value;
         readonly int       _column;
 
-        public TokenKind kind   => _kind;
-        public string    value  => _value;
-        public int       column => _column;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
 
         public Token(TokenKind kind, string value, int column) {
             _kind   = kind;
             _value  = value;
             _column = column;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        public TokenKind Kind   => _kind;
+        public string    Value  => _value;
+        public int       Column => _column;
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Tokenizer for the Germio condition DSL.
@@ -52,7 +71,8 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class ExprLexer {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Converts the input source string into a flat list of <see cref="Token"/>s.
@@ -124,8 +144,8 @@ namespace Germio.Core {
                     '>' => TokenKind.Gt,
                     '<' => TokenKind.Lt,
                     '!' => TokenKind.Not,
-                    '(' => TokenKind.LParen,
-                    ')' => TokenKind.RParen,
+                    '(' => TokenKind.LeftParen,
+                    ')' => TokenKind.RightParen,
                     '.' => TokenKind.Dot,
                     ',' => TokenKind.Comma,
                     '=' => TokenKind.Equals,

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 #if UNITY_EDITOR
 
 using System;
@@ -31,8 +33,6 @@ namespace Germio.Editor {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class SceneCodeSyncer {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
@@ -57,8 +57,8 @@ namespace Germio.Editor {
 
             var validation = Validator.Validate(scenario: scenario);
             foreach (var v in validation) {
-                if (v.severity == ValidationLevel.Error && v.rule_id == "V004") {
-                    result.errors.Add(item: $"V004: {v.message}");
+                if (v.Severity == ValidationLevel.Error && v.RuleID == "V004") {
+                    result.errors.Add(item: $"V004: {v.Message}");
                 }
             }
             if (result.errors.Count > 0) {
@@ -383,7 +383,7 @@ namespace Germio.Editor {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public types
 
     /// <summary>Computed expectation for a single node, derived from germio.json.</summary>

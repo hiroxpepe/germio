@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;

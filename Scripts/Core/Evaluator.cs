@@ -1,11 +1,16 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Parses and evaluates condition expressions against a <see cref="State"/> instance.
     /// Delegates to <see cref="ExprLexer"/> and <see cref="ExprParser"/> (recursive-descent AST).
@@ -15,8 +20,6 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Evaluator {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -60,12 +63,12 @@ namespace Germio.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private static Methods
+        // private static Methods [verb]
 
         /// <summary>
         /// Evaluates an AST tree with history context available.
         /// </summary>
-        static bool evaluateWithHistory(ExprAst ast, State state, History history) {
+        static bool evaluateWithHistory(ExprAST ast, State state, History history) {
             return ast switch {
                 HistoryCountNode node => (int)evaluateHistoryCount(node: node, history: history) > 0,
                 HistoryHasNode node => (bool)evaluateHistoryHas(node: node, history: history),
@@ -116,7 +119,7 @@ namespace Germio.Core {
         /// Fallback recursive evaluator that tries to evaluate using history-aware logic.
         /// For nodes without history support, falls back to regular evaluation.
         /// </summary>
-        static bool evaluateRecursiveWithHistory(ExprAst node, State state, History history) {
+        static bool evaluateRecursiveWithHistory(ExprAST node, State state, History history) {
             // For composite nodes (And, Or, Not), we can't easily decompose them
             // So we try to evaluate with state only, which will fail for history nodes
             // This is a limitation of the current design
@@ -139,8 +142,8 @@ namespace Germio.Core {
         static object evaluateHistoryCount(HistoryCountNode node, History history) {
             int count = 0;
             foreach (var entry in history.entries) {
-                if (entry.kind == node.kind) {
-                    if (node.target_id == null || entry.target_id == node.target_id) {
+                if (entry.kind == node.Kind) {
+                    if (node.TargetID == null || entry.target_id == node.TargetID) {
                         count++;
                     }
                 }
@@ -154,8 +157,8 @@ namespace Germio.Core {
         /// </summary>
         static object evaluateHistoryHas(HistoryHasNode node, History history) {
             foreach (var entry in history.entries) {
-                if (entry.kind == node.kind) {
-                    if (node.target_id == null || entry.target_id == node.target_id) {
+                if (entry.kind == node.Kind) {
+                    if (node.TargetID == null || entry.target_id == node.TargetID) {
                         return true;
                     }
                 }
@@ -170,8 +173,8 @@ namespace Germio.Core {
         static object evaluateHistoryLast(HistoryLastNode node, History history) {
             HistoryEntry? last = null;
             foreach (var entry in history.entries) {
-                if (entry.kind == node.kind) {
-                    if (node.target_id == null || entry.target_id == node.target_id) {
+                if (entry.kind == node.Kind) {
+                    if (node.TargetID == null || entry.target_id == node.TargetID) {
                         last = entry;
                     }
                 }
@@ -181,10 +184,10 @@ namespace Germio.Core {
                 return string.Empty;
             }
             
-            if (node.property == "target_id") {
+            if (node.Property == "target_id") {
                 return last.target_id ?? string.Empty;
             }
-            if (node.property == "timestamp") {
+            if (node.Property == "timestamp") {
                 return last.timestamp;
             }
             return string.Empty;
@@ -197,8 +200,8 @@ namespace Germio.Core {
         static object evaluateHistoryTimeSince(HistoryTimeSinceNode node, History history) {
             float last_time = 0.0f;
             foreach (var entry in history.entries) {
-                if (entry.kind == node.kind) {
-                    if (node.target_id == null || entry.target_id == node.target_id) {
+                if (entry.kind == node.Kind) {
+                    if (node.TargetID == null || entry.target_id == node.TargetID) {
                         last_time = entry.timestamp;
                     }
                 }
@@ -234,41 +237,41 @@ namespace Germio.Core {
         static bool evaluateGenericComparison(GenericComparisonNode node, State state, History history) {
             double left_num = 0;
             // Evaluate left side with history context
-            if (node.left is HistoryCountNode count_node) {
+            if (node.Left is HistoryCountNode count_node) {
                 left_num = (int)evaluateHistoryCount(node: count_node, history: history);
-            } else if (node.left is HistoryTimeSinceNode time_node) {
+            } else if (node.Left is HistoryTimeSinceNode time_node) {
                 left_num = (float)evaluateHistoryTimeSince(node: time_node, history: history);
-            } else if (node.left is HistorySessionCountNode session_node) {
+            } else if (node.Left is HistorySessionCountNode session_node) {
                 left_num = (int)evaluateHistorySessionCount(node: session_node, state: state);
-            } else if (node.left is HistoryTotalPlayTimeNode play_node) {
+            } else if (node.Left is HistoryTotalPlayTimeNode play_node) {
                 left_num = (float)evaluateHistoryTotalPlayTime(node: play_node, state: state);
             } else {
-                throw new InvalidOperationException($"Unsupported left operand type: {node.left.GetType().Name}");
+                throw new InvalidOperationException($"Unsupported left operand type: {node.Left.GetType().Name}");
             }
 
             // Evaluate right side
-            double right_num = node.right.GetNumeric(state: state);
+            double right_num = node.Right.GetNumeric(state: state);
 
-            return node.op switch {
-                "==" => relativeEqual(a: left_num, b: right_num),
-                "!=" => !relativeEqual(a: left_num, b: right_num),
+            return node.Op switch {
+                "==" => relativeEqual(left_value: left_num, right_value: right_num),
+                "!=" => !relativeEqual(left_value: left_num, right_value: right_num),
                 ">" => left_num > right_num,
                 "<" => left_num < right_num,
-                ">=" => left_num >= right_num || relativeEqual(a: left_num, b: right_num),
-                "<=" => left_num <= right_num || relativeEqual(a: left_num, b: right_num),
-                _ => throw new InvalidOperationException($"Unknown operator: {node.op}")
+                ">=" => left_num >= right_num || relativeEqual(left_value: left_num, right_value: right_num),
+                "<=" => left_num <= right_num || relativeEqual(left_value: left_num, right_value: right_num),
+                _ => throw new InvalidOperationException($"Unknown operator: {node.Op}")
             };
         }
 
         /// <summary>
         /// G4 relative-error equality: |a-b| <= eps * max(|a|, |b|, 1.0)
         /// </summary>
-        static bool relativeEqual(double a, double b) {
+        static bool relativeEqual(double left_value, double right_value) {
             const double EPSILON = 1e-6;
-            if (double.IsNaN(a) || double.IsNaN(b)) { return false; }
-            if (double.IsInfinity(a) || double.IsInfinity(b)) { return a == b; }
-            double diff = Math.Abs(a - b);
-            double scale = Math.Max(Math.Max(Math.Abs(a), Math.Abs(b)), 1.0);
+            if (double.IsNaN(left_value) || double.IsNaN(right_value)) { return false; }
+            if (double.IsInfinity(left_value) || double.IsInfinity(right_value)) { return left_value == right_value; }
+            double diff = Math.Abs(left_value - right_value);
+            double scale = Math.Max(Math.Max(Math.Abs(left_value), Math.Abs(right_value)), 1.0);
             return diff <= EPSILON * scale;
         }
     }

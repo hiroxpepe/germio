@@ -1,11 +1,16 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.IO;
 using UnityEngine;
 
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Lightweight file-based logger for diagnostic purposes.
     /// Writes to <c>game/germio.log</c> (project root) so the maintainer can inspect
@@ -17,17 +22,18 @@ namespace Germio {
     /// Usage:
     ///   GermioLog.Write("[Germio] something happened");
     ///
-    /// Disable by setting <see cref="enabled"/> to false (or removing calls).
+    /// Disable by setting <see cref="Enabled"/> to false (or removing calls).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class GermioLog {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Fields
+        // public static Fields
 
         /// <summary>Enable / disable the logger globally.</summary>
-        public static bool enabled = true;
+        public static bool Enabled = true;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Fields
 
         /// <summary>Cached log file path (relative to project root: game/germio.log).</summary>
         static string? _path;
@@ -36,14 +42,14 @@ namespace Germio {
         static bool _initialized = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Methods
+        // public static Methods [verb]
 
         /// <summary>
         /// Writes a timestamped message to <c>game/germio.log</c> and Unity Console.
         /// First call clears any previous log file.
         /// </summary>
         public static void Write(string message) {
-            if (!enabled) { return; }
+            if (!Enabled) { return; }
             try {
                 if (_path == null) {
                     _path = Path.Combine(Application.dataPath, "..", "germio.log");

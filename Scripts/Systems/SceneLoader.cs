@@ -1,12 +1,17 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 
 using Germio.Core;
 using Germio.Model;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Listens for transition requests from the Store and loads the corresponding scene.
     /// Uses an injected <see cref="Action{String}"/> for the actual load call so that
@@ -22,8 +27,6 @@ namespace Germio.Systems {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class SceneLoader : IDisposable {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
@@ -85,9 +88,9 @@ namespace Germio.Systems {
 
             // Update current_node in both Scenario.initial_state (legacy compatibility)
             // and Snapshot.state (the source of truth as of Phase 5.8 v2 fix6).
-            _store.scenario.initial_state.current_node = target_node_id;
-            if (_store.snapshot != null) {
-                _store.snapshot.state.current_node = target_node_id;
+            _store.Scenario.initial_state.current_node = target_node_id;
+            if (_store.Snapshot != null) {
+                _store.Snapshot.state.current_node = target_node_id;
             }
             _store.MarkDirty();
 
@@ -98,8 +101,8 @@ namespace Germio.Systems {
             // (fix6 hotfix7: was async fire-and-forget, which raced with the new
             // scene's LoadSnapshotAsync and caused current_node to revert to the
             // germio.json initial value, breaking all scene-to-scene transitions.)
-            if (_store.snapshot != null) {
-                Storage.SaveSnapshot(snapshot: _store.snapshot, slot: 0);
+            if (_store.Snapshot != null) {
+                Storage.SaveSnapshot(snapshot: _store.Snapshot, slot: 0);
             }
 
             // Auto-fire _on_enter_node trigger so DSL rules can react to node entry

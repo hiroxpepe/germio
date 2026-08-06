@@ -1,9 +1,14 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Pure-function navigator over the scenario node tree.
     /// 
@@ -12,7 +17,7 @@ namespace Germio.Core {
     /// 
     /// On scene start, GameSystem.initializeStateCoroutine resolves the current
     /// Unity Scene name (via SceneManager.GetActiveScene().name) to a node id by
-    /// calling FindNodeIdBySceneName, then sets scenario.initial_state.current_node
+    /// calling FindNodeIDBySceneName, then sets scenario.initial_state.current_node
     /// to that value. The persisted snapshot's current_node field is intentionally
     /// ignored — what Unity is showing is the truth.
     /// 
@@ -21,7 +26,8 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class ScenarioNavigator {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Returns the id of the node whose <c>scene</c> field equals
@@ -35,7 +41,7 @@ namespace Germio.Core {
         /// <param name="root">Root of the node tree (typically scenario.root).</param>
         /// <param name="scene_name">Unity Scene name as returned by SceneManager.GetActiveScene().name.</param>
         /// <returns>Matching node id, or null if not found.</returns>
-        public static string? FindNodeIdBySceneName(Node? root, string? scene_name) {
+        public static string? FindNodeIDBySceneName(Node? root, string? scene_name) {
             if (root == null || string.IsNullOrEmpty(value: scene_name)) {
                 return null;
             }
@@ -44,7 +50,7 @@ namespace Germio.Core {
             }
             if (root.children != null) {
                 foreach (Node child in root.children) {
-                    string? hit = FindNodeIdBySceneName(root: child, scene_name: scene_name);
+                    string? hit = FindNodeIDBySceneName(root: child, scene_name: scene_name);
                     if (hit != null) {
                         return hit;
                     }

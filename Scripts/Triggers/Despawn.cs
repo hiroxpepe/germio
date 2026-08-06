@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using UnityEngine;
 using static UnityEngine.GameObject;
@@ -14,6 +16,9 @@ using Germio;
 using Germio.Systems;
 
 namespace Germio.Triggers {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Handles player despawn logic.
     /// Directly reloads the active scene (original behavior retained as primary fallback),
@@ -22,10 +27,8 @@ namespace Germio.Triggers {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Despawn : MonoBehaviour {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives]
+        // Fields
 
         /// <summary>
         /// Holds a reference to the game system instance.
@@ -40,6 +43,9 @@ namespace Germio.Triggers {
         /// Retained for backward compatibility with observers (e.g., SoundSystem).
         /// </summary>
         public event Action? OnDespawn;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
@@ -66,7 +72,7 @@ namespace Germio.Triggers {
                 .Subscribe(onNext: _ => {
                     OnDespawn?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
-                    _game_system.bus?.Publish("sig_despawn");
+                    _game_system.Bus?.Publish("sig_despawn");
                 }).AddTo(gameObjectComponent: this);
         }
     }

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +11,15 @@ using System.Threading.Tasks;
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Manages the runtime Scenario: trigger dispatch, state transitions, and persistence.
     /// G2 idempotency: once=true rules are tracked via History events.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Store {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
@@ -26,13 +29,7 @@ namespace Germio.Core {
         bool     _is_dirty;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Events
-
-        /// <summary>
-        /// Raised when a command requests a node transition.
-        /// The string argument is the target node ID.
-        /// </summary>
-        public event Action<string>? OnTransitionRequested;
+        // Constructor
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor (public for unit tests — no file I/O)
@@ -48,16 +45,25 @@ namespace Germio.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties
+        // public Events [verb, verb phrase]
+
+        /// <summary>
+        /// Raised when a command requests a node transition.
+        /// The string argument is the target node ID.
+        /// </summary>
+        public event Action<string>? OnTransitionRequested;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
 
         /// <summary>The scenario data object. Updated after InitializeAsync completes.</summary>
-        public Scenario scenario => _scenario;
+        public Scenario Scenario => _scenario;
 
         /// <summary>The current runtime snapshot (if loaded).</summary>
-        public Snapshot? snapshot => _snapshot;
+        public Snapshot? Snapshot => _snapshot;
 
         /// <summary>True if state has been mutated since the last save.</summary>
-        public bool isDirty => _is_dirty;
+        public bool IsDirty => _is_dirty;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
@@ -281,7 +287,7 @@ namespace Germio.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods
+        // private Methods [verb]
 
         /// <summary>
         /// Recursive helper for FindNode.

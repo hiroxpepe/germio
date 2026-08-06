@@ -1,26 +1,29 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using Germio;
 
 namespace Germio.Players {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMapper {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
+        // protected inner Classes
 
         /// <summary>
         /// Handles the FixedUpdate() method logic.
         /// </summary>
         protected class DoFixedUpdate {
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Fields [noun, adjectives] 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
 
             /// <summary>
             /// Indicates whether the player is idle.
@@ -57,46 +60,46 @@ namespace Germio.Players {
             /// </summary>
             bool _stop;
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjectives] 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public Properties [noun, adjective]
 
             /// <summary>
             /// Gets whether the player is idle.
             /// </summary>
-            public bool idol { get => _idol; }
+            public bool Idol { get => _idol; }
 
             /// <summary>
             /// Gets whether the player is running.
             /// </summary>
-            public bool run { get => _run; }
+            public bool Run { get => _run; }
 
             /// <summary>
             /// Gets whether the player is walking.
             /// </summary>
-            public bool walk { get => _walk; }
+            public bool Walk { get => _walk; }
 
             /// <summary>
             /// Gets whether the player is jumping.
             /// </summary>
-            public bool jump { get => _jump; }
+            public bool Jump { get => _jump; }
 
             /// <summary>
             /// Gets whether the player is aborting a jump.
             /// </summary>
-            public bool abortJump { get => _abort_jump; }
+            public bool AbortJump { get => _abort_jump; }
 
             /// <summary>
             /// Gets whether the player is moving backward.
             /// </summary>
-            public bool backward { get => _backward; }
+            public bool Backward { get => _backward; }
 
             /// <summary>
             /// Gets whether the player is stopping.
             /// </summary>
-            public bool stop { get => _stop; }
+            public bool Stop { get => _stop; }
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Constructor
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public static Methods [verb]
 
             /// <summary>
             /// Creates and returns an initialized DoFixedUpdate instance.
@@ -141,8 +144,10 @@ namespace Germio.Players {
             }
         }
 
-        #endregion
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
 
     /// <summary>
     /// Specifies the FixedUpdate states.

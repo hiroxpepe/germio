@@ -1,9 +1,14 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Executes a Command against the game state via a Store.
     /// Stateless: all state mutation happens through the store.
@@ -11,8 +16,6 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Executor {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -26,14 +29,14 @@ namespace Germio.Core {
             bool mutated = false;
 
             if (command.set_flag != null) {
-                store.scenario.initial_state.flags[command.set_flag.key] = command.set_flag.value;
+                store.Scenario.initial_state.flags[command.set_flag.key] = command.set_flag.value;
                 mutated = true;
             }
 
             if (command.update_counter != null) {
                 var uc = command.update_counter;
-                float current = store.scenario.initial_state.counters.TryGetValue(uc.key, out float v) ? v : 0f;
-                store.scenario.initial_state.counters[uc.key] = uc.op switch {
+                float current = store.Scenario.initial_state.counters.TryGetValue(uc.key, out float v) ? v : 0f;
+                store.Scenario.initial_state.counters[uc.key] = uc.op switch {
                     CounterOp.Sub => current - uc.delta,
                     CounterOp.Set => uc.delta,
                     _             => current + uc.delta  // CounterOp.Add (default)
@@ -43,12 +46,12 @@ namespace Germio.Core {
 
             if (command.update_inventory != null) {
                 var ui = command.update_inventory;
-                int current = store.scenario.initial_state.inventory.TryGetValue(ui.key, out int v) ? v : 0;
+                int current = store.Scenario.initial_state.inventory.TryGetValue(ui.key, out int v) ? v : 0;
                 int next    = current + ui.delta;
                 if (next <= 0) {
-                    store.scenario.initial_state.inventory.Remove(ui.key);
+                    store.Scenario.initial_state.inventory.Remove(ui.key);
                 } else {
-                    store.scenario.initial_state.inventory[ui.key] = next;
+                    store.Scenario.initial_state.inventory[ui.key] = next;
                 }
                 mutated = true;
             }
@@ -59,7 +62,7 @@ namespace Germio.Core {
             }
 
             if (command.set_persistence != null) {
-                store.scenario.initial_state.persistence[command.set_persistence.key] = command.set_persistence.value;
+                store.Scenario.initial_state.persistence[command.set_persistence.key] = command.set_persistence.value;
                 mutated = true;
             }
 
@@ -75,17 +78,17 @@ namespace Germio.Core {
             // Typically used with trigger="_on_enter_node" on title/menu nodes
             // to start a fresh session.
             if (command.reset_flags) {
-                store.scenario.initial_state.flags.Clear();
+                store.Scenario.initial_state.flags.Clear();
                 mutated = true;
             }
 
             if (command.reset_counters) {
-                store.scenario.initial_state.counters.Clear();
+                store.Scenario.initial_state.counters.Clear();
                 mutated = true;
             }
 
             if (command.reset_inventory) {
-                store.scenario.initial_state.inventory.Clear();
+                store.Scenario.initial_state.inventory.Clear();
                 mutated = true;
             }
 

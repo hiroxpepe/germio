@@ -1,21 +1,34 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>Thrown when the condition DSL fails to parse.</summary>
     public class ExprParseException : Exception {
-#nullable enable
-        /// <summary>Zero-based column index where the error was detected.</summary>
-        public int Column { get; }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
 
         public ExprParseException(string message, int column = 0) : base(message) {
             Column = column;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>Zero-based column index where the error was detected.</summary>
+        public int Column { get; }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Recursive-descent parser for the Germio condition DSL.
@@ -37,7 +50,8 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class ExprParser {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Parses the list of tokens (produced by <see cref="ExprLexer"/>) into an AST.
@@ -45,26 +59,70 @@ namespace Germio.Core {
         /// <param name="tokens">List of tokens including trailing EOF.</param>
         /// <returns>Root AST node.</returns>
         /// <exception cref="ExprParseException">Thrown on any syntax error.</exception>
-        public static ExprAst Parse(List<Token> tokens) {
+        public static ExprAST Parse(List<Token> tokens) {
             var parser = new Parser(tokens: tokens);
-            var ast    = parser.parseExpression();
-            parser.expectEof();
+            var ast    = parser.ParseExpression();
+            parser.ExpectEof();
             return ast;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // inner Classes
 
         // ──────────────────────────────────────────────────────────────────────
         // Inner parser state
 
         sealed class Parser {
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
+
             readonly List<Token> _tokens;
             int _pos;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Constructor
 
             public Parser(List<Token> tokens) {
                 _tokens = tokens;
                 _pos    = 0;
             }
 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Properties [noun, adjective]
+
             Token current => _tokens[_pos];
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public Methods [verb]
+
+            // ── Grammar rules ────────────────────────────────────────────────
+
+            // expression = or_expr
+            public ExprAST ParseExpression() => parseOrExpr();
+
+            public void ExpectEof() {
+                if (current.Kind != TokenKind.EOF) {
+                    throw new ExprParseException(
+                        message: $"Unexpected token '{current.Value}' after expression.",
+                        column: current.Column);
+                }
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // private static Methods [verb]
+
+            static bool isComparisonOp(TokenKind kind) => kind switch {
+                TokenKind.EqEq  => true,
+                TokenKind.NotEq => true,
+                TokenKind.Gt    => true,
+                TokenKind.Lt    => true,
+                TokenKind.GtEq  => true,
+                TokenKind.LtEq  => true,
+                _               => false
+            };
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // private Methods [verb]
 
             Token consume() {
                 var t = _tokens[_pos];
@@ -72,15 +130,10 @@ namespace Germio.Core {
                 return t;
             }
 
-            // ── Grammar rules ────────────────────────────────────────────────
-
-            // expression = or_expr
-            public ExprAst parseExpression() => parseOrExpr();
-
             // or_expr = and_expr ('||' and_expr)*
-            ExprAst parseOrExpr() {
+            ExprAST parseOrExpr() {
                 var left = parseAndExpr();
-                while (current.kind == TokenKind.Or) {
+                while (current.Kind == TokenKind.Or) {
                     consume();
                     var right = parseAndExpr();
                     left = new OrNode(left: left, right: right);
@@ -89,9 +142,9 @@ namespace Germio.Core {
             }
 
             // and_expr = unary_expr ('&&' unary_expr)*
-            ExprAst parseAndExpr() {
+            ExprAST parseAndExpr() {
                 var left = parseUnaryExpr();
-                while (current.kind == TokenKind.And) {
+                while (current.Kind == TokenKind.And) {
                     consume();
                     var right = parseUnaryExpr();
                     left = new AndNode(left: left, right: right);
@@ -100,23 +153,23 @@ namespace Germio.Core {
             }
 
             // unary_expr = '!' unary_expr | '(' expression ')' | comparison_or_accessor
-            ExprAst parseUnaryExpr() {
-                if (current.kind == TokenKind.Not) {
+            ExprAST parseUnaryExpr() {
+                if (current.Kind == TokenKind.Not) {
                     consume();
                     return new NotNode(operand: parseUnaryExpr());
                 }
-                if (current.kind == TokenKind.LParen) {
+                if (current.Kind == TokenKind.LeftParen) {
                     consume();
-                    if (current.kind == TokenKind.RParen) {
+                    if (current.Kind == TokenKind.RightParen) {
                         throw new ExprParseException(
                             message: "Empty parentheses '()' are not valid.",
-                            column: current.column);
+                            column: current.Column);
                     }
-                    var inner = parseExpression();
-                    if (current.kind != TokenKind.RParen) {
+                    var inner = ParseExpression();
+                    if (current.Kind != TokenKind.RightParen) {
                         throw new ExprParseException(
                             message: "Missing closing parenthesis ')'.",
-                            column: current.column);
+                            column: current.Column);
                     }
                     consume();
                     return inner;
@@ -125,22 +178,22 @@ namespace Germio.Core {
             }
 
             // comparison_or_accessor = history_or_accessor (op rhs)?
-            ExprAst parseComparisonOrAccessor() {
+            ExprAST parseComparisonOrAccessor() {
                 // Check if this is a history function call (history.*)
-                ExprAst left;
-                if (current.kind == TokenKind.Identifier && current.value == "history" &&
-                    _pos + 1 < _tokens.Count && _tokens[_pos + 1].kind == TokenKind.Dot) {
+                ExprAST left;
+                if (current.Kind == TokenKind.Identifier && current.Value == "history" &&
+                    _pos + 1 < _tokens.Count && _tokens[_pos + 1].Kind == TokenKind.Dot) {
                     left = parseHistoryFunction();
                 } else {
                     left = parseAccessor();
                 }
 
-                var op_kind = current.kind;
+                var op_kind = current.Kind;
                 if (!isComparisonOp(kind: op_kind)) { return left; }
 
                 // For history nodes, we need a more generic comparison node
                 // Since ComparisonNode only accepts AccessorNode, wrap it in a way that works
-                string op  = current.value;
+                string op  = current.Value;
                 consume();
                 var right = parseRhs();
                 
@@ -153,23 +206,23 @@ namespace Germio.Core {
             }
 
             // history_function = history.COUNT | history.HAS | history.LAST | history.TIME_SINCE | history.SESSION_COUNT | history.TOTAL_PLAY_TIME
-            ExprAst parseHistoryFunction() {
-                int col = current.column;
+            ExprAST parseHistoryFunction() {
+                int col = current.Column;
                 consume(); // consume "history"
                 
-                if (current.kind != TokenKind.Dot) {
+                if (current.Kind != TokenKind.Dot) {
                     throw new ExprParseException(
                         message: "Expected '.' after 'history'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume(); // consume "."
 
-                if (current.kind != TokenKind.Identifier) {
+                if (current.Kind != TokenKind.Identifier) {
                     throw new ExprParseException(
                         message: "Expected function name after 'history.'.",
-                        column: current.column);
+                        column: current.Column);
                 }
-                string func_name = consume().value;
+                string func_name = consume().Value;
 
                 // Parse function call based on function name
                 return func_name switch {
@@ -186,26 +239,26 @@ namespace Germio.Core {
             }
 
             // history.count(kind=..., target_id=...)
-            ExprAst parseHistoryCount(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistoryCount(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.count'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                string kind = parseNamedParam(param_name: "kind");
+                string kind = parseNamedParameter(name: "kind");
                 string? target_id = null;
 
-                if (current.kind == TokenKind.Comma) {
+                if (current.Kind == TokenKind.Comma) {
                     consume();
-                    target_id = parseNamedParam(param_name: "target_id");
+                    target_id = parseNamedParameter(name: "target_id");
                 }
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after history.count parameters.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
@@ -213,26 +266,26 @@ namespace Germio.Core {
             }
 
             // history.has(kind=..., target_id=...)
-            ExprAst parseHistoryHas(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistoryHas(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.has'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                string kind = parseNamedParam(param_name: "kind");
+                string kind = parseNamedParameter(name: "kind");
                 string? target_id = null;
 
-                if (current.kind == TokenKind.Comma) {
+                if (current.Kind == TokenKind.Comma) {
                     consume();
-                    target_id = parseNamedParam(param_name: "target_id");
+                    target_id = parseNamedParameter(name: "target_id");
                 }
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after history.has parameters.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
@@ -240,64 +293,64 @@ namespace Germio.Core {
             }
 
             // history.last(kind=..., target_id=...).property
-            ExprAst parseHistoryLast(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistoryLast(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.last'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                string kind = parseNamedParam(param_name: "kind");
+                string kind = parseNamedParameter(name: "kind");
                 string? target_id = null;
 
-                if (current.kind == TokenKind.Comma) {
+                if (current.Kind == TokenKind.Comma) {
                     consume();
-                    target_id = parseNamedParam(param_name: "target_id");
+                    target_id = parseNamedParameter(name: "target_id");
                 }
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after history.last parameters.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
                 string? property = null;
-                if (current.kind == TokenKind.Dot) {
+                if (current.Kind == TokenKind.Dot) {
                     consume();
-                    if (current.kind != TokenKind.Identifier) {
+                    if (current.Kind != TokenKind.Identifier) {
                         throw new ExprParseException(
                             message: "Expected property name after '.' in history.last.",
-                            column: current.column);
+                            column: current.Column);
                     }
-                    property = consume().value;
+                    property = consume().Value;
                 }
 
                 return new HistoryLastNode(kind: kind, target_id: target_id, property: property);
             }
 
             // history.time_since(kind=..., target_id=...)
-            ExprAst parseHistoryTimeSince(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistoryTimeSince(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.time_since'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                string kind = parseNamedParam(param_name: "kind");
+                string kind = parseNamedParameter(name: "kind");
                 string? target_id = null;
 
-                if (current.kind == TokenKind.Comma) {
+                if (current.Kind == TokenKind.Comma) {
                     consume();
-                    target_id = parseNamedParam(param_name: "target_id");
+                    target_id = parseNamedParameter(name: "target_id");
                 }
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after history.time_since parameters.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
@@ -305,18 +358,18 @@ namespace Germio.Core {
             }
 
             // history.session_count()
-            ExprAst parseHistorySessionCount(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistorySessionCount(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.session_count'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after 'history.session_count()'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
@@ -324,18 +377,18 @@ namespace Germio.Core {
             }
 
             // history.total_play_time()
-            ExprAst parseHistoryTotalPlayTime(int col) {
-                if (current.kind != TokenKind.LParen) {
+            ExprAST parseHistoryTotalPlayTime(int col) {
+                if (current.Kind != TokenKind.LeftParen) {
                     throw new ExprParseException(
                         message: "Expected '(' after 'history.total_play_time'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
-                if (current.kind != TokenKind.RParen) {
+                if (current.Kind != TokenKind.RightParen) {
                     throw new ExprParseException(
                         message: "Expected ')' after 'history.total_play_time()'.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 consume();
 
@@ -343,40 +396,40 @@ namespace Germio.Core {
             }
 
             // Parse named parameter: name=value
-            string parseNamedParam(string param_name) {
-                if (current.kind != TokenKind.Identifier || current.value != param_name) {
+            string parseNamedParameter(string name) {
+                if (current.Kind != TokenKind.Identifier || current.Value != name) {
                     throw new ExprParseException(
-                        message: $"Expected '{param_name}='.",
-                        column: current.column);
+                        message: $"Expected '{name}='.",
+                        column: current.Column);
                 }
                 consume();
 
-                if (current.kind != TokenKind.Equals) {
+                if (current.Kind != TokenKind.Equals) {
                     throw new ExprParseException(
-                        message: $"Expected '=' after '{param_name}'.",
-                        column: current.column);
+                        message: $"Expected '=' after '{name}'.",
+                        column: current.Column);
                 }
                 consume();
 
-                if (current.kind != TokenKind.Identifier) {
+                if (current.Kind != TokenKind.Identifier) {
                     throw new ExprParseException(
                         message: "Expected identifier value after '='.",
-                        column: current.column);
+                        column: current.Column);
                 }
-                string value = consume().value;
+                string value = consume().Value;
                 return value;
             }
 
             // rhs = accessor | literal
-            ExprAst parseRhs() {
-                if (current.kind == TokenKind.EOF) {
+            ExprAST parseRhs() {
+                if (current.Kind == TokenKind.EOF) {
                     throw new ExprParseException(
                         message: "Unexpected end of expression: missing right-hand side value.",
-                        column: current.column);
+                        column: current.Column);
                 }
                 // If it looks like an accessor (IDENT DOT), parse as accessor
-                if (current.kind == TokenKind.Identifier && _pos + 1 < _tokens.Count &&
-                    _tokens[_pos + 1].kind == TokenKind.Dot) {
+                if (current.Kind == TokenKind.Identifier && _pos + 1 < _tokens.Count &&
+                    _tokens[_pos + 1].Kind == TokenKind.Dot) {
                     return parseAccessor();
                 }
                 return parseLiteral();
@@ -384,66 +437,48 @@ namespace Germio.Core {
 
             // accessor = IDENT '.' IDENT
             AccessorNode parseAccessor() {
-                if (current.kind != TokenKind.Identifier) {
+                if (current.Kind != TokenKind.Identifier) {
                     throw new ExprParseException(
-                        message: $"Expected identifier, got '{current.value}'.",
-                        column: current.column);
+                        message: $"Expected identifier, got '{current.Value}'.",
+                        column: current.Column);
                 }
-                int    col    = current.column;
-                string prefix = consume().value;
+                int    col    = current.Column;
+                string prefix = consume().Value;
 
-                if (current.kind != TokenKind.Dot) {
+                if (current.Kind != TokenKind.Dot) {
                     throw new ExprParseException(
-                        message: $"Expected '.' after '{prefix}', got '{current.value}'.",
-                        column: current.column);
+                        message: $"Expected '.' after '{prefix}', got '{current.Value}'.",
+                        column: current.Column);
                 }
                 consume();
 
-                if (current.kind != TokenKind.Identifier) {
+                if (current.Kind != TokenKind.Identifier) {
                     throw new ExprParseException(
-                        message: $"Expected key after '.', got '{current.value}'.",
-                        column: current.column);
+                        message: $"Expected key after '.', got '{current.Value}'.",
+                        column: current.Column);
                 }
-                string key = consume().value;
+                string key = consume().Value;
                 return new AccessorNode(prefix: prefix, key: key, column: col);
             }
 
             // literal = NUMBER | 'true' | 'false'
             LiteralNode parseLiteral() {
-                if (current.kind == TokenKind.BoolTrue)  { consume(); return new LiteralNode(value: true);  }
-                if (current.kind == TokenKind.BoolFalse) { consume(); return new LiteralNode(value: false); }
-                if (current.kind == TokenKind.Number) {
-                    string raw = current.value;
+                if (current.Kind == TokenKind.BoolTrue)  { consume(); return new LiteralNode(value: true);  }
+                if (current.Kind == TokenKind.BoolFalse) { consume(); return new LiteralNode(value: false); }
+                if (current.Kind == TokenKind.Number) {
+                    string raw = current.Value;
                     consume();
                     if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out double d)) {
                         throw new ExprParseException(
                             message: $"Invalid numeric literal '{raw}'.",
-                            column: current.column);
+                            column: current.Column);
                     }
                     return new LiteralNode(value: d);
                 }
                 throw new ExprParseException(
-                    message: $"Expected a literal (number, true, false), got '{current.value}'.",
-                    column: current.column);
+                    message: $"Expected a literal (number, true, false), got '{current.Value}'.",
+                    column: current.Column);
             }
-
-            public void expectEof() {
-                if (current.kind != TokenKind.EOF) {
-                    throw new ExprParseException(
-                        message: $"Unexpected token '{current.value}' after expression.",
-                        column: current.column);
-                }
-            }
-
-            static bool isComparisonOp(TokenKind kind) => kind switch {
-                TokenKind.EqEq  => true,
-                TokenKind.NotEq => true,
-                TokenKind.Gt    => true,
-                TokenKind.Lt    => true,
-                TokenKind.GtEq  => true,
-                TokenKind.LtEq  => true,
-                _               => false
-            };
         }
     }
 }

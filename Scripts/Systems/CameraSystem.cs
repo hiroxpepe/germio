@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,12 +15,16 @@ using static Germio.Env;
 using Germio;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Controls the camera system, including rotation and transparency effects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class CameraSystem : InputMapper {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
@@ -44,7 +50,7 @@ namespace Germio.Systems {
         [SerializeField] GameObject _look_target;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives] 
+        // Fields
 
         /// <summary>
         /// Gets the default local position of the camera.
@@ -55,6 +61,9 @@ namespace Germio.Systems {
         /// Gets the default local rotation of the camera.
         /// </summary>
         Quaternion _default_local_rotation;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
@@ -74,13 +83,13 @@ namespace Germio.Systems {
             /// </summary>
             this.UpdateAsObservable()
                 .Subscribe(_ => {
-                    if (_x_button.wasReleasedThisFrame) {
+                    if (X_Button.wasReleasedThisFrame) {
                         resetLookAround();
-                        _look = false;
+                        Look = false;
                         return;
                     }
-                    if (_x_button.isPressed) {
-                        _look = true;
+                    if (X_Button.isPressed) {
+                        Look = true;
                         lookAround();
                         return;
                     }
@@ -99,7 +108,7 @@ namespace Germio.Systems {
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
-                    _right_stick_button.wasPressedThisFrame)
+                    RightStick_Button.wasPressedThisFrame)
                 .Subscribe(onNext: _ => {
                     resetRotateView();
                 }).AddTo(gameObjectComponent: this);
@@ -181,11 +190,11 @@ namespace Germio.Systems {
             const float ADJUST = 120.0f;
             Vector3 player_position = transform.parent.gameObject.transform.position;
             // Rotate left.
-            if (_right_stick_left_button.isPressed) {
+            if (RightStick_Left_Button.isPressed) {
                 transform.RotateAround(point: player_position, axis: up, angle: 1.0f * ADJUST * Time.deltaTime);
             }
             // Rotate right.
-            else if (_right_stick_right_button.isPressed) {
+            else if (RightStick_Right_Button.isPressed) {
                 transform.RotateAround(point: player_position, axis: up, angle: -1.0f * ADJUST * Time.deltaTime);
             }
         }
@@ -215,19 +224,19 @@ namespace Germio.Systems {
             const float ADJUST = 80.0f;
             transform.localEulerAngles = new(x: 0f, y: 0f, z: 0f); // Keep the camera system horizontally fixed.
             // Look up.
-            if (_up_button.isPressed) {
+            if (Up_Button.isPressed) {
                 _vertical_axis.transform.Rotate(xAngle: 1.0f * Time.deltaTime * ADJUST, yAngle: 0f, zAngle: 0f);
             }
             // Look down.
-            else if (_down_button.isPressed) {
+            else if (Down_Button.isPressed) {
                 _vertical_axis.transform.Rotate(xAngle: -1.0f * Time.deltaTime * ADJUST, yAngle: 0f, zAngle: 0f);
             }
             // Look left.
-            else if (_left_button.isPressed) {
+            else if (Left_Button.isPressed) {
                 _horizontal_axis.transform.Rotate(xAngle: 0f, yAngle: -1.0f * Time.deltaTime * ADJUST, zAngle: 0f);
             }
             // Look right.
-            else if (_right_button.isPressed) {
+            else if (Right_Button.isPressed) {
                 _horizontal_axis.transform.Rotate(xAngle: 0f, yAngle: 1.0f * Time.deltaTime * ADJUST, zAngle: 0f);
             }
             // Moves the camera towards the character's eyes if it's too close.

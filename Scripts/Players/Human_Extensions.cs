@@ -1,25 +1,31 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using static System.Math;
 using UnityEngine;
 
 using Germio;
 
 namespace Germio.Players {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // internal Classes
+
     /// <summary>
     /// Provides extension methods for the Human class.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     internal static class Human_Extensions {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // internal static Methods [verb]
 
         /// <summary>
         /// Determines whether the player hits the side of the colliding object.
         /// </summary>
         /// <param name="self">The player GameObject.</param>
         /// <param name="target">The target GameObject to check collision with.</param>
-        internal static bool isHitSide(this GameObject self, GameObject target) {
+        internal static bool IsHitSide(this GameObject self, GameObject target) {
             const float ADJUST = 0.1f;
             float target_height = target.Get<Renderer>().bounds.size.y;
             float target_y = target.transform.position.y;
@@ -36,7 +42,7 @@ namespace Germio.Players {
         /// Moves the player up when hitting a block.
         /// </summary>
         /// <param name="self">The player GameObject.</param>
-        internal static void moveUp(this GameObject self) {
+        internal static void MoveUp(this GameObject self) {
             const float MOVE_VALUE = 12.0f;
             Vector3 new_position = self.transform.position + Vector3.up * MOVE_VALUE * Time.deltaTime;
             self.transform.position = new_position;
@@ -46,7 +52,7 @@ namespace Germio.Players {
         /// Moves the player down when hitting a block.
         /// </summary>
         /// <param name="self">The player GameObject.</param>
-        internal static void moveDown(this GameObject self) {
+        internal static void MoveDown(this GameObject self) {
             const float MOVE_VALUE = 6.0f;
             Vector3 new_position = self.transform.position - Vector3.up * MOVE_VALUE * Time.deltaTime;
             self.transform.position = new_position;
@@ -57,7 +63,7 @@ namespace Germio.Players {
         /// </summary>
         /// <param name="self">The player GameObject.</param>
         /// <param name="target">The target GameObject to measure distance to.</param>
-        internal static double getReach(this GameObject self, GameObject target) {
+        internal static double GetReach(this GameObject self, GameObject target) {
             //Debug.Log($"name: {target.name}");
             float distance_y = self.transform.position.y - target.transform.position.y;
             //Debug.Log($"distance_y: {distance_y}");
@@ -74,7 +80,7 @@ namespace Germio.Players {
         /// </summary>
         /// <param name="self">The player GameObject.</param>
         /// <param name="direction">The player's direction.</param>
-        internal static void moveLetfOrRight(this GameObject self, Direction direction) {
+        internal static void MoveLeftOrRight(this GameObject self, Direction direction) {
             const float MOVE_VALUE = 0.3f;
             Vector3 new_position = self.transform.position;
             float move_amount = MOVE_VALUE * Time.deltaTime;

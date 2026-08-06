@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.IO;
 using System.Linq;
 
@@ -16,22 +18,25 @@ using NJsonSchema.Generation;
 using Germio.Model;
 
 namespace Germio.Schema {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <author>h.adachi (STUDIO MeowToon)</author>
     /// <summary>
     /// Provides the germio JSON Schema for LLM prompt injection and tooling.
     /// In non-Unity contexts (tests, dotnet CLI): dynamically generates schema from C# types
     /// using NJsonSchema so the schema always reflects the current model.
-    /// In Unity contexts: reads the pre-generated static schema file via GetSchemaJson().
+    /// In Unity contexts: reads the pre-generated static schema file via GetSchemaJSON().
     /// </summary>
     public static class SchemaExporter {
-        #nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constants
+        // Const [nouns]
 
         /// <summary>The schema file name shared across all export methods.</summary>
         public const string SCHEMA_FILE_NAME = "germio.schema.json";
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Const [nouns]
 
         const string DRAFT_2020_12_URI = "https://json-schema.org/draft/2020-12/schema";
         const string SCHEMA_ID = "https://germio.dev/schemas/germio.schema.json";
@@ -40,6 +45,10 @@ namespace Germio.Schema {
         // public static Methods [verb]
 
 #if !UNITY_5_3_OR_NEWER
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
+
         /// <summary>
         /// Dynamically generates the germio JSON Schema from the C# model types.
         /// Uses NJsonSchema reflection on <see cref="Scenario"/> and related types.
@@ -71,6 +80,20 @@ namespace Germio.Schema {
             string path = Path.Combine(output_dir, SCHEMA_FILE_NAME);
             File.WriteAllText(path: path, contents: Export());
         }
+#endif
+
+        /// <summary>
+        /// Reads and returns the germio.schema.json content from the given directory.
+        /// Useful in Unity (read the pre-generated committed file from StreamingAssets)
+        /// or in tests that want to verify the on-disk committed schema.
+        /// </summary>
+        public static string GetSchemaJSON(string schema_dir) {
+            string path = Path.Combine(schema_dir, SCHEMA_FILE_NAME);
+            return File.ReadAllText(path);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
 
         // -----------------------------------------------------------------
         // private helpers — Draft 2020-12 normalization
@@ -102,17 +125,6 @@ namespace Germio.Schema {
             } else if (token is JArray arr) {
                 foreach (var item in arr) { fixRefs(token: item); }
             }
-        }
-#endif
-
-        /// <summary>
-        /// Reads and returns the germio.schema.json content from the given directory.
-        /// Useful in Unity (read the pre-generated committed file from StreamingAssets)
-        /// or in tests that want to verify the on-disk committed schema.
-        /// </summary>
-        public static string GetSchemaJson(string schema_dir) {
-            string path = Path.Combine(schema_dir, SCHEMA_FILE_NAME);
-            return File.ReadAllText(path);
         }
     }
 }
