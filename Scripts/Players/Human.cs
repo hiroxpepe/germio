@@ -6,7 +6,7 @@
 using System;
 using static System.Math;
 using UnityEngine;
-using UnityEngine.Serialization;
+using static UnityEngine.GameObject;
 using static UnityEngine.Vector3;
 using UniRx;
 using UniRx.Triggers;
