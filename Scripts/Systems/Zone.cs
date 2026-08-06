@@ -39,7 +39,7 @@ namespace Germio.Systems {
             /// Retrieves the Bus reference from GameSystem.
             /// Using Start (not Awake) ensures GameSystem.Awake() has already initialised the bus.
             /// </summary>
-            _bus = Find(name: GAME_SYSTEM).Get<GameSystem>().bus;
+            _bus = Find(name: GAME_SYSTEM).Get<GameSystem>().Bus;
         }
 
         void OnTriggerEnter(Collider other) {
