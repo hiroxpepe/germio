@@ -5,18 +5,14 @@
 
 using System.IO;
 using System.Linq;
-
 using Newtonsoft.Json.Linq;
-
 // NJsonSchema is a dotnet tool dependency; not available in Unity runtime.
 // Dynamic schema generation is used in tests and CLI tools only.
 #if !UNITY_5_3_OR_NEWER
 using NJsonSchema;
 using NJsonSchema.Generation;
 #endif
-
 using Germio.Model;
-
 namespace Germio.Schema {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

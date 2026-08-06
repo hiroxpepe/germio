@@ -4,10 +4,8 @@
 #nullable enable
 
 using System;
-
 using Germio.Core;
 using Germio.Model;
-
 namespace Germio.Systems {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

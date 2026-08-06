@@ -9,11 +9,8 @@ using UnityEngine;
 using static UnityEngine.Vector3;
 using UniRx;
 using UniRx.Triggers;
-
 using static Germio.Env;
-
 using Germio;
-
 namespace Germio.Systems {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

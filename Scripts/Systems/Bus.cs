@@ -4,9 +4,7 @@
 #nullable enable
 
 using System.Collections.Generic;
-
 using Germio.Core;
-
 namespace Germio.Systems {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

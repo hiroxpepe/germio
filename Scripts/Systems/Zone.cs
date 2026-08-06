@@ -6,10 +6,8 @@
 #if UNITY_5_3_OR_NEWER
 using UnityEngine;
 using static UnityEngine.GameObject;
-
 using static Germio.Env;
 using Germio;
-
 namespace Germio.Systems {
     /// <summary>
     /// Attaches to a trigger collider in the scene.

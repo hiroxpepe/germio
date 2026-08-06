@@ -7,9 +7,7 @@ using System;
 using static System.Math;
 using UnityEngine;
 using static UnityEngine.GameObject;
-
 using static Germio.Env;
-
 namespace Germio {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes
