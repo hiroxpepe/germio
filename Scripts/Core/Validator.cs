@@ -216,7 +216,7 @@ namespace Germio.Core {
                         message:        $"Duplicate node.id '{node.id}' in scenario.",
                         cause_detail:   $"Two nodes share the same id '{node.id}'. Node IDs must be globally unique within the scenario.",
                         fix_suggestion: $"Rename one of the duplicate nodes to a unique id.",
-                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                        location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')]" }));
                 } else {
                     node_map[node.id] = node;
                 }
@@ -233,7 +233,7 @@ namespace Germio.Core {
                             message:        $"Duplicate node.scene '{node.scene}' (node ids: '{other.id}' and '{node.id}').",
                             cause_detail:   $"Two nodes reference the same scene '{node.scene}'. Scene names must be unique.",
                             fix_suggestion: $"Rename one of the nodes' scene or update the node id.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].scene" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].scene" }));
                     } else {
                         scene_to_node[node.scene] = node;
                     }
@@ -252,7 +252,7 @@ namespace Germio.Core {
                         message:        $"Leaf node '{node.id}' has no scene defined.",
                         cause_detail:   "A leaf node (no children) must correspond to a Unity scene.",
                         fix_suggestion: $"Add a scene name to node '{node.id}'.",
-                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].scene" }));
+                        location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].scene" }));
                 }
             }
 
@@ -310,7 +310,7 @@ namespace Germio.Core {
                         message:        $"Node '{node.id}' is a dead end (no rules, no next transitions, no children).",
                         cause_detail:   "The player can arrive at this node but nothing will happen and they cannot progress.",
                         fix_suggestion: "Add at least one next entry or a rule with a request_transition command.",
-                        location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                        location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')]" }));
                 }
             }
 
@@ -326,7 +326,7 @@ namespace Germio.Core {
                             message:        $"Node '{node.id}' → next.id '{next.id}' does not exist in scenario.",
                             cause_detail:   $"No node with id '{next.id}' was found.{suggestSimilar(next.id, node_map.Keys)}",
                             fix_suggestion: $"Add a node with id '{next.id}', or correct the typo.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].next[{n_index}].id" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].next[{n_index}].id" }));
                     }
                     // V009 / V001 / V002 / V003: validate condition
                     validateCondition(
@@ -349,7 +349,7 @@ namespace Germio.Core {
                             message:        $"Duplicate rule.id '{rule.id}' in node '{node.id}'.",
                             cause_detail:   $"Two rules in node '{node.id}' share id '{rule.id}'. Rule IDs must be unique within a node.",
                             fix_suggestion: $"Rename one of the duplicate rules to a unique id.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].rules" }));
                     }
 
                     // V007: empty condition (always fires)
@@ -360,7 +360,7 @@ namespace Germio.Core {
                             message:        $"Rule '{rule.id}' in node '{node.id}' has an empty condition — it fires unconditionally.",
                             cause_detail:   "A rule with no condition fires every time its trigger is received, regardless of state.",
                             fix_suggestion: "Add a condition if the rule should only fire under specific circumstances.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].condition" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].condition" }));
                     } else {
                         // V009 / V001 / V002 / V003
                         validateCondition(
@@ -378,7 +378,7 @@ namespace Germio.Core {
                             message:        $"Rule '{rule.id}' in node '{node.id}' has once=false with a set_flag command — infinite-loop risk.",
                             cause_detail:   "Setting a flag repeatedly without a once guard can cause the rule to fire every tick.",
                             fix_suggestion: "Set once=true unless you intentionally want the flag set on every trigger.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}]" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}]" }));
                     }
 
                     // V010: command has no effect
@@ -398,7 +398,7 @@ namespace Germio.Core {
                             message:        $"Rule '{rule.id}' in node '{node.id}' has an empty command — it has no effect.",
                             cause_detail:   "The command object has no fields set.",
                             fix_suggestion: "Add at least one command field to give the rule an effect.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command" }));
                     }
                 }
             }
@@ -438,7 +438,7 @@ namespace Germio.Core {
                         message:        $"Node '{node_id}' → {json_path} '{condition}': {semantic_err}",
                         cause_detail:   semantic_err,
                         fix_suggestion: "Use only 'flags', 'counters', or 'inventory' as prefixes. Counters require comparison operators. Flags support == and != only. Inventory values are integers.",
-                        location:       new Location { json_path = json_path }));
+                        location:       new Location { JsonPath = json_path }));
                     return;
                 }
             } catch (ExprParseException ex) {
@@ -448,7 +448,7 @@ namespace Germio.Core {
                     message:        $"Node '{node_id}' → {json_path} '{condition}' has a DSL syntax error: {ex.Message}",
                     cause_detail:   $"The condition could not be parsed. Column: {ex.Column}.",
                     fix_suggestion: "Check the condition DSL syntax. Valid forms: 'flags.KEY', 'counters.KEY >= N', 'inventory.KEY', combined with &&, ||, !.",
-                    location:       new Location { json_path = json_path, column = ex.Column }));
+                    location:       new Location { JsonPath = json_path, Column = ex.Column }));
                 return;  // skip undefined-key checks for invalid DSL
             }
 
@@ -485,7 +485,7 @@ namespace Germio.Core {
                             message:        $"Node '{node_id}' → {json_path}: flag key '{key}' is not defined in initial state.flags.",
                             cause_detail:   $"The condition references flags.{key} but this key is absent from scenario.initial_state.flags.{suggestSimilar(key, state.flags.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": false' to scenario.initial_state.flags, or fix the key name.",
-                            location:       new Location { json_path = json_path }));
+                            location:       new Location { JsonPath = json_path }));
                     } else if (prefix == "counters" && !state.counters.ContainsKey(key)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
@@ -493,7 +493,7 @@ namespace Germio.Core {
                             message:        $"Node '{node_id}' → {json_path}: counter key '{key}' is not defined in initial state.counters.",
                             cause_detail:   $"The condition references counters.{key} but this key is absent from scenario.initial_state.counters.{suggestSimilar(key, state.counters.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.counters, or fix the key name.",
-                            location:       new Location { json_path = json_path }));
+                            location:       new Location { JsonPath = json_path }));
                     } else if (prefix == "inventory" && !state.inventory.ContainsKey(key)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
@@ -501,7 +501,7 @@ namespace Germio.Core {
                             message:        $"Node '{node_id}' → {json_path}: inventory key '{key}' is not defined in initial state.inventory.",
                             cause_detail:   $"The condition references inventory.{key} but this key is absent from scenario.initial_state.inventory.{suggestSimilar(key, state.inventory.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.inventory, or fix the key name.",
-                            location:       new Location { json_path = json_path }));
+                            location:       new Location { JsonPath = json_path }));
                     }
                     i += 2;  // skip past the dot and key we just processed
                 }
@@ -582,7 +582,7 @@ namespace Germio.Core {
                     message:        $"Node '{node.id}' at depth {depth} exceeds MAX_NODE_DEPTH ({Env.MAX_NODE_DEPTH}).",
                     cause_detail:   $"The node tree is deeper than {Env.MAX_NODE_DEPTH} levels.",
                     fix_suggestion: "Restructure the node hierarchy to reduce depth, or increase MAX_NODE_DEPTH if appropriate.",
-                    location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                    location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')]" }));
             } else if (depth > Env.WarningNodeDepth) {
                 results.Add(new ValidationResult(
                     level:          ValidationLevel.Warning,
@@ -590,7 +590,7 @@ namespace Germio.Core {
                     message:        $"Node '{node.id}' at depth {depth} exceeds WarningNodeDepth ({Env.WarningNodeDepth}).",
                     cause_detail:   $"The node tree reaches {depth} levels, approaching the soft limit of {Env.WarningNodeDepth}.",
                     fix_suggestion: "Consider restructuring for better performance, or increase WarningNodeDepth if intentional.",
-                    location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
+                    location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')]" }));
             }
 
             if (node.children != null) {
@@ -616,7 +616,7 @@ namespace Germio.Core {
                             message:        $"Circular reference detected: node '{child.id}' references ancestor.",
                             cause_detail:   $"Node '{child.id}' appears in the children of node '{node.id}', but '{child.id}' is an ancestor of '{node.id}'.",
                             fix_suggestion: $"Remove the child node '{child.id}' from node '{node.id}', or restructure the hierarchy.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].children" }));
+                            location:       new Location { JsonPath = $"$.root..[?(@.id='{node.id}')].children" }));
                     }
                 }
             }
@@ -703,7 +703,7 @@ namespace Germio.Core {
                                 message:        $"Circular transition chain detected: {cycle_path}",
                                 cause_detail:   $"The transition chain forms a loop: {cycle_path}. The player can get stuck in an infinite loop between these nodes.",
                                 fix_suggestion: $"Remove or modify one of the next[] entries to break the cycle, or add a condition to ensure the cycle is eventually exited.",
-                                location:       new Location { json_path = $"$.root..[?(@.id='{current_id}')].next[?(@.id='{next_entry.id}')]" }));
+                                location:       new Location { JsonPath = $"$.root..[?(@.id='{current_id}')].next[?(@.id='{next_entry.id}')]" }));
                             return true;
                         }
                     }
