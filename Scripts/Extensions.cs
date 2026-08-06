@@ -15,7 +15,6 @@ namespace Germio {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Extensions {
-
         #region Type of Object
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

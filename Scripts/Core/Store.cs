@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Germio.Model;
+
 namespace Germio.Core {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

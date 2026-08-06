@@ -13,6 +13,7 @@ using NJsonSchema;
 using NJsonSchema.Generation;
 #endif
 using Germio.Model;
+
 namespace Germio.Schema {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

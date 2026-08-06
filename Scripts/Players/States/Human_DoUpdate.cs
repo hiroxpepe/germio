@@ -21,7 +21,6 @@ namespace Germio.Players {
         /// Handles the Update() method logic.
         /// </summary>
         protected class DoUpdate {
-
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 

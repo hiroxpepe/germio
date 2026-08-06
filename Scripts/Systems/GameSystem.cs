@@ -16,6 +16,7 @@ using Germio.Triggers;
 using Germio.Model;
 using Scenario = Germio.Model.Scenario;
 using Snapshot = Germio.Model.Snapshot;
+
 namespace Germio.Systems {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

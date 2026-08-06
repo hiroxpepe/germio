@@ -15,6 +15,7 @@ using UniRx.Triggers;
 using static Germio.Env;
 using Germio.Model;
 using Germio.Systems;
+
 namespace Germio {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

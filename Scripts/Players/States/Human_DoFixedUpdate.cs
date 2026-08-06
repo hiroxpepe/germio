@@ -21,7 +21,6 @@ namespace Germio.Players {
         /// Handles the FixedUpdate() method logic.
         /// </summary>
         protected class DoFixedUpdate {
-
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
