@@ -21,7 +21,7 @@ namespace Germio.Players {
         /// <summary>
         /// Handles acceleration logic for the Human player.
         /// </summary>
-        protected class Acceleration {
+        protected class Human_Acceleration {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
@@ -44,10 +44,10 @@ namespace Germio.Players {
             // Constructor
 
             /// <summary>
-            /// Initializes a new instance of the Acceleration class with the specified parent.
+            /// Initializes a new instance of the Human_Acceleration class with the specified parent.
             /// </summary>
             /// <param name="parent">Parent Human object to associate with this acceleration logic.</param>
-            Acceleration(Human parent) {
+            Human_Acceleration(Human parent) {
                 _parent = parent;
             }
 
@@ -116,11 +116,11 @@ namespace Germio.Players {
             // public static Methods [verb]
 
             /// <summary>
-            /// Creates and returns an initialized Acceleration instance for the specified parent.
+            /// Creates and returns an initialized Human_Acceleration instance for the specified parent.
             /// </summary>
-            /// <param name="parent">Parent Human object to associate with the new Acceleration instance.</param>
-            public static Acceleration GetInstance(Human parent) {
-                return new Acceleration(parent);
+            /// <param name="parent">Parent Human object to associate with the new Human_Acceleration instance.</param>
+            public static Human_Acceleration GetInstance(Human parent) {
+                return new Human_Acceleration(parent);
             }
         }
 

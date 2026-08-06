@@ -24,6 +24,19 @@ namespace Germio.Systems {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class NoticeSystem : MonoBehaviour {
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        /// <summary>
+        /// Gets the frame count for FPS calculation.
+        /// </summary>
+        int _frame_count;
+
+        /// <summary>
+        /// Gets the elapsed time for FPS calculation.
+        /// </summary>
+        float _elapsed_time;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,26 +77,10 @@ namespace Germio.Systems {
         /// </summary>
         [SerializeField] protected Text FpsText;
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Fields
-
         /// <summary>
         /// Gets the reference to the game system.
         /// </summary>
         protected GameSystem GameSystem;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        /// <summary>
-        /// Gets the frame count for FPS calculation.
-        /// </summary>
-        int _frame_count;
-
-        /// <summary>
-        /// Gets the elapsed time for FPS calculation.
-        /// </summary>
-        float _elapsed_time;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Methods [verb]

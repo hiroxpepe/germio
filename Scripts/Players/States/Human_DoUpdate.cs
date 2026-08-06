@@ -20,7 +20,7 @@ namespace Germio.Players {
         /// <summary>
         /// Handles the Update() method logic.
         /// </summary>
-        protected class DoUpdate {
+        protected class Human_DoUpdate {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
@@ -127,10 +127,10 @@ namespace Germio.Players {
             // public static Methods [verb]
 
             /// <summary>
-            /// Creates and returns an initialized DoUpdate instance with the default state.
+            /// Creates and returns an initialized Human_DoUpdate instance with the default state.
             /// </summary>
-            public static DoUpdate GetInstance() {
-                DoUpdate instance = new();
+            public static Human_DoUpdate GetInstance() {
+                Human_DoUpdate instance = new();
                 instance.ResetState();
                 return instance;
             }

@@ -29,14 +29,14 @@ namespace Germio.Schema {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Const [nouns]
 
-        /// <summary>The schema file name shared across all export methods.</summary>
-        public const string SCHEMA_FILE_NAME = "germio.schema.json";
+        const string DRAFT_2020_12_URI = "https://json-schema.org/draft/2020-12/schema";
+        const string SCHEMA_ID = "https://germio.dev/schemas/germio.schema.json";
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Const [nouns]
 
-        const string DRAFT_2020_12_URI = "https://json-schema.org/draft/2020-12/schema";
-        const string SCHEMA_ID = "https://germio.dev/schemas/germio.schema.json";
+        /// <summary>The schema file name shared across all export methods.</summary>
+        public const string SCHEMA_FILE_NAME = "germio.schema.json";
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]

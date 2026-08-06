@@ -700,6 +700,71 @@ namespace Germio.Tests.Convention {
         // No more than one blank line in a row, anywhere in the file. Two blank
         // lines read the same as one to a human, so the second is just noise —
         // and it is cheap to check without any syntax awareness at all.
+        // A field or property is either bare (no doc comment) or documented
+        // (a /// summary sits right above it). Two bare members in a row
+        // pack together with no blank line — there is nothing to set apart.
+        // Everywhere else — a section-header divider next to a member, or a
+        // documented member next to anything — a blank line separates the
+        // two, since a divider label and a doc comment both mark a
+        // deliberate visual break.
+        internal static List<string> find_member_spacing_violations(string code, string label)
+        {
+            var found = new List<string>();
+            var tree = CSharpSyntaxTree.ParseText(code);
+            var root = tree.GetCompilationUnitRoot();
+            var lines = code.Replace("\r\n", "\n").Split('\n');
+
+            bool is_divider(string line) {
+                var t = line.Trim();
+                return t.Length >= 10 && t.All(c => c == '/');
+            }
+
+            bool has_doc_comment(MemberDeclarationSyntax member) =>
+                member.GetLeadingTrivia().Any(t =>
+                    t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
+
+            bool blank_at(int i) => i >= 0 && i < lines.Length && lines[i].Trim().Length == 0;
+
+            var targets = root.DescendantNodes()
+                .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
+                .Cast<MemberDeclarationSyntax>()
+                .OrderBy(m => m.Span.Start)
+                .ToList();
+
+            foreach (var member in targets) {
+                bool documented = has_doc_comment(member);
+                // The line right above this member's own text (its doc comment
+                // if any, else its declaration) — attributes count as part of
+                // the member's own first line, not something to look above.
+                var first_line = tree.GetLineSpan(
+                    (documented ? member.GetLeadingTrivia()
+                        .First(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)).Span
+                     : member.Span)).StartLinePosition.Line;
+                var above = first_line - 1;
+
+                if (above >= 0 && !blank_at(above) && !is_divider(lines[above])) {
+                    // The line right above is real code, not a blank and not a
+                    // divider — it must be another member. A blank is only
+                    // optional when NEITHER side is documented.
+                    if (documented)
+                        found.Add($"{label}:{first_line + 1}: documented member needs a blank line above it");
+                    // else: bare-to-bare adjacency is fine as-is (packed).
+                }
+
+                var last_line = tree.GetLineSpan(member.Span).EndLinePosition.Line;
+                var below = last_line + 1;
+                // A closing brace right below means this member is the last
+                // one in its type — there is no "next member" to separate
+                // from, so no blank line is needed there either.
+                var below_trim = below < lines.Length ? lines[below].Trim() : "";
+                if (below < lines.Length && !blank_at(below) && !is_divider(lines[below]) && below_trim.Length > 0 && below_trim[0] != '}') {
+                    if (documented)
+                        found.Add($"{label}:{last_line + 2}: documented member needs a blank line below it");
+                }
+            }
+            return found;
+        }
+
         internal static List<string> find_blank_line_violations(string code, string label)
         {
             var found = new List<string>();
@@ -915,10 +980,19 @@ namespace Germio.Tests.Convention {
         static (int kind, int sub, int acc, int stat) key_of(MemberDeclarationSyntax member)
         {
             int kind = kind_rank(member);
-            int sub = member is FieldDeclarationSyntax f ? field_sub(f) : 0;
+            bool is_field = member is FieldDeclarationSyntax;
+            int sub = is_field ? field_sub((FieldDeclarationSyntax)member) : 0;
             var modifiers = modifiers_of(member);
+            // A field is read as internal state — the plain, private, instance
+            // shape is the normal case and comes first; protected is the
+            // deliberate exception, called out afterward. static vs instance
+            // for a field is handled by field_sub above. A method is read as
+            // the API surface, so it runs the other way: public and static
+            // (the type's own tools) lead, private comes last.
             int stat = has(modifiers, "static") ? 0 : 1;
-            int acc = accessibility_rank(modifiers);
+            int acc = is_field
+                ? 5 - accessibility_rank(modifiers)
+                : accessibility_rank(modifiers);
             return (kind, sub, acc, stat);
         }
 
@@ -944,9 +1018,14 @@ namespace Germio.Tests.Convention {
 
         static int field_sub(FieldDeclarationSyntax field)
         {
+            // const stays first regardless — it is neither the "normal
+            // instance state" case nor the "type-level tool" case, just a
+            // literal. Between the other two, a field is read as instance
+            // state first, static second — the opposite of the method
+            // reading order, matched by key_of's stat inversion below.
             if (has(field.Modifiers, "const")) return 0;
-            if (has(field.Modifiers, "static")) return 1;
-            return 2;
+            if (has(field.Modifiers, "static")) return 2;
+            return 1;
         }
 
         static int accessibility_rank(SyntaxTokenList modifiers)

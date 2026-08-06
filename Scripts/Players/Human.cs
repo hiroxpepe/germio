@@ -66,17 +66,17 @@ namespace Germio.Players {
         /// <summary>
         /// Handles update logic for the player.
         /// </summary>
-        protected DoUpdate DoUpdate;
+        protected Human_DoUpdate DoUpdate;
 
         /// <summary>
         /// Handles fixed update logic for the player.
         /// </summary>
-        protected DoFixedUpdate DoFixedUpdate;
+        protected Human_DoFixedUpdate DoFixedUpdate;
 
         /// <summary>
         /// Handles acceleration logic for the player.
         /// </summary>
-        protected Acceleration Acceleration;
+        protected Human_Acceleration Acceleration;
 
         /// <summary>
         /// Stores the player's positions from previous frames.
@@ -172,9 +172,9 @@ namespace Germio.Players {
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
-            DoUpdate = DoUpdate.GetInstance();
-            DoFixedUpdate = DoFixedUpdate.GetInstance();
-            Acceleration = Acceleration.GetInstance(this);
+            DoUpdate = Human_DoUpdate.GetInstance();
+            DoFixedUpdate = Human_DoFixedUpdate.GetInstance();
+            Acceleration = Human_Acceleration.GetInstance(this);
             GameSystem = Find(name: GAME_SYSTEM).Get<GameSystem>();
             SoundSystem = Find(name: SOUND_SYSTEM).Get<SoundSystem>();
 
