@@ -77,8 +77,8 @@ namespace Germio.Core {
             var errors = new List<ParseError>();
 
             if (string.IsNullOrWhiteSpace(mermaid)) {
-                errors.Add(new ParseError { line_number = 0, message = "Input is empty." });
-                return new ParseResult { success = false, errors = errors };
+                errors.Add(new ParseError { LineNumber = 0, Message = "Input is empty." });
+                return new ParseResult { Success = false, Errors = errors };
             }
 
             var lines = mermaid.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -87,10 +87,10 @@ namespace Germio.Core {
                 (!lines[0].TrimStart().StartsWith("graph") && 
                  !lines[0].TrimStart().StartsWith("flowchart"))) {
                 errors.Add(new ParseError {
-                    line_number = 1,
-                    message = "Expected 'graph' or 'flowchart' declaration on first line."
+                    LineNumber = 1,
+                    Message = "Expected 'graph' or 'flowchart' declaration on first line."
                 });
-                return new ParseResult { success = false, errors = errors };
+                return new ParseResult { Success = false, Errors = errors };
             }
 
             // Create synthetic root node to serve as the tree root.
@@ -178,10 +178,10 @@ namespace Germio.Core {
 
             if (synthetic_root.children.Count == 0) {
                 errors.Add(new ParseError {
-                    line_number = 1,
-                    message = "No subgraph or leaf node declarations found in the Mermaid input."
+                    LineNumber = 1,
+                    Message = "No subgraph or leaf node declarations found in the Mermaid input."
                 });
-                return new ParseResult { success = false, errors = errors };
+                return new ParseResult { Success = false, Errors = errors };
             }
 
             // Resolve deferred edges → Next entries on source nodes.
@@ -192,7 +192,7 @@ namespace Germio.Core {
             }
 
             var scenario = new Scenario { root = synthetic_root };
-            return new ParseResult { success = true, scenario = scenario, errors = errors };
+            return new ParseResult { Success = true, Scenario = scenario, Errors = errors };
         }
     }
 
