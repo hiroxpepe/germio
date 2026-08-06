@@ -120,27 +120,27 @@ namespace Germio.Core {
         /// </summary>
         public string ToLlmReadable() {
             var sb = new StringBuilder();
-            sb.Append($"[{rule_id}][{severity}] {message}");
-            if (!string.IsNullOrEmpty(location.json_path)) {
-                sb.Append($"\nPath: {location.json_path}");
-                if (location.line > 0) {
-                    sb.Append($" (line {location.line}, col {location.column})");
+            sb.Append($"[{RuleId}][{Severity}] {Message}");
+            if (!string.IsNullOrEmpty(Location.JsonPath)) {
+                sb.Append($"\nPath: {Location.JsonPath}");
+                if (Location.Line > 0) {
+                    sb.Append($" (line {Location.Line}, col {Location.Column})");
                 }
             }
-            if (!string.IsNullOrEmpty(cause_detail)) {
-                sb.Append($"\nCause: {cause_detail}");
+            if (!string.IsNullOrEmpty(CauseDetail)) {
+                sb.Append($"\nCause: {CauseDetail}");
             }
-            if (!string.IsNullOrEmpty(fix_suggestion)) {
-                sb.Append($"\nFix: {fix_suggestion}");
+            if (!string.IsNullOrEmpty(FixSuggestion)) {
+                sb.Append($"\nFix: {FixSuggestion}");
             }
-            if (!string.IsNullOrEmpty(suggested_json)) {
-                sb.Append($"\nSuggested JSON:\n{suggested_json}");
+            if (!string.IsNullOrEmpty(SuggestedJson)) {
+                sb.Append($"\nSuggested JSON:\n{SuggestedJson}");
             }
             return sb.ToString();
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"[{rule_id}][{severity}] {message}";
+        public override string ToString() => $"[{RuleID}][{Severity}] {Message}";
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
