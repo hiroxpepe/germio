@@ -565,7 +565,13 @@ static class ConventionRules
     // The line right after the namespace declaration — whether the
     // block-scoped "namespace X {" or the file-scoped "namespace X;" form —
     // is never blank. Whatever comes first, usually a section-header
-    // comment, sits directly against the namespace line.
+    // comment, sits directly against the namespace line. On the other side,
+    // if a using directive comes right before the namespace declaration,
+    // exactly a blank line separates the two — the using block and the
+    // namespace are visually distinct, unlike the namespace and its own
+    // first line. The same "no blank line right after the opening brace"
+    // rule holds for every type declaration too — class, interface, struct,
+    // record, enum — at any nesting depth, inner classes included.
     internal static List<string> find_namespace_gap_violations(string code, string label)
     {
         var found = new List<string>();
@@ -573,15 +579,41 @@ static class ConventionRules
         var unit = tree.GetCompilationUnitRoot();
         var source_lines = code.Replace("\r\n", "\n").Split('\n');
 
-        foreach (var ns in unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>()) {
-            var decl_line = tree.GetLineSpan(ns.Name.Span).EndLinePosition.Line;
-            // For a block-scoped namespace, the declaration line is the one
-            // with the opening brace; the next line is whatever sits inside.
-            var next_line = decl_line + 1;
+        void check_no_blank_after(int brace_line, string what)
+        {
+            var next_line = brace_line + 1;
             if (next_line < source_lines.Length && source_lines[next_line].Trim().Length == 0) {
                 var at = next_line + 1;
-                found.Add($"{label}:{at}: blank line right after the namespace declaration");
+                found.Add($"{label}:{at}: blank line right after the {what} declaration");
             }
+        }
+
+        foreach (var ns in unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>()) {
+            var start_line = tree.GetLineSpan(ns.Span).StartLinePosition.Line;
+            var prev_line = start_line - 1;
+            if (prev_line >= 0 && source_lines[prev_line].Trim().StartsWith("using ")) {
+                found.Add($"{label}:{start_line + 1}: namespace needs a blank line above it, after the using block");
+            }
+
+            // For a block-scoped namespace, the declaration line is the one
+            // with the opening brace; the next line is whatever sits inside.
+            var decl_line = tree.GetLineSpan(ns.Name.Span).EndLinePosition.Line;
+            check_no_blank_after(decl_line, "namespace");
+        }
+
+        foreach (var type in unit.DescendantNodes().OfType<BaseTypeDeclarationSyntax>()) {
+            var brace_line = tree.GetLineSpan(type.Identifier.Span).EndLinePosition.Line;
+            // The identifier's own line may not be the brace line if a base
+            // list or type parameters follow (class Foo : Bar { on one more
+            // line) — walk forward to the line that actually opens the body.
+            for (var li = brace_line; li < source_lines.Length; li++) {
+                if (source_lines[li].Contains("{")) { brace_line = li; break; }
+            }
+            // A one-line declaration (enum Foo { A, B } complete on a
+            // single line) has no real "inside" to check — the closing
+            // brace sits on the same line as the opening one.
+            if (source_lines[brace_line].Contains("}")) continue;
+            check_no_blank_after(brace_line, "type");
         }
         return found;
     }

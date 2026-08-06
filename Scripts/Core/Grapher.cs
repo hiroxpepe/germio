@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Germio.Model;
+
 namespace Germio.Core {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

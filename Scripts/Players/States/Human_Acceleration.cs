@@ -5,6 +5,7 @@
 
 using static System.Math;
 using Germio;
+
 namespace Germio.Players {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes
@@ -21,7 +22,6 @@ namespace Germio.Players {
         /// Handles acceleration logic for the Human player.
         /// </summary>
         protected class Acceleration {
-
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 

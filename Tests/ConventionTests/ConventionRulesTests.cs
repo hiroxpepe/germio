@@ -195,6 +195,54 @@ public class ConventionRulesTests
         Assert.That(found, Is.Empty);
     }
 
+    [Test]
+    public void Catches_NamespaceRightAfterUsingWithNoBlankLine()
+    {
+        var code = "using Germio.Systems;\nnamespace Germio.Players {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line above it")), Is.True);
+    }
+
+    [Test]
+    public void Passes_NamespaceWithBlankLineAfterUsing()
+    {
+        var code = "using Germio.Systems;\n\nnamespace Germio.Players {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line above it")), Is.False);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterTypeDeclaration()
+    {
+        var code = "class Mock {\n\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.True);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterInnerClassDeclaration()
+    {
+        var code = "class Human {\n    protected class Acceleration {\n\n        int x;\n    }\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.True);
+    }
+
+    [Test]
+    public void Passes_NoBlankLineAfterTypeDeclaration()
+    {
+        var code = "class Mock {\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.False);
+    }
+
+    [Test]
+    public void Passes_OneLineEnumFollowedByBlankLine()
+    {
+        var code = "class Mock {\n    public enum Level { Error, Warning }\n\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.False);
+    }
+
     static bool caught(string code, string needle) =>
         ConventionRules.find_naming_violations(code, "mock.cs").Any(v => v.Contains(needle));
 
