@@ -10,13 +10,10 @@ using UnityEngine.Serialization;
 using static UnityEngine.Vector3;
 using UniRx;
 using UniRx.Triggers;
-
 using static Germio.Env;
 using static Germio.Utils;
-
 using Germio;
 using Germio.Systems;
-
 namespace Germio.Players {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

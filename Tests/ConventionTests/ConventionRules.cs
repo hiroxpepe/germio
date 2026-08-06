@@ -530,6 +530,7 @@ static class ConventionRules
         }
 
         int high = -1;
+        UsingDirectiveSyntax? previous = null;
         foreach (var u in unit.DescendantNodes().OfType<UsingDirectiveSyntax>()) {
             if (u.Alias != null) continue; // an alias's own name is ours to choose; no external root to group by
             var name = u.Name?.ToString() ?? "";
@@ -539,8 +540,49 @@ static class ConventionRules
                 found.Add($"{label}:{at}: using '{name}' is out of group order (system, then third-party, then own code)");
             }
             if (group > high) high = group;
+            // The using block is one continuous run — grouping is by order
+            // alone, never by a blank line between one using and the next.
+            // A comment or a #if/#endif line between two usings is a real
+            // annotation, not the pattern this rule targets, so only a
+            // truly empty line in the gap counts.
+            if (previous != null) {
+                var prev_line = tree.GetLineSpan(previous.Span).EndLinePosition.Line;
+                var this_line = tree.GetLineSpan(u.Span).StartLinePosition.Line;
+                var source_lines = code.Replace("\r\n", "\n").Split('\n');
+                bool has_blank = false;
+                for (var li = prev_line + 1; li < this_line; li++)
+                    if (li < source_lines.Length && source_lines[li].Trim().Length == 0)
+                        has_blank = true;
+                if (has_blank)
+                    found.Add($"{label}:{this_line + 1}: using '{name}' has a blank line before it inside the using block");
+            }
+            previous = u;
         }
         found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
+    // The line right after the namespace declaration — whether the
+    // block-scoped "namespace X {" or the file-scoped "namespace X;" form —
+    // is never blank. Whatever comes first, usually a section-header
+    // comment, sits directly against the namespace line.
+    internal static List<string> find_namespace_gap_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var unit = tree.GetCompilationUnitRoot();
+        var source_lines = code.Replace("\r\n", "\n").Split('\n');
+
+        foreach (var ns in unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>()) {
+            var decl_line = tree.GetLineSpan(ns.Name.Span).EndLinePosition.Line;
+            // For a block-scoped namespace, the declaration line is the one
+            // with the opening brace; the next line is whatever sits inside.
+            var next_line = decl_line + 1;
+            if (next_line < source_lines.Length && source_lines[next_line].Trim().Length == 0) {
+                var at = next_line + 1;
+                found.Add($"{label}:{at}: blank line right after the namespace declaration");
+            }
+        }
         return found;
     }
 

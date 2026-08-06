@@ -9,12 +9,9 @@ using static UnityEngine.GameObject;
 using static UnityEngine.Mathf;
 using UniRx;
 using UniRx.Triggers;
-
 using static Germio.Env;
-
 using Germio;
 using Germio.Systems;
-
 namespace Germio.Triggers {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

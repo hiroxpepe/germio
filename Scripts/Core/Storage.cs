@@ -7,13 +7,10 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-
 using Germio.Model;
-
 namespace Germio.Core {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // public Classes

@@ -171,6 +171,30 @@ public class ConventionRulesTests
         Assert.Pass();
     }
 
+    [Test]
+    public void Catches_BlankLineAfterBlockScopedNamespace()
+    {
+        var code = "namespace Germio.Core {\n\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Not.Empty);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterFileScopedNamespace()
+    {
+        var code = "namespace Webio.Core;\n\nclass Mock {}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Not.Empty);
+    }
+
+    [Test]
+    public void Passes_NoBlankLineAfterNamespace()
+    {
+        var code = "namespace Germio.Core {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
     static bool caught(string code, string needle) =>
         ConventionRules.find_naming_violations(code, "mock.cs").Any(v => v.Contains(needle));
 
@@ -212,6 +236,46 @@ public class ConventionRulesTests
             + "}";
         var found = ConventionRules.find_using_order_violations(code, "mock.cs");
         Assert.That(found.Any(v => v.Contains("out of group order")), Is.False);
+    }
+
+    [Test]
+    public void Catches_BlankLineBetweenUsings()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "\n"
+            + "    using UnityEngine;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.True);
+    }
+
+    [Test]
+    public void Passes_UsingsWithNoBlankLineBetweenThem()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "    using UnityEngine;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.False);
+    }
+
+    [Test]
+    public void Passes_UsingsSeparatedByCommentOrIfdefWithNoBlankLine()
+    {
+        var code = "using System;\n"
+            + "// explanatory comment\n"
+            + "#if !UNITY_5_3_OR_NEWER\n"
+            + "using NJsonSchema;\n"
+            + "#endif\n"
+            + "namespace Briko.Editor { class Mock {} }";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.False);
     }
 
     [Test]
