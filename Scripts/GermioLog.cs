@@ -27,12 +27,6 @@ namespace Germio {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class GermioLog {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Fields
-
-        /// <summary>Enable / disable the logger globally.</summary>
-        public static bool Enabled = true;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Fields
 
         /// <summary>Cached log file path (relative to project root: game/germio.log).</summary>
@@ -40,6 +34,12 @@ namespace Germio {
 
         /// <summary>True if the file has been cleared at app startup.</summary>
         static bool _initialized = false;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Fields
+
+        /// <summary>Enable / disable the logger globally.</summary>
+        public static bool Enabled = true;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]

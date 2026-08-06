@@ -20,7 +20,7 @@ namespace Germio.Players {
         /// <summary>
         /// Handles the FixedUpdate() method logic.
         /// </summary>
-        protected class DoFixedUpdate {
+        protected class Human_DoFixedUpdate {
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Fields
 
@@ -101,10 +101,10 @@ namespace Germio.Players {
             // public static Methods [verb]
 
             /// <summary>
-            /// Creates and returns an initialized DoFixedUpdate instance.
+            /// Creates and returns an initialized Human_DoFixedUpdate instance.
             /// </summary>
-            public static DoFixedUpdate GetInstance() {
-                return new DoFixedUpdate();
+            public static Human_DoFixedUpdate GetInstance() {
+                return new Human_DoFixedUpdate();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////

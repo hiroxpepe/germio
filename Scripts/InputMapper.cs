@@ -20,12 +20,17 @@ namespace Germio {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class InputMapper : MonoBehaviour {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected static Fields
+        // Fields
 
         /// <summary>
-        /// Indicates whether the look functionality is active.
+        /// Indicates whether vibration is enabled for the controller.
         /// </summary>
-        protected static bool Look = false;
+        bool _use_vibration = true;
+
+        /// <summary>
+        /// Indicates whether the virtual controller is currently used.
+        /// </summary>
+        bool _use_virtual_controller;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // protected Fields
@@ -56,17 +61,12 @@ namespace Germio {
         protected ButtonControl Start_Button, Select_Button;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
+        // protected static Fields
 
         /// <summary>
-        /// Indicates whether vibration is enabled for the controller.
+        /// Indicates whether the look functionality is active.
         /// </summary>
-        bool _use_vibration = true;
-
-        /// <summary>
-        /// Indicates whether the virtual controller is currently used.
-        /// </summary>
-        bool _use_virtual_controller;
+        protected static bool Look = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Properties [noun, adjective]

@@ -60,3 +60,6 @@ accidentally covered.
 + InputMapper.Left2_Button
 + InputMapper.Right2_Button
 + Human_Extensions
++ Human_DoUpdate
++ Human_DoFixedUpdate
++ Human_Acceleration

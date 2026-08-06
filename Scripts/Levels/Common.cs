@@ -27,6 +27,22 @@ namespace Germio.Levels {
         // protected Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
+
+        /// <summary>
+        /// Transform for the left hand.
+        /// </summary>
+        Transform _left_hand_transform;
+
+        /// <summary>
+        /// Transform for the right hand.
+        /// </summary>
+        Transform _right_hand_transform;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Fields
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
 
         /// <summary>
@@ -49,26 +65,10 @@ namespace Germio.Levels {
         /// </summary>
         [SerializeField] protected float _HOLD_ADJUST_DEGREE = 15.0f;
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // protected Fields
-
         /// <summary>
         /// Indicates whether the object is grounded.
         /// </summary>
         protected bool IsGrounded;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields
-
-        /// <summary>
-        /// Transform for the left hand.
-        /// </summary>
-        Transform _left_hand_transform;
-
-        /// <summary>
-        /// Transform for the right hand.
-        /// </summary>
-        Transform _right_hand_transform;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Properties [noun, adjective]

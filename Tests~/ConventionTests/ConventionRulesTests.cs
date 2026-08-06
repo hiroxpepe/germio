@@ -242,6 +242,124 @@ namespace Germio.Tests.Convention {
             Assert.That(found.Any(v => v.Contains("type")), Is.False);
         }
 
+        [Test]
+        public void Passes_PrivateFieldBeforeProtectedField()
+        {
+            var code = "class Mock {\n"
+                + "    bool _flag;\n"
+                + "    protected bool IsGrounded;\n"
+                + "}";
+            var found = ConventionRules.find_order_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Catches_ProtectedFieldBeforePrivateField()
+        {
+            var code = "class Mock {\n"
+                + "    protected bool IsGrounded;\n"
+                + "    bool _flag;\n"
+                + "}";
+            var found = ConventionRules.find_order_violations(code, "mock.cs");
+            Assert.That(found, Is.Not.Empty);
+        }
+
+        [Test]
+        public void Passes_InstanceFieldBeforeStaticField()
+        {
+            var code = "class Mock {\n"
+                + "    bool _flag;\n"
+                + "    static bool _cache;\n"
+                + "}";
+            var found = ConventionRules.find_order_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Passes_PublicMethodBeforeProtectedMethod()
+        {
+            var code = "class Mock {\n"
+                + "    public void Run() {}\n"
+                + "    protected void step() {}\n"
+                + "}";
+            var found = ConventionRules.find_order_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Passes_StaticMethodBeforeInstanceMethod()
+        {
+            var code = "class Mock {\n"
+                + "    public static void Create() {}\n"
+                + "    public void Run() {}\n"
+                + "}";
+            var found = ConventionRules.find_order_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Passes_BareFieldsPackedTogether()
+        {
+            var code = "class Mock {\n"
+                + "    int _a;\n"
+                + "    int _b;\n"
+                + "}";
+            var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Catches_DocumentedFieldWithNoBlankLineAbove()
+        {
+            var code = "class Mock {\n"
+                + "    int _a;\n"
+                + "    /// <summary>b</summary>\n"
+                + "    int _b;\n"
+                + "}";
+            var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+            Assert.That(found.Any(v => v.Contains("above")), Is.True);
+        }
+
+        [Test]
+        public void Catches_DocumentedFieldWithNoBlankLineBelow()
+        {
+            var code = "class Mock {\n"
+                + "    /// <summary>a</summary>\n"
+                + "    int _a;\n"
+                + "    int _b;\n"
+                + "}";
+            var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+            Assert.That(found.Any(v => v.Contains("below")), Is.True);
+        }
+
+        [Test]
+        public void Passes_DocumentedFieldWithBlankLinesAround()
+        {
+            var code = "class Mock {\n"
+                + "    int _a;\n"
+                + "\n"
+                + "    /// <summary>b</summary>\n"
+                + "    int _b;\n"
+                + "\n"
+                + "    int _c;\n"
+                + "}";
+            var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
+        [Test]
+        public void Passes_BareFieldRightAfterSectionHeaderWithBlank()
+        {
+            var code = "class Mock {\n"
+                + "    /////////////////////////////\n"
+                + "    // Fields\n"
+                + "\n"
+                + "    int _a;\n"
+                + "}";
+            var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+            Assert.That(found, Is.Empty);
+        }
+
         static bool caught(string code, string needle) =>
             ConventionRules.find_naming_violations(code, "mock.cs").Any(v => v.Contains(needle));
 
@@ -620,8 +738,8 @@ namespace Germio.Tests.Convention {
     class Watcher
     {
         const int MAX_TABS = 8;
-        static int _shared_count;
         int _tab_count;
+        static int _shared_count;
 
         public Watcher() { }
 
