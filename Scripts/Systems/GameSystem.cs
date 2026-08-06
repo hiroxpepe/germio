@@ -279,7 +279,7 @@ namespace Germio.Systems {
                 GermioLog.Write(message: $"[Germio GameSystem]   step4: WARN active scene '{scene_name}' not in germio.json; current_node left at '{_store.Scenario.initial_state.current_node}'");
             }
 
-            isReady = true;
+            IsReady = true;
             GermioLog.Write(message: $"[Germio GameSystem] init complete; current_node='{_store.Scenario.initial_state.current_node}', isReady=true");
         }
 

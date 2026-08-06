@@ -319,7 +319,7 @@ namespace Germio.Players {
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
-                    Y_Button.wasReleasedThisFrame && useVirtualController)
+                    Y_Button.wasReleasedThisFrame && UseVirtualController)
                 .Subscribe(onNext: _ => {
                     DoUpdate.VirtualControllerMode = true;
                     Observable.TimerFrame(dueTimeFrameCount: 45)
@@ -390,7 +390,7 @@ namespace Germio.Players {
                     int axis = Right_Button.isPressed ? 1 : Left_Button.isPressed ? -1 : 0;
                     transform.Rotate(
                         xAngle: 0, 
-                        yAngle: axis * (RotationalSpeed * Time.deltaTime) * ADD_FORCE_VALUE, 
+                        yAngle: axis * (_ROTATIONAL_SPEED * Time.deltaTime) * ADD_FORCE_VALUE, 
                         zAngle: 0
                     );
                 }).AddTo(gameObjectComponent: this);
@@ -493,8 +493,8 @@ namespace Germio.Players {
             // LateUpdate is called after all Update functions have been called.
             this.LateUpdateAsObservable()
                 .Subscribe(onNext: _ => {
-                    position = transform.position;
-                    rotation = transform.rotation;
+                    Position = transform.position;
+                    Rotation = transform.rotation;
                     cashPreviousPosition();
                 }).AddTo(gameObjectComponent: this);
         }
