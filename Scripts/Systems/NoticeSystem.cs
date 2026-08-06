@@ -5,6 +5,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using static UnityEngine.GameObject;
 using static UnityEngine.SceneManagement.SceneManager;
@@ -45,36 +46,43 @@ namespace Germio.Systems {
         /// <summary>
         /// Gets the text field for displaying messages.
         /// </summary>
+        [FormerlySerializedAs("_message_text")]
         [SerializeField] protected Text MessageText;
 
         /// <summary>
         /// Gets the text field for displaying target information.
         /// </summary>
+        [FormerlySerializedAs("_targets_text")]
         [SerializeField] protected Text TargetsText;
 
         /// <summary>
         /// Gets the text field for displaying points.
         /// </summary>
+        [FormerlySerializedAs("_points_text")]
         [SerializeField] protected Text PointsText;
 
         /// <summary>
         /// Gets the text field for displaying the game mode.
         /// </summary>
+        [FormerlySerializedAs("_mode_text")]
         [SerializeField] protected Text ModeText;
 
         /// <summary>
         /// Gets the text field for displaying energy information (used for development).
         /// </summary>
+        [FormerlySerializedAs("_energy_text")]
         [SerializeField] protected Text EnergyText;
 
         /// <summary>
         /// Gets the text field for displaying power information (used for development).
         /// </summary>
+        [FormerlySerializedAs("_power_text")]
         [SerializeField] protected Text PowerText;
 
         /// <summary>
         /// Gets the text field for displaying FPS information (used for development).
         /// </summary>
+        [FormerlySerializedAs("_fps_text")]
         [SerializeField] protected Text FpsText;
 
         /// <summary>

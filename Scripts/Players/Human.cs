@@ -6,6 +6,7 @@
 using System;
 using static System.Math;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static UnityEngine.GameObject;
 using static UnityEngine.Vector3;
 using UniRx;
@@ -58,6 +59,7 @@ namespace Germio.Players {
         /// <summary>
         /// Gets the animation component for the player.
         /// </summary>
+        [FormerlySerializedAs("_simple_anime")]
         [SerializeField] protected SimpleAnimation SimpleAnime;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
