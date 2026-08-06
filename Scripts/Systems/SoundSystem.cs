@@ -1,18 +1,24 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using UnityEngine;
 
 using Germio;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Manages sound effects and background music.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class SoundSystem : MonoBehaviour {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
@@ -53,7 +59,7 @@ namespace Germio.Systems {
         [SerializeField] AudioClip _bgm_beat_level_clip;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives] 
+        // Fields
 
         /// <summary>
         /// Gets the currently playing sound effect type.
@@ -161,6 +167,9 @@ namespace Germio.Systems {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
 
         // Start is called before the first frame update.
@@ -169,6 +178,9 @@ namespace Germio.Systems {
             _audio_source_bgm = GetComponents<AudioSource>()[1]; // BGM
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
 
     /// <summary>
     /// Specifies the types of sound effects.

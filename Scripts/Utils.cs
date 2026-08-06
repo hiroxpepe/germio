@@ -1,10 +1,15 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// A concise alias for Dictionary to reduce verbosity in code.
     /// </summary>
@@ -16,8 +21,6 @@ namespace Germio {
     /// Represents event arguments with a name and optional value.
     /// </summary>
     public class EvtArgs : EventArgs {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constructor
 
@@ -30,7 +33,7 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, noun phrase, adjective]
+        // public Properties [noun, adjective]
 
         /// <summary>
         /// Gets the name of the event.
@@ -42,6 +45,9 @@ namespace Germio {
         /// </summary>
         public string? Value { get; set; }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Delegate
 
     /// <summary>
     /// Represents a delegate for handling changed events.

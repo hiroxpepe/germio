@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +18,9 @@ using Germio.Model;
 using Germio.Systems;
 
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Base class for all scene controllers in a Germio-driven application.
     /// Bridges Unity input world and the Germio DSL world by:
@@ -30,15 +35,16 @@ namespace Germio {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Scene : InputMapper {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives]
+        // protected Fields
 
         /// <summary>
         /// Reference to the game system, used to access Bus and Store.
         /// </summary>
-        protected GameSystem _game_system = null!;
+        protected GameSystem GameSystem = null!;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
@@ -46,8 +52,8 @@ namespace Germio {
         // Awake is called when the script instance is being loaded.
         protected virtual void Awake() {
             GermioLog.Write(message: "[Germio Scene] Awake");
-            _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
-            GermioLog.Write(message: $"[Germio Scene] Awake done; _game_system={(_game_system != null ? "OK" : "NULL")}");
+            GameSystem = Find(name: GAME_SYSTEM).Get<GameSystem>();
+            GermioLog.Write(message: $"[Germio Scene] Awake done; GameSystem={(GameSystem != null ? "OK" : "NULL")}");
         }
 
         // Start is called before the first frame update.
@@ -57,32 +63,32 @@ namespace Germio {
 
             this.UpdateAsObservable()
                 .Where(predicate: _ =>
-                    _start_button.wasPressedThisFrame || _a_button.wasPressedThisFrame)
+                    Start_Button.wasPressedThisFrame || A_Button.wasPressedThisFrame)
                 .Subscribe(onNext: _ => {
                     GermioLog.Write(message: "[Germio Scene] publish signal_btn_start_pressed");
-                    _game_system.bus?.Publish(signal_id: "signal_btn_start_pressed");
+                    GameSystem.Bus?.Publish(signal_id: "signal_btn_start_pressed");
                 }).AddTo(gameObjectComponent: this);
 
             this.UpdateAsObservable()
                 .Where(predicate: _ =>
-                    _select_button.wasPressedThisFrame)
+                    Select_Button.wasPressedThisFrame)
                 .Subscribe(onNext: _ => {
                     GermioLog.Write(message: "[Germio Scene] publish signal_btn_select_pressed");
-                    _game_system.bus?.Publish(signal_id: "signal_btn_select_pressed");
+                    GameSystem.Bus?.Publish(signal_id: "signal_btn_select_pressed");
                 }).AddTo(gameObjectComponent: this);
 
             this.UpdateAsObservable()
                 .Where(predicate: _ =>
-                    _up_button.wasPressedThisFrame)
+                    Up_Button.wasPressedThisFrame)
                 .Subscribe(onNext: _ => {
-                    _game_system.bus?.Publish(signal_id: "signal_btn_up_pressed");
+                    GameSystem.Bus?.Publish(signal_id: "signal_btn_up_pressed");
                 }).AddTo(gameObjectComponent: this);
 
             this.UpdateAsObservable()
                 .Where(predicate: _ =>
-                    _down_button.wasPressedThisFrame)
+                    Down_Button.wasPressedThisFrame)
                 .Subscribe(onNext: _ => {
-                    _game_system.bus?.Publish(signal_id: "signal_btn_down_pressed");
+                    GameSystem.Bus?.Publish(signal_id: "signal_btn_down_pressed");
                 }).AddTo(gameObjectComponent: this);
 
             // Defer handler invocation until GameSystem finishes loading germio.json.
@@ -90,16 +96,16 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods
+        // private Methods [verb]
 
         /// <summary>
         /// Coroutine that waits for GameSystem to finish loading germio.json,
         /// then invokes ancestor-order handlers.
         /// </summary>
         IEnumerator invokeAfterReady() {
-            GermioLog.Write(message: "[Germio Scene] waiting for GameSystem.isReady...");
-            yield return new WaitUntil(predicate: () => _game_system != null && _game_system.isReady);
-            GermioLog.Write(message: "[Germio Scene] GameSystem.isReady=true; invoking handlers");
+            GermioLog.Write(message: "[Germio Scene] waiting for GameSystem.IsReady...");
+            yield return new WaitUntil(predicate: () => GameSystem != null && GameSystem.IsReady);
+            GermioLog.Write(message: "[Germio Scene] GameSystem.IsReady=true; invoking handlers");
             invokeAncestorHandlers();
         }
 
@@ -108,16 +114,16 @@ namespace Germio {
         /// all handlers whose [GermioSceneHandler] attribute matches an ancestor's id.
         /// </summary>
         void invokeAncestorHandlers() {
-            if (_game_system?.store?.scenario == null) {
-                GermioLog.Write(message: "[Germio Scene] store.scenario is null; aborting");
+            if (GameSystem?.Store?.Scenario == null) {
+                GermioLog.Write(message: "[Germio Scene] store.Scenario is null; aborting");
                 return;
             }
-            string current_id = _game_system.store.scenario.initial_state.current_node;
+            string current_id = GameSystem.Store.Scenario.initial_state.current_node;
             GermioLog.Write(message: $"[Germio Scene] current_node='{current_id}'");
             if (string.IsNullOrEmpty(value: current_id)) { return; }
 
             List<Node> ancestors = new List<Node>();
-            findAncestorPath(node: _game_system.store.scenario.root, target_id: current_id, path: ancestors);
+            findAncestorPath(node: GameSystem.Store.Scenario.root, target_id: current_id, path: ancestors);
             if (ancestors.Count == 0) {
                 GermioLog.Write(message: $"[Germio Scene] node '{current_id}' not found in tree");
                 return;
@@ -129,9 +135,9 @@ namespace Germio {
                 bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             foreach (Node node in ancestors) {
-                MethodInfo? handler = methods.FirstOrDefault(predicate: m => {
-                    var attr = m.GetCustomAttribute<GermioSceneHandlerAttribute>();
-                    return attr != null && attr.id == node.id;
+                MethodInfo? handler = methods.FirstOrDefault(predicate: method => {
+                    var attr = method.GetCustomAttribute<GermioSceneHandlerAttribute>();
+                    return attr != null && attr.ID == node.id;
                 });
                 if (handler != null) {
                     GermioLog.Write(message: $"[Germio Scene] invoking '{handler.Name}' for node '{node.id}'");
@@ -168,10 +174,16 @@ namespace Germio {
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class GermioSceneHandlerAttribute : Attribute {
-        public string id { get; }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
 
         public GermioSceneHandlerAttribute(string id) {
-            this.id = id;
+            this.ID = id;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        public string ID { get; }
     }
 }

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using static System.Math;
 using UnityEngine;
@@ -15,11 +17,16 @@ using static Germio.Utils;
 using Germio;
 
 namespace Germio.Levels {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides shared functionality for common game objects.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Common : MonoBehaviour {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
@@ -45,12 +52,15 @@ namespace Germio.Levels {
         [SerializeField] protected float _HOLD_ADJUST_DEGREE = 15.0f;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives]
+        // protected Fields
 
         /// <summary>
         /// Indicates whether the object is grounded.
         /// </summary>
-        protected bool _is_grounded;
+        protected bool IsGrounded;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         /// <summary>
         /// Transform for the left hand.
@@ -63,12 +73,12 @@ namespace Germio.Levels {
         Transform _right_hand_transform;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Properties [noun, adjectives]
+        // public Properties [noun, adjective]
 
         /// <summary>
         /// Gets whether the object is holdable.
         /// </summary>
-        public bool holdable { get => _CAN_HOLD; }
+        public bool Holdable { get => _CAN_HOLD; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
@@ -88,6 +98,9 @@ namespace Germio.Levels {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Methods [verb]
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
 
         // Start is called before the first frame update.
@@ -96,7 +109,7 @@ namespace Germio.Levels {
             /// Sets up hand objects and initializes hold state if the item is holdable.
             /// </summary>
             if (_CAN_HOLD) {
-                _is_grounded = true;
+                IsGrounded = true;
                 // Creates left and right hand objects.
                 GameObject left_hand_game_object = new(name: "LeftHand");
                 GameObject right_hand_game_object = new(name: "RightHand");
@@ -118,9 +131,9 @@ namespace Germio.Levels {
                 .Where(predicate: x => 
                     _CAN_HOLD && 
                     transform.parent != null && transform.parent.gameObject.Like(type: PLAYER_TYPE) &&
-                    _is_grounded)
+                    IsGrounded)
                 .Subscribe(onNext: x => {
-                    _is_grounded = false;
+                    IsGrounded = false;
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -130,12 +143,12 @@ namespace Germio.Levels {
                 .Where(predicate: x => 
                     _CAN_HOLD && 
                     transform.parent != null && transform.parent.gameObject.Like(type: PLAYER_TYPE) &&
-                    !_is_grounded)
+                    !IsGrounded)
                 .Subscribe(onNext: x => {
                     if (transform.parent.transform.position.y > transform.position.y + 0.2f) { // 0.2f: Adjustment value
-                        beHolded(speed: 8.0f); // Lifted from above.
+                        beHeld(speed: 8.0f); // Lifted from above.
                     } else {
-                        beHolded(); // Lifted from the side.
+                        beHeld(); // Lifted from the side.
                     }
                 }).AddTo(gameObjectComponent: this);
 
@@ -146,7 +159,7 @@ namespace Germio.Levels {
                 .Where(predicate: x =>
                     _CAN_HOLD &&
                     (transform.parent == null || !transform.parent.gameObject.Like(type: PLAYER_TYPE)) &&
-                    !_is_grounded)
+                    !IsGrounded)
                 .Subscribe(onNext: x => {
                     Ray ray = new(transform.position, new(x: 0, y: -1f, z: 0)); // Creates a ray to search downwards.
                     // When throwing a ray down and getting a reaction.
@@ -156,7 +169,7 @@ namespace Germio.Levels {
 #endif
                         float distance = (float) Round(value: raycast_hit.distance, digits: 3, mode: MidpointRounding.AwayFromZero);
                         if (distance < 0.2f) { // The distance is close.
-                            _is_grounded = true;
+                            IsGrounded = true;
                             // Gets the top position of being hit object.
                             float top = getTopOf(target: raycast_hit.transform.gameObject);
                             transform.localPosition = SwapLocalPositionY(transform: transform, value: top); // Put it in that position.
@@ -164,7 +177,7 @@ namespace Germio.Levels {
                         }
                     }
                     // Falls when not touched the ground yet.
-                    if (!_is_grounded) {
+                    if (!IsGrounded) {
                         transform.localPosition -= new Vector3(x: 0f, y: 5.0f * Time.deltaTime, z: 0f); // 5.0f: Adjustment value
                     }
                 }).AddTo(gameObjectComponent: this);
@@ -178,7 +191,7 @@ namespace Germio.Levels {
         /// </summary>
         /// <param name="forward_vector">Forward vector representing the player's facing direction.</param>
         /// </summary>
-        protected Direction getPushedDirection(Vector3 forward_vector) {
+        protected Direction GetPushedDirection(Vector3 forward_vector) {
             float forward_x = (float) Round(a: forward_vector.x);
             float forward_y = (float) Round(a: forward_vector.y);
             float forward_z = (float) Round(a: forward_vector.z);
@@ -207,9 +220,9 @@ namespace Germio.Levels {
         /// </summary>
         /// <param name="speed">Speed at which the object is lifted. Default is 2.0f.</param>
         /// </summary>
-        void beHolded(float speed = 2.0f) {
+        void beHeld(float speed = 2.0f) {
             if (transform.localPosition.y < _HOLD_ADJUST_Y) {
-                Direction direction = getPushedDirection(transform.parent.forward);
+                Direction direction = GetPushedDirection(transform.parent.forward);
                 // Z-axis positive.
                 if (direction == Direction.PositiveZ) {
                     transform.position = new(

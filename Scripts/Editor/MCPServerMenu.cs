@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 #if UNITY_EDITOR
 using System.Diagnostics;
 using UnityEditor;
@@ -17,7 +19,7 @@ namespace Germio.Editor {
     /// germio_export_mermaid, germio_get_schema, etc. via JSON-RPC over stdio.
     /// See docs/mcp_design.md for the full 6-tool specification.
     /// </summary>
-    public static class McpServerMenu {
+    public static class MCPServerMenu {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constants

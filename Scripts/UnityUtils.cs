@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using static System.Math;
 using UnityEngine;
@@ -9,15 +11,16 @@ using static UnityEngine.GameObject;
 using static Germio.Env;
 
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides Unity-dependent utility methods and properties.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Utils {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // static Fields [noun, adjectives]
+        // private static Fields
 
         /// <summary>
         /// Holds predefined color values for utility access.
@@ -45,67 +48,70 @@ namespace Germio {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public static Properties [noun, noun phrase, adjective]
+        // public static Properties [noun, adjective]
 
         /// <summary>
         /// Gets the red color.
         /// </summary>
-        public static Color red { get => _red; }
+        public static Color Red { get => _red; }
 
         /// <summary>
         /// Gets the orange color.
         /// </summary>
-        public static Color orange { get => _orange; }
+        public static Color Orange { get => _orange; }
 
         /// <summary>
         /// Gets the yellow color.
         /// </summary>
-        public static Color yellow { get => _yellow; }
+        public static Color Yellow { get => _yellow; }
 
         /// <summary>
         /// Gets the lime color.
         /// </summary>
-        public static Color lime { get => _lime; }
+        public static Color Lime { get => _lime; }
 
         /// <summary>
         /// Gets the green color.
         /// </summary>
-        public static Color green { get => _green; }
+        public static Color Green { get => _green; }
 
         /// <summary>
         /// Gets the cyan color.
         /// </summary>
-        public static Color cyan { get => _cyan; }
+        public static Color Cyan { get => _cyan; }
 
         /// <summary>
         /// Gets the azure color.
         /// </summary>
-        public static Color azure { get => _azure; }
+        public static Color Azure { get => _azure; }
 
         /// <summary>
         /// Gets the blue color.
         /// </summary>
-        public static Color blue { get => _blue; }
+        public static Color Blue { get => _blue; }
 
         /// <summary>
         /// Gets the purple color.
         /// </summary>
-        public static Color purple { get => _purple; }
+        public static Color Purple { get => _purple; }
 
         /// <summary>
         /// Gets the magenta color.
         /// </summary>
-        public static Color magenta { get => _magenta; }
+        public static Color Magenta { get => _magenta; }
 
         /// <summary>
         /// Gets the white color.
         /// </summary>
-        public static Color white { get => _white; }
+        public static Color White { get => _white; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
         #region has the component.
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Determines whether a scene-controller GameObject exists.
@@ -238,21 +244,32 @@ namespace Germio {
     /// <author>h.adachi</author>
     public static class AndroidVibrator {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        public static AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        public static AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        public static AndroidJavaObject vibrator = currentActivity.Call<AndroidJavaObject>("getSystemService", "vibrator");
+        public static AndroidJavaClass UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        public static AndroidJavaObject CurrentActivity = UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        public static AndroidJavaObject Vibrator = CurrentActivity.Call<AndroidJavaObject>("getSystemService", "vibrator");
 #else
-        public static AndroidJavaClass unityPlayer;
-        public static AndroidJavaObject currentActivity;
-        public static AndroidJavaObject vibrator;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Fields
+
+        public static AndroidJavaClass UnityPlayer;
+        public static AndroidJavaObject CurrentActivity;
+        public static AndroidJavaObject Vibrator;
 #endif
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
+
         public static void Vibrate(long milliseconds) {
             if (isAndroid()) {
-                vibrator.Call(methodName: "vibrate", args: milliseconds);
+                Vibrator.Call(methodName: "vibrate", args: milliseconds);
             } else {
                 Handheld.Vibrate();
             }
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
 
         static bool isAndroid() {
 #if UNITY_ANDROID && !UNITY_EDITOR

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 
 #if UNITY_5_3_OR_NEWER
@@ -9,6 +11,9 @@ using System.IO;
 #endif
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides AES key material for Storage encryption.
     /// Key source priority (first available wins):
@@ -19,7 +24,9 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Vault {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Const [nouns]
+
         const string ENV_VAR     = "GERMIO_AES_KEY";
         const int    MATERIAL_LEN = 48; // 32 bytes key + 16 bytes IV
         const int    KEY_LEN      = 32;

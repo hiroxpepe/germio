@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using UnityEngine;
 using static UnityEngine.GameObject;
@@ -14,6 +16,9 @@ using Germio;
 using Germio.Systems;
 
 namespace Germio.Triggers {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Represents a home object in the game and manages player and vehicle interactions.
     /// On contact, emits the "vol_home" signal to <see cref="Bus"/>
@@ -21,7 +26,8 @@ namespace Germio.Triggers {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Home : MonoBehaviour {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
@@ -32,7 +38,7 @@ namespace Germio.Triggers {
         [SerializeField] bool _move = false;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives]
+        // Fields
 
         /// <summary>
         /// Holds a reference to the game system instance.
@@ -47,6 +53,9 @@ namespace Germio.Triggers {
         /// Retained for backward compatibility with observers (e.g., SoundSystem).
         /// </summary>
         public event Action? OnCameBack;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
@@ -92,7 +101,7 @@ namespace Germio.Triggers {
                     // Time.timeScale=1f before LoadScene, preventing the next scene
                     // from starting frozen.
                     OnCameBack?.Invoke();
-                    _game_system.bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -103,7 +112,7 @@ namespace Germio.Triggers {
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -112,10 +121,10 @@ namespace Germio.Triggers {
             this.OnCollisionEnterAsObservable()
                 .Where(predicate: x =>
                     x.Like(type: VEHICLE_TYPE) &&
-                    _game_system.beat)
+                    _game_system.Beat)
                 .Subscribe(onNext: _ => {
                     OnCameBack?.Invoke();
-                    _game_system.bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
     }

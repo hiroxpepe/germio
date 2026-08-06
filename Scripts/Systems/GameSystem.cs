@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using UnityEngine;
@@ -18,6 +20,9 @@ using Scenario = Germio.Model.Scenario;
 using Snapshot = Germio.Model.Snapshot;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Manages the game system, including levels, home interactions, and the JSON-driven state machine.
     /// Initialises <see cref="Store"/>, <see cref="Bus"/>,
@@ -25,8 +30,6 @@ namespace Germio.Systems {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class GameSystem : MonoBehaviour {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 
@@ -39,80 +42,9 @@ namespace Germio.Systems {
         /// <summary>Subscribes to transition requests and calls SceneManager.</summary>
         SceneLoader _scene_loader = null!;
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Properties [noun, adjectives]
-
-        /// <summary>
-        /// Gets or sets the current game mode for the system.
-        /// </summary>
-        public string mode { get => Status.mode; set => Status.mode = value; }
-
         bool _home;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the player is at home.
-        /// Setter mirrors to flags.player_at_home so DSL rules can read it.
-        /// </summary>
-        public bool home {
-            get => _home;
-            set {
-                _home = value;
-                if (_store?.scenario?.initial_state?.flags != null) {
-                    _store.scenario.initial_state.flags["player_at_home"] = value;
-                    GermioLog.Write(message: $"[Germio GameSystem] home={value}, flags.player_at_home={value}");
-                } else {
-                    GermioLog.Write(message: $"[Germio GameSystem] home={value} BUT flags dict is null");
-                }
-            }
-        }
-
         bool _beat;
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the level is beaten.
-        /// Setter mirrors to flags.is_beat so DSL rules can read it.
-        /// </summary>
-        public bool beat {
-            get => _beat;
-            set {
-                _beat = value;
-                if (_store?.scenario?.initial_state?.flags != null) {
-                    _store.scenario.initial_state.flags["is_beat"] = value;
-                    GermioLog.Write(message: $"[Germio GameSystem] beat={value}, flags.is_beat={value}");
-                } else {
-                    GermioLog.Write(message: $"[Germio GameSystem] beat={value} BUT flags dict is null");
-                }
-            }
-        }
-
-        /// <summary>Exposes the Store for use by Scene base class.</summary>
-        public Store store => _store;
-
-        /// <summary>Indicates whether async initialization has completed.</summary>
-        public bool isReady { get; private set; } = false;
-
-        /// <summary>
-        /// Exposes the Bus for use by Zone, Home, and Despawn.
-        /// </summary>
-        public Bus? bus => _bus;
-
-        /// <summary>Fires the OnPauseOn event. Called by application Scene controllers.</summary>
-        public void firePauseOn() {
-            GermioLog.Write(message: "[Germio GameSystem] firePauseOn relay");
-            OnPauseOn?.Invoke();
-        }
-
-        /// <summary>Fires the OnPauseOff event.</summary>
-        public void firePauseOff() {
-            GermioLog.Write(message: "[Germio GameSystem] firePauseOff relay");
-            OnPauseOff?.Invoke();
-        }
-
-        /// <summary>Fires the OnStartLevel event.</summary>
-        public void fireStartLevel() {
-            GermioLog.Write(message: "[Germio GameSystem] fireStartLevel relay");
-            OnStartLevel?.Invoke();
-        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Events [verb, verb phrase]
@@ -136,6 +68,99 @@ namespace Germio.Systems {
         /// Occurs when the player returns home.
         /// </summary>
         public event Action? OnCameBackHome;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>
+        /// Gets or sets the current game mode for the system.
+        /// </summary>
+        public string Mode { get => Status.Mode; set => Status.Mode = value; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the player is at home.
+        /// Setter mirrors to flags.player_at_home so DSL rules can read it.
+        /// </summary>
+        public bool Home {
+            get => _home;
+            set {
+                _home = value;
+                if (_store?.Scenario?.initial_state?.flags != null) {
+                    _store.Scenario.initial_state.flags["player_at_home"] = value;
+                    GermioLog.Write(message: $"[Germio GameSystem] home={value}, flags.player_at_home={value}");
+                } else {
+                    GermioLog.Write(message: $"[Germio GameSystem] home={value} BUT flags dict is null");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the level is beaten.
+        /// Setter mirrors to flags.is_beat so DSL rules can read it.
+        /// </summary>
+        public bool Beat {
+            get => _beat;
+            set {
+                _beat = value;
+                if (_store?.Scenario?.initial_state?.flags != null) {
+                    _store.Scenario.initial_state.flags["is_beat"] = value;
+                    GermioLog.Write(message: $"[Germio GameSystem] beat={value}, flags.is_beat={value}");
+                } else {
+                    GermioLog.Write(message: $"[Germio GameSystem] beat={value} BUT flags dict is null");
+                }
+            }
+        }
+
+        /// <summary>Exposes the Store for use by Scene base class.</summary>
+        public Store Store => _store;
+
+        /// <summary>Indicates whether async initialization has completed.</summary>
+        public bool IsReady { get; private set; } = false;
+
+        /// <summary>
+        /// Exposes the Bus for use by Zone, Home, and Despawn.
+        /// </summary>
+        public Bus? Bus => _bus;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>Fires the OnPauseOn event. Called by application Scene controllers.</summary>
+        public void FirePauseOn() {
+            GermioLog.Write(message: "[Germio GameSystem] FirePauseOn relay");
+            OnPauseOn?.Invoke();
+        }
+
+        /// <summary>Fires the OnPauseOff event.</summary>
+        public void FirePauseOff() {
+            GermioLog.Write(message: "[Germio GameSystem] FirePauseOff relay");
+            OnPauseOff?.Invoke();
+        }
+
+        /// <summary>Fires the OnStartLevel event.</summary>
+        public void FireStartLevel() {
+            GermioLog.Write(message: "[Germio GameSystem] FireStartLevel relay");
+            OnStartLevel?.Invoke();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Methods [verb]
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Update Methods handler.
+
+        /// <summary>
+        /// Handles the loading of ability-related methods during Awake.
+        /// </summary>
+        protected virtual void abilities_OnAwake() { }
+
+        /// <summary>
+        /// Handles the updating of ability-related methods during Start.
+        /// </summary>
+        protected virtual void abilities_OnStart() { }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
@@ -162,8 +187,8 @@ namespace Germio.Systems {
             );
             // -----------------------------------------------
 
-            // hotfix1: Push reversal — Scene-side controllers call firePauseOn / firePauseOff /
-            // fireStartLevel relay methods directly. GameSystem (Germio) does not import Stemic types.
+            // hotfix1: Push reversal — Scene-side controllers call FirePauseOn / FirePauseOff /
+            // FireStartLevel relay methods directly. GameSystem (Germio) does not import Stemic types.
 
             if (HasHome()) {
                 // Gets the home.
@@ -172,10 +197,10 @@ namespace Germio.Systems {
                 /// <summary>
                 /// Invokes the event when the player returns home.
                 /// </summary>
-                this.home = false;
+                this.Home = false;
                 home.OnCameBack += () => {
                     GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack fired");
-                    this.home = true;
+                    this.Home = true;
                     OnCameBackHome?.Invoke();
                 };
                 GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack subscription registered");
@@ -224,7 +249,7 @@ namespace Germio.Systems {
             if (scenario_task.IsFaulted) {
                 GermioLog.Write(message: $"[Germio GameSystem]   step1 FAULTED: {scenario_task.Exception}");
             } else {
-                GermioLog.Write(message: $"[Germio GameSystem]   step1 done; scenario.initial_state.current_node='{_store.scenario.initial_state.current_node}'");
+                GermioLog.Write(message: $"[Germio GameSystem]   step1 done; scenario.initial_state.current_node='{_store.Scenario.initial_state.current_node}'");
             }
 
             // Step 2: Load Snapshot
@@ -238,7 +263,7 @@ namespace Germio.Systems {
                 string ld = loaded.state == null ? "<null>" : loaded.state.current_node;
                 GermioLog.Write(message: $"[Germio GameSystem]   step2 done; snapshot.state.current_node='{ld}'");
             }
-            Snapshot snapshot = loaded ?? new Snapshot { state = _store.scenario.initial_state };
+            Snapshot snapshot = loaded ?? new Snapshot { state = _store.Scenario.initial_state };
 
             GermioLog.Write(message: "[Germio GameSystem]   step3: SetSnapshot...");
             _store.SetSnapshot(snapshot: snapshot);
@@ -247,45 +272,33 @@ namespace Germio.Systems {
             // Override whatever value came from snapshot/germio.json with the result of
             // resolving the active Unity Scene name through ScenarioNavigator.
             string scene_name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-            string? resolved = ScenarioNavigator.FindNodeIdBySceneName(
-                root: _store.scenario.root, scene_name: scene_name);
+            string? resolved = ScenarioNavigator.FindNodeIDBySceneName(
+                root: _store.Scenario.root, scene_name: scene_name);
             if (resolved != null) {
-                _store.scenario.initial_state.current_node = resolved;
+                _store.Scenario.initial_state.current_node = resolved;
                 GermioLog.Write(message: $"[Germio GameSystem]   step4: Unity scene '{scene_name}' → current_node='{resolved}'");
             } else {
-                GermioLog.Write(message: $"[Germio GameSystem]   step4: WARN active scene '{scene_name}' not in germio.json; current_node left at '{_store.scenario.initial_state.current_node}'");
+                GermioLog.Write(message: $"[Germio GameSystem]   step4: WARN active scene '{scene_name}' not in germio.json; current_node left at '{_store.Scenario.initial_state.current_node}'");
             }
 
             isReady = true;
-            GermioLog.Write(message: $"[Germio GameSystem] init complete; current_node='{_store.scenario.initial_state.current_node}', isReady=true");
+            GermioLog.Write(message: $"[Germio GameSystem] init complete; current_node='{_store.Scenario.initial_state.current_node}', isReady=true");
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Update Methods handler.
-
-        /// <summary>
-        /// Handles the loading of ability-related methods during Awake.
-        /// </summary>
-        protected virtual void abilities_OnAwake() { }
-
-        /// <summary>
-        /// Handles the updating of ability-related methods during Start.
-        /// </summary>
-        protected virtual void abilities_OnStart() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // inner Classes
 
         #region Status
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private inner Classes
+
         /// <summary>
         /// Represents the game status.
         /// </summary>
         static class Status {
-#nullable enable
-
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // static Fields [nouns, noun phrases]
+            // private static Fields
 
             /// <summary>
             /// Stores the current game mode.
@@ -303,12 +316,12 @@ namespace Germio.Systems {
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // public static Properties [noun, noun phrase, adjective]
+            // public static Properties [noun, adjective]
 
             /// <summary>
             /// Gets or sets the current game mode for the status.
             /// </summary>
-            public static string mode {
+            public static string Mode {
                 get => _mode; set => _mode = value;
             }
         }

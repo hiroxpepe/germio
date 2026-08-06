@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,12 +17,16 @@ using static Germio.Utils;
 using Germio;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Manages game status notifications.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class NoticeSystem : MonoBehaviour {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // References [bool => is+adjective, has+past participle, can+verb prototype, triad verb]
@@ -28,45 +34,48 @@ namespace Germio.Systems {
         /// <summary>
         /// Gets the text field for displaying messages.
         /// </summary>
-        [SerializeField] protected Text _message_text;
+        [SerializeField] protected Text MessageText;
 
         /// <summary>
         /// Gets the text field for displaying target information.
         /// </summary>
-        [SerializeField] protected Text _targets_text;
+        [SerializeField] protected Text TargetsText;
 
         /// <summary>
         /// Gets the text field for displaying points.
         /// </summary>
-        [SerializeField] protected Text _points_text;
+        [SerializeField] protected Text PointsText;
 
         /// <summary>
         /// Gets the text field for displaying the game mode.
         /// </summary>
-        [SerializeField] protected Text _mode_text;
+        [SerializeField] protected Text ModeText;
 
         /// <summary>
         /// Gets the text field for displaying energy information (used for development).
         /// </summary>
-        [SerializeField] protected Text _energy_text;
+        [SerializeField] protected Text EnergyText;
 
         /// <summary>
         /// Gets the text field for displaying power information (used for development).
         /// </summary>
-        [SerializeField] protected Text _power_text;
+        [SerializeField] protected Text PowerText;
 
         /// <summary>
         /// Gets the text field for displaying FPS information (used for development).
         /// </summary>
-        [SerializeField] protected Text _fps_text;
+        [SerializeField] protected Text FpsText;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Fields [noun, adjectives] 
+        // protected Fields
 
         /// <summary>
         /// Gets the reference to the game system.
         /// </summary>
-        protected GameSystem _game_system;
+        protected GameSystem GameSystem;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Fields
 
         /// <summary>
         /// Gets the frame count for FPS calculation.
@@ -79,49 +88,68 @@ namespace Germio.Systems {
         float _elapsed_time;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // protected Methods [verb]
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // update Methods handler.
+
+        /// <summary>
+        /// Handles the loading of ability-related methods during Awake.
+        /// </summary>
+        protected virtual void abilities_OnAwake() { }
+
+        /// <summary>
+        /// Handles the updating of ability-related methods during Start.
+        /// </summary>
+        protected virtual void abilities_OnStart() { }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // update Methods
 
         // Awake is called when the script instance is being loaded.
         void Awake() {
-            _game_system = Find(name: GAME_SYSTEM).Get<GameSystem>();
+            GameSystem = Find(name: GAME_SYSTEM).Get<GameSystem>();
 
             /// <summary>
             /// Handles the event when the game is paused.
             /// </summary>
-            _game_system.OnPauseOn += () => { if (!_game_system.home) { _message_text.text = MESSAGE_GAME_PAUSE; }};
+            GameSystem.OnPauseOn += () => { if (!GameSystem.Home) { MessageText.text = MESSAGE_GAME_PAUSE; }};
 
             /// <summary>
             /// Handles the event when the game is unpaused.
             /// </summary>
-            _game_system.OnPauseOff += () => { _message_text.text = string.Empty; };
+            GameSystem.OnPauseOff += () => { MessageText.text = string.Empty; };
 
             /// <summary>
             /// Handles the event when the player returns home.
             /// </summary>
-            _game_system.OnCameBackHome += () => { _message_text.text = MESSAGE_LEVEL_CLEAR; };
+            GameSystem.OnCameBackHome += () => { MessageText.text = MESSAGE_LEVEL_CLEAR; };
 
             /// <summary>
             /// Handles the event when a new level starts.
             /// </summary>
-            _game_system.OnStartLevel += () => {
+            GameSystem.OnStartLevel += () => {
                 // Phase 5.13: Changed from switching based on the Unity Scene name (e.g., "Level_1")
                 // to displaying the 'name' property of the node in germio.json (e.g., "Level 1").
                 // Decoupled the Unity Scene filename from the display name (the human-readable string shown in the UI).
                 // Looking up the Node using the current_node id and displaying its name.
-                string current_id = _game_system.store.scenario.initial_state.current_node;
-                Germio.Model.Node? node = _game_system.store.FindNode(node_id: current_id);
+                string current_id = GameSystem.Store.Scenario.initial_state.current_node;
+                Germio.Model.Node? node = GameSystem.Store.FindNode(node_id: current_id);
                 if (node != null) {
-                    _message_text.text = node.name;
+                    MessageText.text = node.name;
                 }
                 // Waits 1.5 seconds, then shows the start message.
                 Observable.Timer(TimeSpan.FromSeconds(1.5))
                     .Subscribe(onNext: _ => {
-                        _message_text.text = MESSAGE_LEVEL_START;
+                        MessageText.text = MESSAGE_LEVEL_START;
                     }).AddTo(gameObjectComponent: this);
                 // Waits 3 seconds, then clears the message.
                 Observable.Timer(TimeSpan.FromSeconds(3.0))
                     .Subscribe(onNext: _ => {
-                        _message_text.text = string.Empty;
+                        MessageText.text = string.Empty;
                     }).AddTo(gameObjectComponent: this);
             };
 
@@ -148,30 +176,17 @@ namespace Germio.Systems {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // update Methods handler.
-
-        /// <summary>
-        /// Handles the loading of ability-related methods during Awake.
-        /// </summary>
-        protected virtual void abilities_OnAwake() { }
-
-        /// <summary>
-        /// Handles the updating of ability-related methods during Start.
-        /// </summary>
-        protected virtual void abilities_OnStart() { }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
 
         /// <summary>
         /// Updates the game mode status display.
         /// </summary>
         void updateGameStatus() {
-            _mode_text.text = string.Format("Mode: {0}", _game_system.mode);
-            switch (_game_system.mode) {
-                case MODE_EASY: _mode_text.color = yellow; break;
-                case MODE_NORMAL: _mode_text.color = green; break;
-                case MODE_HARD: _mode_text.color = purple; break;
+            ModeText.text = string.Format("Mode: {0}", GameSystem.Mode);
+            switch (GameSystem.Mode) {
+                case MODE_EASY: ModeText.color = Yellow; break;
+                case MODE_NORMAL: ModeText.color = Green; break;
+                case MODE_HARD: ModeText.color = Purple; break;
             }
         }
 
@@ -190,7 +205,7 @@ namespace Germio.Systems {
             if (_elapsed_time >= 1.0f) {
                 float fps = 1.0f * _frame_count / _elapsed_time;
                 string fps_rate = $"FPS {fps.ToString(format: "F2")}";
-                _fps_text.text = fps_rate;
+                FpsText.text = fps_rate;
                 _frame_count = 0;
                 _elapsed_time = 0f;
             }

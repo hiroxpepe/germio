@@ -1,10 +1,15 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides generic extension methods.
     /// </summary>
@@ -12,6 +17,9 @@ namespace Germio {
     public static class Extensions {
 
         #region Type of Object
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// Determines whether the GameObject's name contains the specified string.
         /// </summary>

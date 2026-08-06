@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +10,9 @@ using System.Text;
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Generates a Mermaid.js flowchart string from a <see cref="Scenario"/> Node tree.
     /// <para>
@@ -24,8 +29,6 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Grapher {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -129,8 +132,8 @@ namespace Germio.Core {
         /// </summary>
         static string sanitize(string id) {
             var sb = new StringBuilder(id.Length);
-            foreach (char c in id) {
-                sb.Append(char.IsLetterOrDigit(c) ? c : '_');
+            foreach (char character in id) {
+                sb.Append(char.IsLetterOrDigit(character) ? character : '_');
             }
             return sb.ToString();
         }

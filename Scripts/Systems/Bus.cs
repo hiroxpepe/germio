@@ -1,11 +1,16 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 
 using Germio.Core;
 
 namespace Germio.Systems {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Central dispatch bus for all game triggers.
     /// Receives zone enter/exit events and arbitrary signals,
@@ -17,8 +22,6 @@ namespace Germio.Systems {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Bus {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Fields
 

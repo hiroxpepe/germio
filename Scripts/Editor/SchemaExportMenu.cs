@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
@@ -27,7 +29,7 @@ namespace Germio.Editor {
                 Debug.LogWarning($"[Germio] Schema directory not found: {schema_dir}");
                 return;
             }
-            string json = SchemaExporter.GetSchemaJson(schema_dir: schema_dir);
+            string json = SchemaExporter.GetSchemaJSON(schema_dir: schema_dir);
             GUIUtility.systemCopyBuffer = json;
             Debug.Log($"[Germio] Schema copied to clipboard ({json.Length} chars). Paste into your LLM prompt.");
         }

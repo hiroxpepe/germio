@@ -1,12 +1,17 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 
 // When compiled outside Unity (e.g. dotnet test), provide a no-op stub so [Preserve]
 // attributes remain valid without requiring UnityEngine.dll.
 #if !UNITY_5_3_OR_NEWER
 namespace UnityEngine.Scripting {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Classes
+
     [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
     internal class PreserveAttribute : System.Attribute {}
 }
@@ -14,8 +19,8 @@ namespace UnityEngine.Scripting {
 
 namespace Germio.Model {
 
-    ///////////////////////////////////////////////////////////////////////
-    // Enums
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
 
     /// <summary>
     /// Operation type for updating a numeric counter.
@@ -26,7 +31,10 @@ namespace Germio.Model {
     [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
     public enum CounterOp { Add, Sub, Set }
 
-    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Static-side classes (LLM-edited, persisted in germio.json)
 
     /// <summary>
@@ -37,7 +45,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Scenario {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>JSON schema version. Stays at 1 (schema not yet published).</summary>
         public int schema_version { get; set; } = 1;
 
@@ -55,7 +65,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Node {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Unique identifier within the entire Scenario.</summary>
         public string id { get; set; } = string.Empty;
 
@@ -91,7 +103,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Next {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Target node id.</summary>
         public string id { get; set; } = string.Empty;
 
@@ -105,7 +119,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Rule {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Unique rule identifier.</summary>
         public string id { get; set; } = string.Empty;
 
@@ -129,7 +145,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Command {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Sets a boolean flag in State.flags.</summary>
         public SetFlag? set_flag { get; set; }
 
@@ -170,7 +188,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class SetFlag {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         public string key { get; set; } = string.Empty;
         public bool value { get; set; }
     }
@@ -179,7 +199,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class UpdateCounter {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         public string key { get; set; } = string.Empty;
         public float delta { get; set; }
         public CounterOp op { get; set; } = CounterOp.Add;
@@ -189,7 +211,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class UpdateInventory {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         public string key { get; set; } = string.Empty;
         public int delta { get; set; }
     }
@@ -198,7 +222,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class SetPersistence {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         public string key { get; set; } = string.Empty;
         public string value { get; set; } = string.Empty;
     }
@@ -210,7 +236,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class RecordEvent {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Event kind (e.g., "node_clear", "node_fail", custom).</summary>
         public string kind { get; set; } = string.Empty;
 
@@ -218,7 +246,7 @@ namespace Germio.Model {
         public string target_id { get; set; } = string.Empty;
     }
 
-    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Dynamic-side classes (runtime-managed, persisted in snapshot_*.json)
 
     /// <summary>
@@ -229,7 +257,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class Snapshot {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>JSON schema version.</summary>
         public int schema_version { get; set; } = 1;
 
@@ -247,7 +277,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class State {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Boolean state flags.</summary>
         public Map<string, bool> flags { get; set; } = new Map<string, bool>();
 
@@ -273,7 +305,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class History {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Chronologically ordered event log.</summary>
         public List<HistoryEntry> entries { get; set; } = new List<HistoryEntry>();
 
@@ -287,7 +321,9 @@ namespace Germio.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [UnityEngine.Scripting.Preserve]
     public class HistoryEntry {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>
         /// Event kind. Standard values:
         ///   "node_enter", "node_exit", "rule_fire"

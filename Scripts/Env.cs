@@ -1,16 +1,19 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace Germio {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides constants for the game environment.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Env {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constants
+        // Const [nouns]
 
         /// <summary>
         /// Gets the frames per second for the game.
@@ -172,10 +175,13 @@ namespace Germio {
         /// </summary>
         public const int MAX_NODE_DEPTH = 10;
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Fields
+
         /// <summary>
         /// Warning threshold for node depth in the scenario tree.
         /// Can be configured. Default: 5 layers.
         /// </summary>
-        public static int warning_node_depth = 5;
+        public static int WarningNodeDepth = 5;
     }
 }

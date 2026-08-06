@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +11,16 @@ using System.Text;
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Enums [noun]
+
     /// <summary>
     /// Severity level of a validation finding produced by <see cref="Validator"/>.
     /// </summary>
     public enum ValidationLevel { Error, Warning }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Source location within a germio JSON document.
@@ -21,19 +29,21 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Location {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>JSONPath expression pointing to the offending JSON node.
         /// Example: "$.root.children[0].next[0].condition"</summary>
-        public string json_path       { get; set; } = string.Empty;
+        public string JSONPath       { get; set; } = string.Empty;
 
         /// <summary>1-based source line number. 0 when not available.</summary>
-        public int    line            { get; set; } = 0;
+        public int    Line            { get; set; } = 0;
 
         /// <summary>1-based source column number. 0 when not available.</summary>
-        public int    column          { get; set; } = 0;
+        public int    Column          { get; set; } = 0;
 
         /// <summary>Short excerpt from the source for human context.</summary>
-        public string context_snippet { get; set; } = string.Empty;
+        public string ContextSnippet { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -43,27 +53,8 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class ValidationResult {
-#nullable enable
-        /// <summary>Severity: Error halts integrity; Warning flags potential data issues. (G17: single name)</summary>
-        public ValidationLevel severity { get; }
-
-        /// <summary>Rule identifier: V001 – V026.</summary>
-        public string rule_id { get; }
-
-        /// <summary>Human-readable short description of the finding.</summary>
-        public string message { get; }
-
-        /// <summary>Detailed explanation of why this finding was raised.</summary>
-        public string cause_detail { get; }
-
-        /// <summary>Actionable suggestion for how to fix the finding.</summary>
-        public string fix_suggestion { get; }
-
-        /// <summary>Optional JSON snippet illustrating the fix. May be empty.</summary>
-        public string suggested_json { get; }
-
-        /// <summary>Optional JSON source location. json_path is the key field for LLM self-correction.</summary>
-        public Location location { get; }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Constructor
 
         /// <summary>Initializes a new ValidationResult with all G12 fields.</summary>
         public ValidationResult(
@@ -74,13 +65,13 @@ namespace Germio.Core {
             string          fix_suggestion,
             string          suggested_json = "",
             Location?       location       = null) {
-            this.severity       = level;
-            this.rule_id        = rule_id;
-            this.message        = message;
-            this.cause_detail   = cause_detail;
-            this.fix_suggestion = fix_suggestion;
-            this.suggested_json = suggested_json;
-            this.location       = location ?? new Location();
+            this.Severity       = level;
+            this.RuleID        = rule_id;
+            this.Message        = message;
+            this.CauseDetail   = cause_detail;
+            this.FixSuggestion = fix_suggestion;
+            this.SuggestedJSON = suggested_json;
+            this.Location       = location ?? new Location();
         }
 
         /// <summary>
@@ -88,14 +79,41 @@ namespace Germio.Core {
         /// Equivalent to ValidationResult(level, "LEGACY", message, "", "").
         /// </summary>
         public ValidationResult(ValidationLevel level, string message) {
-            this.severity       = level;
-            this.rule_id        = "LEGACY";
-            this.message        = message;
-            this.cause_detail   = string.Empty;
-            this.fix_suggestion = string.Empty;
-            this.suggested_json = string.Empty;
-            this.location       = new Location();
+            this.Severity       = level;
+            this.RuleID        = "LEGACY";
+            this.Message        = message;
+            this.CauseDetail   = string.Empty;
+            this.FixSuggestion = string.Empty;
+            this.SuggestedJSON = string.Empty;
+            this.Location       = new Location();
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>Severity: Error halts integrity; Warning flags potential data issues. (G17: single name)</summary>
+        public ValidationLevel Severity { get; }
+
+        /// <summary>Rule identifier: V001 – V026.</summary>
+        public string RuleID { get; }
+
+        /// <summary>Human-readable short description of the finding.</summary>
+        public string Message { get; }
+
+        /// <summary>Detailed explanation of why this finding was raised.</summary>
+        public string CauseDetail { get; }
+
+        /// <summary>Actionable suggestion for how to fix the finding.</summary>
+        public string FixSuggestion { get; }
+
+        /// <summary>Optional JSON snippet illustrating the fix. May be empty.</summary>
+        public string SuggestedJSON { get; }
+
+        /// <summary>Optional JSON source location. json_path is the key field for LLM self-correction.</summary>
+        public Location Location { get; }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
 
         /// <summary>
         /// Returns an LLM-friendly multi-line string containing all diagnostic info.
@@ -126,6 +144,9 @@ namespace Germio.Core {
         public override string ToString() => $"[{rule_id}][{severity}] {message}";
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Performs static analysis on a <see cref="Scenario"/> and returns a list of
     /// <see cref="ValidationResult"/> items. An empty list means the data is sound.
@@ -147,7 +168,7 @@ namespace Germio.Core {
     ///   V021: Leaf nodes (empty children) must have a scene (Error)
     ///   V023: Completely empty nodes (both children and scene empty) are forbidden (Error)
     ///   V024: Node hierarchy exceeds MAX_NODE_DEPTH (Error)
-    ///   V025: Node hierarchy exceeds warning_node_depth (Warning)
+    ///   V025: Node hierarchy exceeds WarningNodeDepth (Warning)
     ///   V026: Circular reference detected (children contain an ancestor ID) (Error)
     /// 
     /// Phase 5.8 v2 fix6 changes:
@@ -158,8 +179,6 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validator {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -298,8 +317,8 @@ namespace Germio.Core {
 
             // Validate Next entries
             if (node.next != null) {
-                for (int n_idx = 0; n_idx < node.next.Count; n_idx++) {
-                    var next = node.next[n_idx];
+                for (int n_index = 0; n_index < node.next.Count; n_index++) {
+                    var next = node.next[n_index];
                     // V006: dangling next.id
                     if (!node_map.ContainsKey(next.id)) {
                         results.Add(new ValidationResult(
@@ -308,13 +327,13 @@ namespace Germio.Core {
                             message:        $"Node '{node.id}' → next.id '{next.id}' does not exist in scenario.",
                             cause_detail:   $"No node with id '{next.id}' was found.{suggestSimilar(next.id, node_map.Keys)}",
                             fix_suggestion: $"Add a node with id '{next.id}', or correct the typo.",
-                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].next[{n_idx}].id" }));
+                            location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')].next[{n_index}].id" }));
                     }
                     // V009 / V001 / V002 / V003: validate condition
                     validateCondition(
                         condition: next.condition, state: state,
                         node_id: node.id,
-                        json_path: $"$.root..[?(@.id='{node.id}')].next[{n_idx}].condition",
+                        json_path: $"$.root..[?(@.id='{node.id}')].next[{n_index}].condition",
                         results: results);
                 }
             }
@@ -453,12 +472,12 @@ namespace Germio.Core {
             catch { return; }  // already caught by V009
 
             for (int i = 0; i + 2 < tokens.Count; i++) {
-                if (tokens[i].kind == TokenKind.Identifier &&
-                    tokens[i + 1].kind == TokenKind.Dot &&
-                    tokens[i + 2].kind == TokenKind.Identifier) {
+                if (tokens[i].Kind == TokenKind.Identifier &&
+                    tokens[i + 1].Kind == TokenKind.Dot &&
+                    tokens[i + 2].Kind == TokenKind.Identifier) {
 
-                    string prefix = tokens[i].value;
-                    string key    = tokens[i + 2].value;
+                    string prefix = tokens[i].Value;
+                    string key    = tokens[i + 2].Value;
 
                     if (prefix == "flags" && !state.flags.ContainsKey(key)) {
                         results.Add(new ValidationResult(
@@ -498,17 +517,17 @@ namespace Germio.Core {
         /// </summary>
         static string? findSemanticError(List<Token> tokens) {
             for (int i = 0; i + 2 < tokens.Count; i++) {
-                if (tokens[i].kind   != TokenKind.Identifier) { continue; }
-                if (tokens[i+1].kind != TokenKind.Dot)        { continue; }
-                if (tokens[i+2].kind != TokenKind.Identifier) { continue; }
+                if (tokens[i].Kind   != TokenKind.Identifier) { continue; }
+                if (tokens[i+1].Kind != TokenKind.Dot)        { continue; }
+                if (tokens[i+2].Kind != TokenKind.Identifier) { continue; }
 
-                string prefix   = tokens[i].value;
-                string key      = tokens[i+2].value;
-                int    next_idx = i + 3;
-                TokenKind next_kind = (next_idx < tokens.Count) ? tokens[next_idx].kind : TokenKind.EOF;
+                string prefix   = tokens[i].Value;
+                string key      = tokens[i+2].Value;
+                int    next_index = i + 3;
+                TokenKind next_kind = (next_index < tokens.Count) ? tokens[next_index].Kind : TokenKind.EOF;
 
                 // Is this accessor on the RHS of another comparison (token before is a comparison op)?
-                bool is_rhs = (i > 0) && isComparisonOpKind(kind: tokens[i-1].kind);
+                bool is_rhs = (i > 0) && isComparisonOpKind(kind: tokens[i-1].Kind);
 
                 // Unknown prefix
                 if (prefix != "flags" && prefix != "counters" && prefix != "inventory" && prefix != "history" && prefix != "now") {
@@ -525,18 +544,18 @@ namespace Germio.Core {
                 if (prefix == "flags" && !is_rhs && isComparisonOpKind(kind: next_kind)) {
                     if (next_kind == TokenKind.Gt  || next_kind == TokenKind.Lt ||
                         next_kind == TokenKind.GtEq || next_kind == TokenKind.LtEq) {
-                        return $"Flag accessor 'flags.{key}' used with unsupported operator '{tokens[next_idx].value}'. " +
+                        return $"Flag accessor 'flags.{key}' used with unsupported operator '{tokens[next_index].Value}'. " +
                                "Flags only support == and !=.";
                     }
                 }
 
                 // inventory.KEY with a float (non-integer) numeric RHS
                 if (prefix == "inventory" && !is_rhs && isComparisonOpKind(kind: next_kind)) {
-                    int rhs_idx = next_idx + 1;
-                    if (rhs_idx < tokens.Count &&
-                        tokens[rhs_idx].kind == TokenKind.Number &&
-                        tokens[rhs_idx].value.Contains('.')) {
-                        return $"Inventory accessor 'inventory.{key}' compared with float '{tokens[rhs_idx].value}'. " +
+                    int rhs_index = next_index + 1;
+                    if (rhs_index < tokens.Count &&
+                        tokens[rhs_index].Kind == TokenKind.Number &&
+                        tokens[rhs_index].Value.Contains('.')) {
+                        return $"Inventory accessor 'inventory.{key}' compared with float '{tokens[rhs_index].Value}'. " +
                                "Inventory values are integers; use an integer literal.";
                     }
                 }
@@ -565,13 +584,13 @@ namespace Germio.Core {
                     cause_detail:   $"The node tree is deeper than {Env.MAX_NODE_DEPTH} levels.",
                     fix_suggestion: "Restructure the node hierarchy to reduce depth, or increase MAX_NODE_DEPTH if appropriate.",
                     location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
-            } else if (depth > Env.warning_node_depth) {
+            } else if (depth > Env.WarningNodeDepth) {
                 results.Add(new ValidationResult(
                     level:          ValidationLevel.Warning,
                     rule_id:        "V025",
-                    message:        $"Node '{node.id}' at depth {depth} exceeds warning_node_depth ({Env.warning_node_depth}).",
-                    cause_detail:   $"The node tree reaches {depth} levels, approaching the soft limit of {Env.warning_node_depth}.",
-                    fix_suggestion: "Consider restructuring for better performance, or increase warning_node_depth if intentional.",
+                    message:        $"Node '{node.id}' at depth {depth} exceeds WarningNodeDepth ({Env.WarningNodeDepth}).",
+                    cause_detail:   $"The node tree reaches {depth} levels, approaching the soft limit of {Env.WarningNodeDepth}.",
+                    fix_suggestion: "Consider restructuring for better performance, or increase WarningNodeDepth if intentional.",
                     location:       new Location { json_path = $"$.root..[?(@.id='{node.id}')]" }));
             }
 
@@ -702,10 +721,10 @@ namespace Germio.Core {
         /// </summary>
         static string suggestSimilar(string target, IEnumerable<string> candidates) {
             string target_lower = target.ToLowerInvariant();
-            foreach (var c in candidates) {
-                string c_lower = c.ToLowerInvariant();
-                if (c_lower.Contains(target_lower) || target_lower.Contains(c_lower)) {
-                    return $" Did you mean '{c}'?";
+            foreach (var candidate in candidates) {
+                string candidate_lower = candidate.ToLowerInvariant();
+                if (candidate_lower.Contains(target_lower) || target_lower.Contains(candidate_lower)) {
+                    return $" Did you mean '{candidate}'?";
                 }
             }
             return string.Empty;

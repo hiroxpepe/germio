@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -8,6 +10,9 @@ using System.Text.RegularExpressions;
 using Germio.Model;
 
 namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Parses a Mermaid <c>graph TD</c> string (as produced by <see cref="Grapher.Export"/>)
     /// back into a <see cref="Scenario"/> object with Node tree structure.
@@ -16,32 +21,33 @@ namespace Germio.Core {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class MermaidParser {
-#nullable enable
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Fields
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Regex patterns (compiled once at class-load time)
 
-        static readonly Regex _rx_subgraph = new Regex(
+        static readonly Regex RX_SUBGRAPH = new Regex(
             @"^\s*subgraph\s+([a-zA-Z0-9_]+)\s+\[""([^""]*)""\]",
             RegexOptions.Compiled);
 
         // pill node: nodeId(["Name"]):::class or nodeId(["Name"])
-        static readonly Regex _rx_pill = new Regex(
+        static readonly Regex RX_PILL = new Regex(
             @"^\s*([a-zA-Z0-9_]+)\(\[""([^""]+)""\]\)",
             RegexOptions.Compiled);
 
         // rect node: nodeId["Name"]
-        static readonly Regex _rx_rect = new Regex(
+        static readonly Regex RX_RECT = new Regex(
             @"^\s*([a-zA-Z0-9_]+)\[""([^""]+)""\]",
             RegexOptions.Compiled);
 
         // labeled edge: from -->|"condition"| to
-        static readonly Regex _rx_edge_lbl = new Regex(
+        static readonly Regex RX_EDGE_LBL = new Regex(
             @"^\s*([a-zA-Z0-9_]+)\s+-->\|""([^""]*)""\|\s+([a-zA-Z0-9_]+)",
             RegexOptions.Compiled);
 
         // unlabeled edge: from --> to
-        static readonly Regex _rx_edge_plain = new Regex(
+        static readonly Regex RX_EDGE_PLAIN = new Regex(
             @"^\s*([a-zA-Z0-9_]+)\s+-->\s+([a-zA-Z0-9_]+)",
             RegexOptions.Compiled);
 
@@ -56,11 +62,11 @@ namespace Germio.Core {
         /// <exception cref="FormatException">Thrown when parsing fails.</exception>
         public static Scenario Parse(string mermaid) {
             var result = TryParse(mermaid: mermaid);
-            if (!result.success) {
-                string msg = result.errors.Count > 0 ? result.errors[0].message : "Mermaid parse failed.";
-                throw new FormatException(msg);
+            if (!result.Success) {
+                string message_text = result.Errors.Count > 0 ? result.Errors[0].Message : "Mermaid parse failed.";
+                throw new FormatException(message_text);
             }
-            return result.scenario!;
+            return result.Scenario!;
         }
 
         /// <summary>
@@ -117,11 +123,11 @@ namespace Germio.Core {
                 }
 
                 // Open a subgraph (internal node).
-                var m = _rx_subgraph.Match(line);
-                if (m.Success) {
+                var match = RX_SUBGRAPH.Match(line);
+                if (match.Success) {
                     var node = new Node {
-                        id = m.Groups[1].Value,
-                        name = m.Groups[2].Value,
+                        id = match.Groups[1].Value,
+                        name = match.Groups[2].Value,
                         kind = "world"
                     };
                     stack.Peek().children.Add(item: node);
@@ -131,25 +137,25 @@ namespace Germio.Core {
                 }
 
                 // Labeled edge (must check before plain edge to avoid misclassification).
-                m = _rx_edge_lbl.Match(line);
-                if (m.Success) {
-                    pending_edges.Add(item: (m.Groups[1].Value, m.Groups[3].Value, m.Groups[2].Value));
+                match = RX_EDGE_LBL.Match(line);
+                if (match.Success) {
+                    pending_edges.Add(item: (match.Groups[1].Value, match.Groups[3].Value, match.Groups[2].Value));
                     continue;
                 }
 
                 // Unlabeled edge.
-                m = _rx_edge_plain.Match(line);
-                if (m.Success) {
-                    pending_edges.Add(item: (m.Groups[1].Value, m.Groups[2].Value, string.Empty));
+                match = RX_EDGE_PLAIN.Match(line);
+                if (match.Success) {
+                    pending_edges.Add(item: (match.Groups[1].Value, match.Groups[2].Value, string.Empty));
                     continue;
                 }
 
                 // Pill-shaped leaf node.
-                m = _rx_pill.Match(line);
-                if (m.Success) {
+                match = RX_PILL.Match(line);
+                if (match.Success) {
                     var node = new Node {
-                        id = m.Groups[1].Value,
-                        name = m.Groups[2].Value,
+                        id = match.Groups[1].Value,
+                        name = match.Groups[2].Value,
                         kind = "level"
                     };
                     stack.Peek().children.Add(item: node);
@@ -158,11 +164,11 @@ namespace Germio.Core {
                 }
 
                 // Rectangular leaf node.
-                m = _rx_rect.Match(line);
-                if (m.Success) {
+                match = RX_RECT.Match(line);
+                if (match.Success) {
                     var node = new Node {
-                        id = m.Groups[1].Value,
-                        name = m.Groups[2].Value,
+                        id = match.Groups[1].Value,
+                        name = match.Groups[2].Value,
                         kind = "level"
                     };
                     stack.Peek().children.Add(item: node);
@@ -191,20 +197,28 @@ namespace Germio.Core {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Result types
 
     /// <summary>Result of a <see cref="MermaidParser.TryParse"/> operation.</summary>
     public class ParseResult {
-#nullable enable
-        public bool success { get; set; }
-        public Scenario? scenario { get; set; }
-        public List<ParseError> errors { get; set; } = new List<ParseError>();
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        public bool Success { get; set; }
+        public Scenario? Scenario { get; set; }
+        public List<ParseError> Errors { get; set; } = new List<ParseError>();
     }
 
     /// <summary>A single parse error with a line number and human-readable message.</summary>
     public class ParseError {
-        public int line_number { get; set; }
-        public string message { get; set; } = string.Empty;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        public int LineNumber { get; set; }
+        public string Message { get; set; } = string.Empty;
     }
 }

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 #if UNITY_5_3_OR_NEWER
 using UnityEngine;
 using static UnityEngine.GameObject;
@@ -16,8 +18,6 @@ namespace Germio.Systems {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Zone : MonoBehaviour {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Inspector Fields
 

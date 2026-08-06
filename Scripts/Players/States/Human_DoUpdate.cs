@@ -1,26 +1,29 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using Germio;
 
 namespace Germio.Players {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Controls the Human player, acceleration and movement logic.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public partial class Human : InputMapper {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        #region inner Classes
+        // protected inner Classes
 
         /// <summary>
         /// Handles the Update() method logic.
         /// </summary>
         protected class DoUpdate {
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Fields [noun, adjectives] 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Fields
 
             /// <summary>
             /// Indicates whether the player is grounded.
@@ -45,84 +48,84 @@ namespace Germio.Players {
             /// <summary>
             /// Indicates whether the player is facing a surface.
             /// </summary>
-            bool _faceing;
+            bool _facing;
 
             /// <summary>
             /// Indicates whether the virtual controller mode is active.
             /// </summary>
-            bool _virtualControllerMode;
+            bool _virtual_controller_mode;
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Properties [noun, adjectives] 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public Properties [noun, adjective]
 
             /// <summary>
             /// Gets or sets whether the player is grounded.
             /// </summary>
-            public bool grounded { get => _grounded; set => _grounded = value; }
+            public bool Grounded { get => _grounded; set => _grounded = value; }
 
             /// <summary>
             /// Gets or sets whether the player is climbing.
             /// </summary>
-            public bool climbing { get => _climbing; set => _climbing = value; }
+            public bool Climbing { get => _climbing; set => _climbing = value; }
 
             /// <summary>
             /// Gets or sets whether the player is pushing an object.
             /// </summary>
-            public bool pushing { get => _pushing; set => _pushing = value; }
+            public bool Pushing { get => _pushing; set => _pushing = value; }
 
             /// <summary>
             /// Gets or sets whether the player is holding an object.
             /// </summary>
-            public bool holding { get => _holding; set => _holding = value; }
+            public bool Holding { get => _holding; set => _holding = value; }
 
             /// <summary>
             /// Gets or sets whether the player is facing a surface.
             /// </summary>
-            public bool faceing { get => _faceing; set => _faceing = value; }
+            public bool Facing { get => _facing; set => _facing = value; }
 
             /// <summary>
             /// Gets or sets whether the virtual controller mode is active.
             /// </summary>
-            public bool virtualControllerMode { get => _virtualControllerMode; set => _virtualControllerMode = value; }
+            public bool VirtualControllerMode { get => _virtual_controller_mode; set => _virtual_controller_mode = value; }
 
             /// <summary>
             /// Indicates whether the player is ready for any ground interaction.
             /// </summary>
-            public bool readyForAnyGround { 
+            public bool ReadyForAnyGround { 
                 get {
-                    return !_look && !_climbing && !_pushing && !_faceing ? true : false;
+                    return !Look && !_climbing && !_pushing && !_facing ? true : false;
                 }
             }
 
             /// <summary>
             /// Indicates whether the player is ready for interaction.
             /// </summary>
-            public bool ready { 
+            public bool Ready { 
                 get {
-                    return !_look && _grounded && !_climbing && !_pushing && !_faceing ? true : false;
+                    return !Look && _grounded && !_climbing && !_pushing && !_facing ? true : false;
                 }
             }
 
             /// <summary>
             /// Indicates whether the player is ready for interaction without holding an object.
             /// </summary>
-            public bool readyWithoutHold { 
+            public bool ReadyWithoutHold { 
                 get {
-                    return !_look && _grounded && !_climbing && !_pushing && !_holding && !_faceing ? true : false;
+                    return !Look && _grounded && !_climbing && !_pushing && !_holding && !_facing ? true : false;
                 }
             }
 
             /// <summary>
             /// Indicates whether the player is ready for interaction while holding an object.
             /// </summary>
-            public bool readyWithHold { 
+            public bool ReadyWithHold { 
                 get {
-                    return !_look && !_climbing && !_pushing && _holding && !_faceing ? true : false;
+                    return !Look && !_climbing && !_pushing && _holding && !_facing ? true : false;
                 }
             }
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // Constructor
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // public static Methods [verb]
 
             /// <summary>
             /// Creates and returns an initialized DoUpdate instance with the default state.
@@ -140,10 +143,9 @@ namespace Germio.Players {
             /// Resets all state flags for the player to their default values.
             /// </summary>
             public void ResetState() {
-                _grounded = _climbing = _pushing = _holding = _faceing = _virtualControllerMode = false;
+                _grounded = _climbing = _pushing = _holding = _facing = _virtual_controller_mode = false;
             }
         }
 
-        #endregion
     }
 }

@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
@@ -12,8 +14,10 @@ using Newtonsoft.Json.Linq;
 
 using Germio.Model;
 
-namespace Germio.Core
-{
+namespace Germio.Core {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Provides serialization and deserialization for game save data.
     /// Supports both plain JSON (for development) and AES-encrypted binary (for production).
@@ -21,24 +25,25 @@ namespace Germio.Core
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Storage {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constants
+        // Const [nouns]
 
         const string SCENARIO_PATH = "germio.json";
         const string SCENARIO_ENC_PATH = "germio.dat";
         const string SNAPSHOT_PATH_TEMPLATE = "snapshot_{0}.json";
         const string SNAPSHOT_ENC_PATH_TEMPLATE = "snapshot_{0}.dat";
 
-        static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Fields
+
+        static readonly JsonSerializerSettings SETTINGS = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
             Converters = { new StringEnumConverter() }
         };
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Methods
+        // public static Methods [verb]
 
         /// <summary>
         /// Asynchronously loads game save data from file.
@@ -52,14 +57,14 @@ namespace Germio.Core
             if (File.Exists(path_json)) {
                 string json = await File.ReadAllTextAsync(path_json, Encoding.UTF8);
                 var raw     = JObject.Parse(json);
-                return raw.ToObject<Scenario>(JsonSerializer.Create(_settings))!;
+                return raw.ToObject<Scenario>(JsonSerializer.Create(SETTINGS))!;
             }
             else if (File.Exists(path_enc)) {
                 var (key, iv) = Vault.GetKey();
                 byte[] enc    = await File.ReadAllBytesAsync(path_enc);
-                string json   = await DecryptAesAsync(data: enc, key: key, iv: iv);
+                string json   = await decryptAesAsync(data: enc, key: key, iv: iv);
                 var raw       = JObject.Parse(json);
-                return raw.ToObject<Scenario>(JsonSerializer.Create(_settings))!;
+                return raw.ToObject<Scenario>(JsonSerializer.Create(SETTINGS))!;
             }
             return null;
         }
@@ -74,10 +79,10 @@ namespace Germio.Core
             string dir        = base_path ?? Directory.GetCurrentDirectory();
             string path_json  = Path.Combine(dir, SCENARIO_PATH);
             string path_enc   = Path.Combine(dir, SCENARIO_ENC_PATH);
-            string json       = JsonConvert.SerializeObject(data, _settings);
+            string json       = JsonConvert.SerializeObject(data, SETTINGS);
             if (encrypt) {
                 var (key, iv) = Vault.GetKey();
-                byte[] enc    = await EncryptAesAsync(plain_text: json, key: key, iv: iv);
+                byte[] enc    = await encryptAesAsync(plain_text: json, key: key, iv: iv);
                 await File.WriteAllBytesAsync(path_enc, enc);
             }
             else {
@@ -98,12 +103,12 @@ namespace Germio.Core
 
             if (File.Exists(plain_full)) {
                 string text = await File.ReadAllTextAsync(plain_full);
-                return JsonConvert.DeserializeObject<Snapshot>(value: text, settings: _settings);
+                return JsonConvert.DeserializeObject<Snapshot>(value: text, settings: SETTINGS);
             }
             if (File.Exists(enc_full)) {
                 byte[] enc_bytes = await File.ReadAllBytesAsync(enc_full);
-                string text = await DecryptAesAsync(data: enc_bytes, key: Vault.GetKey().key, iv: Vault.GetKey().iv);
-                return JsonConvert.DeserializeObject<Snapshot>(value: text, settings: _settings);
+                string text = await decryptAesAsync(data: enc_bytes, key: Vault.GetKey().key, iv: Vault.GetKey().iv);
+                return JsonConvert.DeserializeObject<Snapshot>(value: text, settings: SETTINGS);
             }
             return null;
         }
@@ -114,7 +119,7 @@ namespace Germio.Core
         /// </summary>
         public static async Task SaveSnapshotAsync(Snapshot snapshot, int slot) {
             string base_dir = getStreamingAssetsPath();
-            string text = JsonConvert.SerializeObject(value: snapshot, settings: _settings);
+            string text = JsonConvert.SerializeObject(value: snapshot, settings: SETTINGS);
 #if UNITY_EDITOR || DEBUG
             string plain_path = string.Format(SNAPSHOT_PATH_TEMPLATE, slot);
             string plain_full = Path.Combine(base_dir, plain_path);
@@ -122,7 +127,7 @@ namespace Germio.Core
 #else
             string enc_path = string.Format(SNAPSHOT_ENC_PATH_TEMPLATE, slot);
             string enc_full = Path.Combine(base_dir, enc_path);
-            byte[] enc_bytes = await EncryptAesAsync(plain_text: text, key: Vault.GetKey().key, iv: Vault.GetKey().iv);
+            byte[] enc_bytes = await encryptAesAsync(plain_text: text, key: Vault.GetKey().key, iv: Vault.GetKey().iv);
             await File.WriteAllBytesAsync(enc_full, enc_bytes);
 #endif
         }
@@ -139,7 +144,7 @@ namespace Germio.Core
         /// </summary>
         public static void SaveSnapshot(Snapshot snapshot, int slot) {
             string base_dir = getStreamingAssetsPath();
-            string text = JsonConvert.SerializeObject(value: snapshot, settings: _settings);
+            string text = JsonConvert.SerializeObject(value: snapshot, settings: SETTINGS);
             string plain_path = string.Format(SNAPSHOT_PATH_TEMPLATE, slot);
             string plain_full = Path.Combine(base_dir, plain_path);
             File.WriteAllText(plain_full, text);
@@ -172,10 +177,13 @@ namespace Germio.Core
             return Task.CompletedTask;
         }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
+
         /// <summary>
         /// Gets the StreamingAssets path appropriate for the current platform.
         /// </summary>
-        private static string getStreamingAssetsPath() {
+        static string getStreamingAssetsPath() {
 #if UNITY_5_3_OR_NEWER
             return UnityEngine.Application.streamingAssetsPath;
 #else
@@ -183,13 +191,10 @@ namespace Germio.Core
 #endif
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        // private Methods
-
         /// <summary>
         /// Asynchronously decrypts AES-encrypted binary data to a JSON string.
         /// </summary>
-        static async Task<string> DecryptAesAsync(byte[] data, byte[] key, byte[] iv)        {
+        static async Task<string> decryptAesAsync(byte[] data, byte[] key, byte[] iv)        {
             using var aes = Aes.Create();
             aes.Key = key;
             aes.IV = iv;
@@ -202,15 +207,13 @@ namespace Germio.Core
         /// <summary>
         /// Asynchronously encrypts a JSON string to AES-encrypted binary data.
         /// </summary>
-        static async Task<byte[]> EncryptAesAsync(string plain_text, byte[] key, byte[] iv)
-        {
+        static async Task<byte[]> encryptAesAsync(string plain_text, byte[] key, byte[] iv) {
             using var aes = Aes.Create();
             aes.Key = key;
             aes.IV = iv;
             using var ms = new MemoryStream();
             await using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
-            await using (var sw = new StreamWriter(cs, Encoding.UTF8))
-            {
+            await using (var sw = new StreamWriter(cs, Encoding.UTF8)) {
                 await sw.WriteAsync(plain_text);
             }
             return ms.ToArray();

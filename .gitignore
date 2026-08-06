@@ -81,3 +81,8 @@ vs.code-workspace.meta
 
 # etc
 *.orig
+
+# dotnet test projects
+bin/
+obj/
+TestResults/
