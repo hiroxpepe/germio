@@ -11,10 +11,10 @@ using static UnityEngine.GameObject;
 using static UnityEngine.Vector3;
 using UniRx;
 using UniRx.Triggers;
-using static Germio.Env;
-using static Germio.Utils;
 using Germio;
 using Germio.Systems;
+using static Germio.Env;
+using static Germio.Utils;
 
 namespace Germio.Players {
     ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -9,9 +9,9 @@ using static UnityEngine.GameObject;
 using static UnityEngine.SceneManagement.SceneManager;
 using UniRx;
 using UniRx.Triggers;
-using static Germio.Env;
 using Germio;
 using Germio.Systems;
+using static Germio.Env;
 
 namespace Germio.Triggers {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
