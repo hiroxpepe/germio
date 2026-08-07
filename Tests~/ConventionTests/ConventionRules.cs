@@ -733,6 +733,25 @@ namespace Germio.Tests.Convention {
             return found;
         }
 
+        // A namespace is always the block-scoped form — `namespace X { ... }`
+        // — never the C# 10 file-scoped form `namespace X;`. Block-scoped is
+        // the only form Unity's own C# compiler accepts (Unity defaults to
+        // C# 9, and file-scoped needs C# 10), so this repository's own dotnet
+        // test projects and any pure-.NET repo in the family use the same
+        // block-scoped form too, rather than splitting the convention by
+        // which compiler happens to read a given file.
+        internal static List<string> find_namespace_form_violations(string code, string label)
+        {
+            var found = new List<string>();
+            var tree = CSharpSyntaxTree.ParseText(code);
+            var unit = tree.GetCompilationUnitRoot();
+            foreach (var ns in unit.DescendantNodes().OfType<FileScopedNamespaceDeclarationSyntax>()) {
+                var at = tree.GetLineSpan(ns.Span).StartLinePosition.Line + 1;
+                found.Add($"{label}:{at}: namespace '{ns.Name}' uses the file-scoped form, use the block-scoped 'namespace X {{ ... }}' form instead");
+            }
+            return found;
+        }
+
         // Every source file opens with the same five lines: the copyright line,
         // the license line, a blank line, `#nullable enable`, and another blank
         // line — before anything else, including using directives.
