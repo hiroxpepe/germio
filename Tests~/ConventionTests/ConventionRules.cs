@@ -532,6 +532,7 @@ namespace Germio.Tests.Convention {
             }
 
             int high = -1;
+            var static_seen_for_root = new HashSet<string>();
             UsingDirectiveSyntax? previous = null;
             foreach (var u in unit.DescendantNodes().OfType<UsingDirectiveSyntax>()) {
                 if (u.Alias != null) continue; // an alias's own name is ours to choose; no external root to group by
@@ -542,6 +543,25 @@ namespace Germio.Tests.Convention {
                     found.Add($"{label}:{at}: using '{name}' is out of group order (system, then third-party, then own code)");
                 }
                 if (group > high) high = group;
+
+                // Within one ROOT namespace (UnityEngine, Germio, ...), a
+                // plain `using X;` always sorts before any `using static
+                // X.Y;` drawn from that same root — the type itself is the
+                // root's main entry, its static members are a further
+                // detail, listed only once the plain form is in. Two
+                // different roots sharing the same group (UnityEngine and
+                // UniRx are both "third-party") are unrelated to each other
+                // here, so a plain using from a fresh root never trips on a
+                // static left behind by an earlier root in the same group.
+                var root = name.Split('.')[0];
+                bool is_static = u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword);
+                if (is_static) {
+                    static_seen_for_root.Add(root);
+                } else if (static_seen_for_root.Contains(root)) {
+                    var at = tree.GetLineSpan(u.Span).StartLinePosition.Line + 1;
+                    found.Add($"{label}:{at}: using '{name}' must come before 'using static' in its group");
+                }
+
                 // The using block is one continuous run — grouping is by order
                 // alone, never by a blank line between one using and the next.
                 // A comment or a #if/#endif line between two usings is a real
@@ -642,6 +662,15 @@ namespace Germio.Tests.Convention {
                 found.Add($"{label}:4: header line 4 must be '#nullable enable'");
             if (at(4) != "")
                 found.Add($"{label}:5: header line 5 must be blank");
+
+            // The header's own line 4 is the only place `#nullable enable`
+            // belongs — a second one further down (often left behind by a
+            // copy-pasted class body) is dead weight, not a second directive.
+            int extra_count = 0;
+            for (var i = 4; i < lines.Length; i++)
+                if (lines[i].Trim() == "#nullable enable") extra_count++;
+            if (extra_count > 0)
+                found.Add($"{label}: has {extra_count} extra '#nullable enable' line(s) beyond the header, remove them");
 
             return found;
         }

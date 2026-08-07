@@ -10,9 +10,9 @@ using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
 using UniRx;
 using UniRx.Triggers;
+using Germio;
 using static Germio.Env;
 using static Germio.Utils;
-using Germio;
 
 namespace Germio.Levels {
     ///////////////////////////////////////////////////////////////////////////////////////////////////

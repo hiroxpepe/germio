@@ -8,12 +8,12 @@ using System.Collections;
 using UnityEngine;
 using static UnityEngine.GameObject;
 using static UnityEngine.SceneManagement.SceneManager;
-using static Germio.Env;
-using static Germio.Utils;
 using Germio;
 using Germio.Core;
 using Germio.Triggers;
 using Germio.Model;
+using static Germio.Env;
+using static Germio.Utils;
 using Scenario = Germio.Model.Scenario;
 using Snapshot = Germio.Model.Snapshot;
 
