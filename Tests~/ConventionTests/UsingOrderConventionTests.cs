@@ -29,5 +29,18 @@ namespace Germio.Tests.Convention {
                 $"{found.Count} using-order violation(s) (showing first 40):\n  "
                 + string.Join("\n  ", found.Take(40)));
         }
+
+        [Test]
+        public void Sources_SortUsingsCorrectly()
+        {
+            var found = new List<string>();
+            foreach (var path in ConventionScan.source_files())
+                found.AddRange(ConventionRules.find_using_sort_violations(
+                    File.ReadAllText(path), Path.GetFileName(path)));
+
+            Assert.That(found, Is.Empty,
+                $"{found.Count} using-sort violation(s):\n\n"
+                + string.Join("\n\n", found));
+        }
     }
 }
