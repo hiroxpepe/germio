@@ -421,7 +421,10 @@ namespace Germio.Tests.Convention {
             string id, SyntaxTokenList modifiers, string kind)
         {
             bool want_pascal = exposed(modifiers);
-            if (want_pascal && is_naming_exception(node, id)) return;
+            // An exception applies to the member regardless of which case it
+            // would otherwise be held to — a private member that must stay
+            // camelCase can be excused exactly the same way an exposed one is.
+            if (is_naming_exception(node, id)) return;
             bool ok = want_pascal ? PASCAL.IsMatch(id) : CAMEL.IsMatch(id);
             if (!ok)
                 found.Add($"{label}:{line(node)}: {kind} '{id}' must be {(want_pascal ? "PascalCase" : "camelCase")}");
@@ -731,6 +734,8 @@ namespace Germio.Tests.Convention {
                 .OrderBy(m => m.Span.Start)
                 .ToList();
 
+            MemberDeclarationSyntax? previous = null;
+            bool previous_documented = false;
             foreach (var member in targets) {
                 bool documented = has_doc_comment(member);
                 // The line right above this member's own text (its doc comment
@@ -749,6 +754,17 @@ namespace Germio.Tests.Convention {
                     if (documented)
                         found.Add($"{label}:{first_line + 1}: documented member needs a blank line above it");
                     // else: bare-to-bare adjacency is fine as-is (packed).
+                } else if (above >= 0 && blank_at(above) && !documented) {
+                    // A blank line sits right above a bare member. A blank
+                    // right after a section header is legitimate (the header
+                    // rule requires it) — only a blank between this member
+                    // and ANOTHER bare member right above it is unearned,
+                    // since two bare members must pack together.
+                    var before_blank = above - 1;
+                    bool prev_is_bare_member = previous != null && !previous_documented
+                        && tree.GetLineSpan(previous.Span).EndLinePosition.Line == before_blank;
+                    if (prev_is_bare_member)
+                        found.Add($"{label}:{above + 1}: blank line between two bare members, they should pack together");
                 }
 
                 var last_line = tree.GetLineSpan(member.Span).EndLinePosition.Line;
@@ -760,7 +776,18 @@ namespace Germio.Tests.Convention {
                 if (below < lines.Length && !blank_at(below) && !is_divider(lines[below]) && below_trim.Length > 0 && below_trim[0] != '}') {
                     if (documented)
                         found.Add($"{label}:{last_line + 2}: documented member needs a blank line below it");
+                } else if (below < lines.Length && blank_at(below) && !documented) {
+                    // A blank line sits right below a bare member, right
+                    // before the type's own closing brace — that separator
+                    // is never needed there, the same way it is not needed
+                    // right after the opening brace.
+                    var after_blank = below + 1;
+                    var after_trim = after_blank < lines.Length ? lines[after_blank].Trim() : "";
+                    if (after_trim.Length > 0 && after_trim[0] == '}')
+                        found.Add($"{label}:{below + 1}: blank line right before the closing brace is not needed");
                 }
+                previous = member;
+                previous_documented = documented;
             }
             return found;
         }

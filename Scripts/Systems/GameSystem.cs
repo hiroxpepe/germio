@@ -41,7 +41,6 @@ namespace Germio.Systems {
         SceneLoader _scene_loader = null!;
 
         bool _home;
-
         bool _beat;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
