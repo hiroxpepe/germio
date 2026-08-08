@@ -122,17 +122,18 @@ namespace Germio.Tests.Convention {
         {
             var trimmed = identifier.Trim('_');
             // A run of caps that ends in a lone lower 's' is a plural letter word
-            // (URLs -> URL + s), so the caps run stops before that 's'.
-            // Priority order: a floor label (2F, B1F) or a 6-digit hex color or a
-            // digit+unit suffix (100K, 1KB) is claimed whole before the generic
-            // digit-run-then-caps-run catch-all gets a chance to split it
-            // differently — that catch-all still fires for anything else digit-led
-            // (2GARBAGE, 3JUNK), keeping those unregistered and rejected.
+            // (URLs -> URL + s), so the caps run stops before that 's' — but
+            // only when the run is a real, multi-letter acronym. A single
+            // capital letter (the "A" in "As", the "V" in "Vs") is not an
+            // acronym; it is the first letter of an ordinary word, so it must
+            // never be peeled off this way — that was the bug: "ExportsNodeAs
+            // Subgraph" split into "As" + "Subgraph" was instead reading "As"
+            // as "A" + "s", the fake acronym "A" plus a fake plural marker.
             foreach (Match m in Regex.Matches(trimmed,
                     @"B?[0-9]+F(?![a-zA-Z0-9])" +
                     @"|(?=[0-9A-F]{6}(?![A-Za-z0-9]))(?=[0-9A-F]*[0-9])[0-9A-F]{6}" +
                     @"|[0-9]+(?:KB|MB|GB|TB|KHZ|MHZ|GHZ|HZ|MS|K)(?![A-Za-z0-9])" +
-                    @"|[0-9]+[A-Z]+(?![a-z])|[A-Z]+(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z0-9]*|[a-z0-9]+"))
+                    @"|[0-9]+[A-Z]+(?![a-z])|[A-Z]{2,}(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z0-9]*|[a-z0-9]+"))
                 yield return m.Value;
         }
 
@@ -1166,22 +1167,22 @@ namespace Germio.Tests.Convention {
 
         static int kind_rank(MemberDeclarationSyntax member) => member switch {
             FieldDeclarationSyntax => 0,
-            ConstructorDeclarationSyntax => 2,
-            DestructorDeclarationSyntax => 3,
-            DelegateDeclarationSyntax => 4,
-            EventDeclarationSyntax => 5,
-            EventFieldDeclarationSyntax => 5,
-            EnumDeclarationSyntax => 6,
-            InterfaceDeclarationSyntax => 7,
-            PropertyDeclarationSyntax => 8,
-            IndexerDeclarationSyntax => 9,
-            MethodDeclarationSyntax => 10,
-            OperatorDeclarationSyntax => 10,
-            ConversionOperatorDeclarationSyntax => 10,
-            StructDeclarationSyntax => 11,
-            ClassDeclarationSyntax => 12,
-            RecordDeclarationSyntax => 12,
-            _ => 10
+            ConstructorDeclarationSyntax => 1,
+            DestructorDeclarationSyntax => 2,
+            DelegateDeclarationSyntax => 3,
+            EventDeclarationSyntax => 4,
+            EventFieldDeclarationSyntax => 4,
+            EnumDeclarationSyntax => 5,
+            InterfaceDeclarationSyntax => 6,
+            PropertyDeclarationSyntax => 7,
+            IndexerDeclarationSyntax => 8,
+            MethodDeclarationSyntax => 9,
+            OperatorDeclarationSyntax => 9,
+            ConversionOperatorDeclarationSyntax => 9,
+            StructDeclarationSyntax => 10,
+            ClassDeclarationSyntax => 11,
+            RecordDeclarationSyntax => 11,
+            _ => 9
         };
 
         static int field_sub(FieldDeclarationSyntax field)

@@ -203,24 +203,24 @@ something else in between.
 | Rank | Kind             |
 | ---- | ---------------- |
 | 0    | Field            |
-| 2    | Constructor      |
-| 3    | Destructor       |
-| 4    | Delegate         |
-| 5    | Event            |
-| 6    | Enum             |
-| 7    | Interface        |
-| 8    | Property         |
-| 9    | Indexer          |
-| 10   | Method, Operator |
-| 11   | Struct           |
-| 12   | Class, Record    |
+| 1    | Constructor      |
+| 2    | Destructor       |
+| 3    | Delegate         |
+| 4    | Event            |
+| 5    | Enum             |
+| 6    | Interface        |
+| 7    | Property         |
+| 8    | Indexer          |
+| 9    | Method, Operator |
+| 10   | Struct           |
+| 11   | Class, Record    |
 
 A field's sub-rank, ahead of the kind table above for that one row: `const`
 (0), `static` (1), then instance (2). Access level ranks `public` first,
 then the `internal`/`protected` combinations, then `private` last; within
 a tie, `static` sits before instance.
 
-**Operator is a standing exception.** It shares rank 10 with Method rather
+**Operator is a standing exception.** It shares rank 9 with Method rather
 than holding a rank of its own, so the order check does not require
 operators and methods to stay in separate runs — they may interleave. No
 repository has an operator today, so the section-header rule below leaves
@@ -309,17 +309,28 @@ every modifier in play:
 
 Every `using` directive falls into one of three groups, checked in this
 order: `System`, then any other outside library, then this project's own
-namespace. Within a group, no particular order is required — only the
-group boundaries are checked, so a file may not put a later group's
-`using` before an earlier group's.
+namespace. Within a group, usings are further grouped by their own root
+namespace (`UnityEngine`, `UniRx`, `Germio`, and so on); all usings that
+share one root stay in one contiguous run — once a different root has
+begun, an earlier root reappearing later is flagged, since that root's
+lines were left scattered instead of kept together.
 
-A `using static` directive is grouped exactly the same way as a plain
-`using`, by its own root namespace — `using static UnityEngine.GameObject;`
-sits in the third-party group with `using UnityEngine;`, and
-`using static Germio.Env;` sits in this project's own group with
-`using Germio;`. It is not a fourth group of its own; a project may still
-choose to set it visually apart with a blank line, but the rule does not
-require or check that spacing.
+A `using static` directive is grouped by the same root namespace as a
+plain `using` from that root — `using static UnityEngine.GameObject;`
+sits with `using UnityEngine;` in the third-party group, and
+`using static Germio.Env;` sits with `using Germio;` in this project's
+own group. It is not a fourth group of its own. Within one root, the
+plain form always sorts before any `using static` form drawn from that
+same root: the type itself is the root's main entry, its static members
+are a further detail, listed only once the plain form is in.
 
-A `using X = Y;` alias is left unchecked: the alias name is ours to
-choose, and there is no single outside root to group it by.
+A `using X = Y;` alias is left unchecked for grouping: the alias name is
+ours to choose, and there is no single outside root to group it by. An
+alias stays anchored to whatever directive immediately followed it in
+the original file, riding along with that directive if the rest of the
+block is reordered.
+
+A file that is out of order on any of these points can be fixed in one
+paste: the check computes the whole correct order in a single pass and
+reports the complete expected block, not just the one line that is out
+of place.
