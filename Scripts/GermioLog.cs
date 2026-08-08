@@ -19,6 +19,11 @@ namespace Germio {
     /// Each entry is timestamped (HH:mm:ss.fff) and appended with a newline.
     /// Also mirrors to Debug.Log so Unity Console keeps the message too.
     ///
+    /// Keeps a single open <see cref="StreamWriter"/> for the process lifetime instead
+    /// of opening and closing the file on every call, so high-frequency logging does
+    /// not degrade frame rate. AutoFlush keeps the file readable in real time while
+    /// the game is running.
+    ///
     /// Usage:
     ///   GermioLog.Write("[Germio] something happened");
     ///
@@ -29,11 +34,8 @@ namespace Germio {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Fields
 
-        /// <summary>Cached log file path (relative to project root: game/germio.log).</summary>
-        static string? _path;
-
-        /// <summary>True if the file has been cleared at app startup.</summary>
-        static bool _initialized = false;
+        /// <summary>Open writer held for the process lifetime; null until first Write.</summary>
+        static StreamWriter? _writer;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Fields
@@ -46,23 +48,30 @@ namespace Germio {
 
         /// <summary>
         /// Writes a timestamped message to <c>game/germio.log</c> and Unity Console.
-        /// First call clears any previous log file.
+        /// First call clears any previous log file and opens it for the process lifetime.
         /// </summary>
         public static void Write(string message) {
             if (!Enabled) { return; }
             try {
-                if (_path == null) {
-                    _path = Path.Combine(Application.dataPath, "..", "germio.log");
+                if (_writer == null) {
+                    string path = Path.Combine(Application.dataPath, "..", "germio.log");
+                    _writer = new StreamWriter(path: path, append: false) { AutoFlush = true };
+                    _writer.WriteLine(value: $"=== Germio diagnostic log started at {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===");
+                    Application.quitting += closeWriter;
                 }
-                if (!_initialized) {
-                    File.WriteAllText(path: _path, contents: $"=== Germio diagnostic log started at {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===\n");
-                    _initialized = true;
-                }
-                File.AppendAllText(path: _path, contents: $"[{DateTime.Now:HH:mm:ss.fff}] {message}\n");
+                _writer.WriteLine(value: $"[{DateTime.Now:HH:mm:ss.fff}] {message}");
             } catch (Exception ex) {
                 Debug.LogError(message: $"[GermioLog] write failed: {ex.Message}");
             }
             Debug.Log(message: message);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
+
+        static void closeWriter() {
+            _writer?.Close();
+            _writer = null;
         }
     }
 }
