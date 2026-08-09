@@ -56,16 +56,19 @@ namespace Germio.Core {
                 mutated = true;
             }
 
+            // request_notify changes no saved state (it is a one-instant
+            // signal to the presentation layer, not a state mutation), so
+            // it never sets `mutated` on its own. It must fire BEFORE
+            // request_transition: a scene transition unloads the current
+            // scene synchronously, destroying whatever listens for the
+            // notify (e.g. NoticeSystem) before it could ever receive it.
+            if (command.request_notify != null) {
+                store.RequestNotify(notify_id: command.request_notify);
+            }
+
             if (command.request_transition != null) {
                 store.RequestTransition(target_id: command.request_transition);
                 mutated = true;
-            }
-
-            // request_notify changes no saved state (it is a one-instant
-            // signal to the presentation layer, not a state mutation), so
-            // it never sets `mutated` on its own.
-            if (command.request_notify != null) {
-                store.RequestNotify(notify_id: command.request_notify);
             }
 
             if (command.set_persistence != null) {
