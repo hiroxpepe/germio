@@ -100,7 +100,77 @@ can drive the code under known, made-up conditions.
 
 **region** — A named area of a larger space, marked off for its own handling.
 
-## How to keep this list
+## Encryption
+
+**encrypt** — To turn readable data into a form that cannot be read without
+a key. To **decrypt** is to turn it back.
+
+**key** — A secret piece of data, needed to encrypt or decrypt. Without it,
+encrypted data cannot be read.
+
+**AES** — A common, well-tested way to encrypt data. AES-256 means the key
+is 256 bits long.
+
+**IV** (initialization vector) — A piece of data, not secret, mixed in with
+the key each time data is encrypted, so that encrypting the same data twice
+gives two different results.
+
+**CBC** — One way of using AES on data longer than one block. Does not, on
+its own, tell you if the encrypted data has been changed by someone else.
+
+**GCM** — Another way of using AES, newer than CBC, that also tells you if
+the encrypted data has been changed by someone else (this is called
+"authenticated encryption").
+
+**padding** — Extra bytes added to data before encrypting it, so its length
+comes out even, in full blocks. **PKCS7** is one common way to pick these
+extra bytes.
+
+**hash** — A short, fixed-length code made from data, such that even a tiny
+change to the data gives a very different hash. Used to check data has not
+changed, without needing to keep the whole data around.
+
+**HMAC** — A hash made using a secret key, so only someone with the key
+could have made it. Used to check both that data is unchanged, and that it
+truly came from whoever holds the key.
+
+**salt** — Extra, non-secret data mixed in before hashing a password, so
+the same password does not always give the same hash.
+
+**Base64** — A way to write raw bytes as plain, printable text.
+
+## Germio scene generation
+
+**Node** — In a `germio.json` file, one entry in the tree under `root`. It
+holds an `id`, a `name`, a `kind`, a `scene` value, a list of `children`, a
+list of `next` targets, and a list of `rules`.
+
+**leaf Node** — A Node with no `children` and a non-empty `scene` value. It
+stands for one Unity Scene.
+
+**Scene class** — In this document, a C# class under
+`Assets/Scripts/Scenes/`, not a Unity Scene file. When the two could be
+mixed up, the text says "Unity Scene" or "Scene class" in full.
+
+**handler** — A method in a Scene class marked with the attribute
+`[GermioSceneHandler(id: "...")]`. When its `id` matches the current Node,
+Germio calls it.
+
+**Generator** — The tool this document is about (class name
+`SceneCodeSyncer`). It reads `germio.json` and makes the Scene class files
+match it.
+
+**orphan** — A Scene class whose handler `id` no longer matches any Node in
+`germio.json`.
+
+**idempotent** — Said of a tool that gives the same result no matter how
+many times it is run on the same input. A core need for the Generator.
+
+**GUID** — A long, near-unique code Unity puts in each `.meta` file. It is
+how Unity tracks a file's identity even after the file is renamed or moved.
+
+**PascalCase** — A way to write a name with no spaces, where each word
+starts with a capital letter, e.g. `LevelOne`.
 
 + One term, one sense. Give the sense in one place only — here.
 + Keep the sense in simple words, by the writing standard.
