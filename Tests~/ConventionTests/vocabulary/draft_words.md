@@ -59,7 +59,7 @@ abbreviation — an abbreviation is fixed in the code, not kept here.
 + delta
 + depth
 + descending
-+ despawn
++ despawn despawns despawned despawning
 + diff
 + differ differs differed differing
 + difference differences

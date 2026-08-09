@@ -44,13 +44,23 @@ namespace Germio.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // public Events [verb]
 
         /// <summary>
-        /// Raised when a command requests a node transition.
+        /// Fires once a command has requested a node transition.
         /// The string argument is the target node ID.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action<string>? OnTransitionRequested;
+        public event Action<string>? TransitionRequested;
+
+        /// <summary>
+        /// Fires once a command has requested a notify. The string argument
+        /// is a free-form id (e.g. "level_clear") whose meaning is decided
+        /// entirely by the game, the same way <see cref="Rule.trigger"/> and
+        /// <see cref="HistoryEntry.kind"/> already are.
+        /// (past participle: a single, completed happening)
+        /// </summary>
+        public event Action<string>? NotifyRequested;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Properties [noun, adjective]
@@ -278,11 +288,19 @@ namespace Germio.Core {
         // public Methods - Existing (unchanged)
 
         /// <summary>
-        /// Fires the OnTransitionRequested event with the given target ID.
+        /// Fires the TransitionRequested event with the given target ID.
         /// Called by Executor for request_transition commands.
         /// </summary>
         public void RequestTransition(string target_id) {
-            OnTransitionRequested?.Invoke(target_id);
+            TransitionRequested?.Invoke(target_id);
+        }
+
+        /// <summary>
+        /// Fires the NotifyRequested event with the given notify id.
+        /// Called by Executor for request_notify commands.
+        /// </summary>
+        public void RequestNotify(string notify_id) {
+            NotifyRequested?.Invoke(notify_id);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

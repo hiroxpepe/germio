@@ -34,13 +34,13 @@ namespace Germio.Triggers {
         GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // public Events [verb]
 
         /// <summary>
-        /// Occurs when the player is despawned from the scene.
-        /// Retained for backward compatibility with observers (e.g., SoundSystem).
+        /// Fires once when the player has been despawned from the scene.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnDespawn;
+        public event Action? Despawned;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -68,7 +68,7 @@ namespace Germio.Triggers {
                 .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
-                    OnDespawn?.Invoke();
+                    Despawned?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
                     _game_system.Bus?.Publish("sig_despawn");
                 }).AddTo(gameObjectComponent: this);

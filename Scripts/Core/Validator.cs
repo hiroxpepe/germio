@@ -93,7 +93,7 @@ namespace Germio.Core {
         /// <summary>Severity: Error halts integrity; Warning flags potential data issues. (G17: single name)</summary>
         public ValidationLevel Severity { get; }
 
-        /// <summary>Rule identifier: V001 – V026.</summary>
+        /// <summary>Rule identifier: V001 – V027.</summary>
         public string RuleID { get; }
 
         /// <summary>Human-readable short description of the finding.</summary>
@@ -150,7 +150,7 @@ namespace Germio.Core {
     /// Performs static analysis on a <see cref="Scenario"/> and returns a list of
     /// <see cref="ValidationResult"/> items. An empty list means the data is sound.
     ///
-    /// Rules enforced (V001 – V026):
+    /// Rules enforced (V001 – V027):
     ///   V001: condition references a flag key absent from initial state.flags (Warning)
     ///   V002: condition references a counter key absent from initial state.counters (Warning)
     ///   V003: condition references an inventory key absent from initial state.inventory (Warning)
@@ -169,6 +169,7 @@ namespace Germio.Core {
     ///   V024: Node hierarchy exceeds MAX_NODE_DEPTH (Error)
     ///   V025: Node hierarchy exceeds WarningNodeDepth (Warning)
     ///   V026: Circular reference detected (children contain an ancestor ID) (Error)
+    ///   V027: command.request_notify is empty or whitespace-only (Warning)
     /// 
     /// Phase 5.8 v2 fix6 changes:
     ///   - V010 now also recognises reset_flags / reset_counters / reset_inventory
@@ -381,12 +382,25 @@ namespace Germio.Core {
                             location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}]" }));
                     }
 
+                    // V027: request_notify is empty or whitespace-only
+                    if (rule.command?.request_notify != null &&
+                        string.IsNullOrWhiteSpace(rule.command.request_notify)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Warning,
+                            rule_id:        "V027",
+                            message:        $"Rule '{rule.id}' in node '{node.id}' has an empty request_notify value.",
+                            cause_detail:   "request_notify must hold a non-empty id; the game has no way to give an empty string a meaning.",
+                            fix_suggestion: "Set request_notify to a non-empty id, or remove the field.",
+                            location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.request_notify" }));
+                    }
+
                     // V010: command has no effect
                     if (rule.command == null ||
                         (rule.command.set_flag        == null &&
                          rule.command.update_counter  == null &&
                          rule.command.update_inventory == null &&
                          rule.command.request_transition == null &&
+                         rule.command.request_notify == null &&
                          rule.command.set_persistence == null &&
                          rule.command.record_event == null &&
                          !rule.command.reset_flags &&

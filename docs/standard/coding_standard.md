@@ -259,16 +259,30 @@ instance — the default needs no name, the same way a `private` keyword
 is left off the member itself. `Kind` and its grammar hint follow the
 table below.
 
-| Kind          | Grammar hint          | Bare form means                        |
-| ------------- | --------------------- | -------------------------------------- |
-| Fields        | (none)                | private, instance                      |
-| Constructor   | (none)                | instance                               |
-| Destructor    | (none)                | — (no access modifier is possible)     |
-| Delegate      | (none)                | private, instance                      |
-| Properties    | `[noun, adjective]`   | private, instance                      |
-| Methods       | `[verb]`              | *(access always shown, see edge case)* |
-| inner Classes | (none)                | — (no access/static split observed)    |
-| Events        | `[verb, verb phrase]` | *(access always shown, like Methods)*  |
+| Kind          | Grammar hint                            | Bare form means                        |
+| ------------- | --------------------------------------- | -------------------------------------- |
+| Fields        | (none)                                  | private, instance                      |
+| Constructor   | (none)                                  | instance                               |
+| Destructor    | (none)                                  | — (no access modifier is possible)     |
+| Delegate      | (none)                                  | private, instance                      |
+| Properties    | `[noun, adjective]`                     | private, instance                      |
+| Methods       | `[verb]`                                | *(access always shown, see edge case)* |
+| inner Classes | (none)                                  | — (no access/static split observed)    |
+| Events        | `[verb]`                                | *(access always shown, like Methods)*  |
+
+**Tense inside an event name.** *Which* participle to use depends on
+what the event stands for:
+
++ **Past participle** — for a single, completed happening (something
+  that has already finished by the time the event fires): `Started`,
+  `Ended`, `TransitionRequested`, `NotifyRequested`, `Paused`, `Resumed`,
+  `LevelStarted`, `HomeEntered`.
++ **Present participle** — for a state that holds true over a span of
+  time, not a single instant: `Playbacking`.
++ **`On` is never part of the event's own name.** `On` belongs only on
+  the *protected method that raises* the event (`OnClosed()` raises
+  `Closed`), never on the public event itself.
+
 | Const         | `[nouns]`             | a literal `const` field                |
 | Enums         | `[noun]`              | private, instance                      |
 | Interfaces    | (none)                | private, instance                      |
@@ -277,21 +291,21 @@ table below.
 Worked examples, from an all-`private`-by-default class to one with
 every modifier in play:
 
-| Members below the label     | Label                                           |
-| --------------------------- | ----------------------------------------------- |
-| private instance fields     | `// Fields`                                     |
-| private static fields       | `// static Fields`                              |
-| public instance fields      | `// public Fields`                              |
-| instance constructor        | `// Constructor`                                |
-| static constructor          | `// static Constructor`                         |
-| private instance properties | `// Properties [noun, adjective]`               |
-| public static properties    | `// public static Properties [noun, adjective]` |
-| private instance methods    | `// private Methods [verb]`                     |
-| public instance methods     | `// public Methods [verb]`                      |
-| public static methods       | `// public static Methods [verb]`               |
-| nested type declarations    | `// inner Classes`                              |
-| public events               | `// public Events [verb, verb phrase]`          |
-| `const` fields              | `// Const [nouns]`                              |
+| Members below the label     | Label                                                    |
+| --------------------------- | -------------------------------------------------------- |
+| private instance fields     | `// Fields`                                              |
+| private static fields       | `// static Fields`                                       |
+| public instance fields      | `// public Fields`                                       |
+| instance constructor        | `// Constructor`                                         |
+| static constructor          | `// static Constructor`                                  |
+| private instance properties | `// Properties [noun, adjective]`                        |
+| public static properties    | `// public static Properties [noun, adjective]`          |
+| private instance methods    | `// private Methods [verb]`                              |
+| public instance methods     | `// public Methods [verb]`                               |
+| public static methods       | `// public static Methods [verb]`                        |
+| nested type declarations    | `// inner Classes`                                       |
+| public events               | `// public Events [verb]`                                |
+| `const` fields              | `// Const [nouns]`                                       |
 
 ## Section-header edge cases
 

@@ -139,6 +139,94 @@ namespace Germio.Tests.Convention {
         }
 
         [Test]
+        public void Catches_EventNameNotEndingInPastOrPresentParticiple()
+        {
+            // An event name's last word must read as a single, completed
+            // happening (past participle) or an ongoing state (present
+            // participle) — never the bare, command-shaped verb.
+            var code = "class Mock { public event Action? RequestTransition; }";
+            Assert.That(caught(code, "past or present participle"), Is.True);
+        }
+
+        [Test]
+        public void Allows_EventNameEndingInEd()
+        {
+            var code = "class Mock { public event Action<string>? TransitionRequested; }";
+            Assert.That(caught(code, "past or present participle"), Is.False);
+        }
+
+        [Test]
+        public void Allows_EventNameEndingInIng()
+        {
+            var code = "class Mock { public event Action? Playbacking; }";
+            Assert.That(caught(code, "past or present participle"), Is.False);
+        }
+
+        [Test]
+        public void Catches_ExplicitAccessorEventNotEndingInParticiple()
+        {
+            // EventDeclarationSyntax (an event with explicit add/remove
+            // accessors) must be held to the same participle rule as the
+            // plain EventFieldDeclarationSyntax form.
+            var code = "class Mock {\n"
+                + "    event Action? _backing;\n"
+                + "    public event Action? RequestTransition {\n"
+                + "        add { _backing += value; }\n"
+                + "        remove { _backing -= value; }\n"
+                + "    }\n"
+                + "}";
+            Assert.That(caught(code, "past or present participle"), Is.True);
+        }
+
+        [Test]
+        public void Allows_ExplicitAccessorEventEndingInParticiple()
+        {
+            var code = "class Mock {\n"
+                + "    event Action? _backing;\n"
+                + "    public event Action? TransitionRequested {\n"
+                + "        add { _backing += value; }\n"
+                + "        remove { _backing -= value; }\n"
+                + "    }\n"
+                + "}";
+            Assert.That(caught(code, "past or present participle"), Is.False);
+        }
+
+        [Test]
+        public void Allows_AcronymPrefixedEventEndingInParticiple()
+        {
+            // word_parts keeps a run of caps together as one acronym token
+            // (JSON, HTTP); the participle check must still read the LAST
+            // word part, not the acronym, so a name like OnHTTPRequested
+            // is judged on "Requested", not on "HTTP".
+            var code = "class Mock { public event Action? HTTPRequested; }";
+            Assert.That(caught(code, "past or present participle"), Is.False);
+        }
+
+        [Test]
+        public void Catches_AcronymPrefixedEventNotEndingInParticiple()
+        {
+            var code = "class Mock { public event Action? HTTPRequest; }";
+            Assert.That(caught(code, "past or present participle"), Is.True);
+        }
+
+        [Test]
+        public void Catches_InterfaceEventNotEndingInParticiple()
+        {
+            // An event declared inside an interface body is still a public
+            // surface every implementer and caller sees; the participle
+            // rule applies to it the same as a class-level event.
+            var code = "interface IMock { event Action? RequestTransition; }";
+            Assert.That(caught(code, "past or present participle"), Is.True);
+        }
+
+        [Test]
+        public void Allows_InterfaceEventEndingInParticiple()
+        {
+            var code = "interface IMock { event Action? TransitionRequested; }";
+            Assert.That(caught(code, "past or present participle"), Is.False);
+        }
+
+        [Test]
         public void Catches_PlainCamelCaseMethodStillFails()
         {
             var code = "class Mock { public void getPushedDirection() {} }";

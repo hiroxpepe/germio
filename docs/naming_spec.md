@@ -49,6 +49,7 @@ turn one name into another. This raises the error rate.
 | `schema_version` | `Scenario` | `"schema_version"` | a whole number, always `1` in v1 |
 | `persistence` | `State` | `"persistence"` | `Dictionary<string, string>` — a key-value store that lives across sessions |
 | `set_persistence` | `Command` | `"set_persistence"` | `{ "key": "...", "value": ... }` |
+| `request_notify` | `Command` | `"request_notify"` | a free-form string; a one-time UI notify id the game gives meaning to. Changes no saved state |
 
 ---
 

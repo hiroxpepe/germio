@@ -190,7 +190,7 @@ a Node's `id` in germio.json.
 | Schema change | needed | not needed |
 | Spread to other documents | large (cookbook, save_data_format, llm_first_design — all of them) | none |
 | Effect on LLM prompts | "do not touch the UUID" must go in every prompt | none |
-| Validator work | new check V027 needed (UUID form, no duplicates) | not needed (V004 already checks `id` for duplicates) |
+| Validator work | a new check needed (UUID form, no duplicates) | not needed (V004 already checks `id` for duplicates) |
 | Generator build cost | must give out, track, and sync UUID v4 values | not needed |
 
 The one problem a UUID would fix is **auto-following a Node `id` rename**.

@@ -96,7 +96,7 @@ namespace Germio.Players {
         protected SoundSystem SoundSystem;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // public Events [verb]
 
         /// <summary>
         /// Occurs when the player is grounded.

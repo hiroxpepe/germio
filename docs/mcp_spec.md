@@ -131,7 +131,7 @@ scenario, encrypt: encrypt, base_path: path)`
 
 ### Tool 3: `germio.validate`
 
-**What it does**: runs every Germio validation rule (V000-V026) against a
+**What it does**: runs every Germio validation rule (V000-V027) against a
 Scenario, and gives back a list of ValidationResults.
 
 **What goes in**:
@@ -175,7 +175,7 @@ Scenario, and gives back a list of ValidationResults.
 }
 ```
 
-**Validation rules** (V000-V026, with gaps at V013-V019, V022, and V023):
+**Validation rules** (V000-V027, with gaps at V013-V019, V022, and V023):
 
 | Code | How serious | What it checks |
 | --- | --- | --- |
@@ -197,6 +197,7 @@ Scenario, and gives back a list of ValidationResults.
 | V024 | Error | the node tree goes deeper than `MAX_NODE_DEPTH` |
 | V025 | Warning | the node tree goes deeper than `warning_node_depth` |
 | V026 | Error | a loop back to an earlier node: `children` holds an ancestor's own ID |
+| V027 | Warning | `command.request_notify` is empty or whitespace-only |
 
 **What this calls, underneath**: `Germio.Core.Validator.Validate(scenario:
 scenario)`

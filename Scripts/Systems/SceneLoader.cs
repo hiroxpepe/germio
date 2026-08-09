@@ -38,7 +38,7 @@ namespace Germio.Systems {
         // Constructor
 
         /// <summary>
-        /// Constructs a SceneLoader and subscribes to <see cref="Store.OnTransitionRequested"/>.
+        /// Constructs a SceneLoader and subscribes to <see cref="Store.TransitionRequested"/>.
         /// </summary>
         /// <param name="store">The Store whose scenario provides node-to-scene mapping.</param>
         /// <param name="load_scene">
@@ -54,7 +54,7 @@ namespace Germio.Systems {
             _store      = store;
             _load_scene = load_scene;
             _bus        = bus;
-            _store.OnTransitionRequested += handleTransition;
+            _store.TransitionRequested += handleTransition;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Germio.Systems {
         /// </summary>
         public void Dispose() {
             if (_disposed) { return; }
-            _store.OnTransitionRequested -= handleTransition;
+            _store.TransitionRequested -= handleTransition;
             _disposed = true;
         }
 
@@ -74,7 +74,7 @@ namespace Germio.Systems {
         // private Methods [verb]
 
         /// <summary>
-        /// Handles the <see cref="Store.OnTransitionRequested"/> event.
+        /// Handles the <see cref="Store.TransitionRequested"/> event.
         /// Looks up the scene name from the target node, updates state, and invokes the load delegate.
         /// </summary>
         /// <param name="target_node_id">The target node ID to transition to.</param>

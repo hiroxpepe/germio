@@ -245,7 +245,9 @@ Phase 4, a change that breaks old files should be avoided from then on.
 
 ### 4.5 Command
 
-Set exactly **one** of the fields below to something other than null:
+Set exactly **one** state-changing field below to something other than
+null; `request_notify` may be set on its own, or alongside one of them,
+since it changes no saved state:
 
 | Field | Type | What it is |
 | --- | --- | --- |
@@ -253,6 +255,7 @@ Set exactly **one** of the fields below to something other than null:
 | update_counter | UpdateCounter? | adds to, takes from, or sets a counter |
 | update_inventory | UpdateInventory? | raises or lowers an inventory count |
 | request_transition | string? | asks to move to the given Node ID |
+| request_notify | string? | asks for a one-time notify; a free-form id the game gives meaning to. Changes no saved state |
 | set_persistence | SetPersistence? | sets one key and value in persistence |
 | record_event | RecordEvent? | records any event you choose, into the History |
 

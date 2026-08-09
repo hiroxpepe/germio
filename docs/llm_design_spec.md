@@ -99,7 +99,7 @@ several set fields:
 | Field | What it is for |
 | --- | --- |
 | `severity` | either `Error` or `Warning` (under G17, this is the one true name; the old alternate name `level` was taken out in P5.5) |
-| `rule_id` | a machine-readable ID (V000-V026, with some gaps), to sort errors by hand or by script |
+| `rule_id` | a machine-readable ID (V000-V027, with some gaps), to sort errors by hand or by script |
 | `message` | a short line, plain enough for a human to read |
 | `cause_detail` | a clear line on exactly why the condition does not hold |
 | `fix_suggestion` | plain-English steps for the fix |
@@ -392,7 +392,7 @@ Editor and Schema tools stay Unity-only.
 | G9 | four ideas: State / Rule / Command / Next |
 | G10 | a public JSON Schema, Draft 2020-12 |
 | G11 | declarative data, not a set of steps to run |
-| G12 | an error format that fixes itself, V000-V026 (with some gaps) |
+| G12 | an error format that fixes itself, V000-V027 (with some gaps) |
 | G13 | a small, closed DSL (3 readable prefixes, plus history.*, 6 operators) |
 | G14 | the grammar, plus 32 patterns with notes (Cookbook §1-§7) |
 | G15 | positioned as LLM-Native (not "data-driven") |

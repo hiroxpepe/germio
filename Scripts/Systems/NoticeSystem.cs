@@ -117,24 +117,29 @@ namespace Germio.Systems {
             GameSystem = Find(name: GAME_SYSTEM).Get<GameSystem>();
 
             /// <summary>
-            /// Handles the event when the game is paused.
+            /// Handles the event when the game has been paused.
             /// </summary>
-            GameSystem.OnPauseOn += () => { if (!GameSystem.Home) { MessageText.text = MESSAGE_GAME_PAUSE; }};
+            GameSystem.Paused += () => { if (!GameSystem.Home) { MessageText.text = MESSAGE_GAME_PAUSE; }};
 
             /// <summary>
-            /// Handles the event when the game is unpaused.
+            /// Handles the event when the game has been resumed.
             /// </summary>
-            GameSystem.OnPauseOff += () => { MessageText.text = string.Empty; };
+            GameSystem.Resumed += () => { MessageText.text = string.Empty; };
 
             /// <summary>
-            /// Handles the event when the player returns home.
+            /// Handles a notify request from the Store. The notify id is a
+            /// free-form string the game gives meaning to (the same way
+            /// Rule.trigger and HistoryEntry.kind already are). "level_clear"
+            /// is the one meaning this class currently knows.
             /// </summary>
-            GameSystem.OnCameBackHome += () => { MessageText.text = MESSAGE_LEVEL_CLEAR; };
+            GameSystem.Store.NotifyRequested += (notify_id) => {
+                if (notify_id == "level_clear") { MessageText.text = MESSAGE_LEVEL_CLEAR; }
+            };
 
             /// <summary>
-            /// Handles the event when a new level starts.
+            /// Handles the event when a new level has started.
             /// </summary>
-            GameSystem.OnStartLevel += () => {
+            GameSystem.LevelStarted += () => {
                 // Phase 5.13: Changed from switching based on the Unity Scene name (e.g., "Level_1")
                 // to displaying the 'name' property of the node in germio.json (e.g., "Level 1").
                 // Decoupled the Unity Scene filename from the display name (the human-readable string shown in the UI).

@@ -159,6 +159,16 @@ namespace Germio.Model {
         /// <summary>Requests an immediate scene transition to the specified node ID.</summary>
         public string? request_transition { get; set; }
 
+        /// <summary>
+        /// Requests a notify. The value is a free-form id (e.g.
+        /// "level_clear") whose meaning is decided entirely by the game,
+        /// the same way <see cref="Rule.trigger"/> and
+        /// <see cref="HistoryEntry.kind"/> already are. Changes no saved
+        /// state — use <see cref="record_event"/> instead if the happening
+        /// itself must also be kept in the History.
+        /// </summary>
+        public string? request_notify { get; set; }
+
         /// <summary>Sets an arbitrary key-value entry in State.persistence.</summary>
         public SetPersistence? set_persistence { get; set; }
 

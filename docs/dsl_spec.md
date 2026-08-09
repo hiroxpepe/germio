@@ -363,7 +363,7 @@ The AST nodes are set out in `ExprAst.cs`:
 | `Scripts/Core/ExprParser.cs` | `Germio.Core` | builds a parse tree, following the EBNF, top-down |
 | `Scripts/Core/ExprAst.cs` | `Germio.Core` | the tree of AST node types |
 | `Scripts/Core/Evaluator.cs` | `Germio.Core` | checks the AST (given the state, and the history) |
-| `Scripts/Core/Validator.cs` | `Germio.Core` | checks the structure and the meaning (V000-V026) |
+| `Scripts/Core/Validator.cs` | `Germio.Core` | checks the structure and the meaning (V000-V027) |
 
 ---
 

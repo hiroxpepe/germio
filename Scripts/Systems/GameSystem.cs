@@ -44,27 +44,31 @@ namespace Germio.Systems {
         bool _beat;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // public Events [verb]
 
         /// <summary>
-        /// Occurs when the game is paused.
+        /// Fires once when the game has been paused.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnPauseOn;
+        public event Action? Paused;
 
         /// <summary>
-        /// Occurs when the game is unpaused.
+        /// Fires once when the game has been resumed from a paused state.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnPauseOff;
+        public event Action? Resumed;
 
         /// <summary>
-        /// Occurs when a level starts.
+        /// Fires once when a level has started.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnStartLevel;
+        public event Action? LevelStarted;
 
         /// <summary>
-        /// Occurs when the player returns home.
+        /// Fires once when the player has returned home.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnCameBackHome;
+        public event Action? HomeReturned;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Properties [noun, adjective]
@@ -122,22 +126,22 @@ namespace Germio.Systems {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
-        /// <summary>Fires the OnPauseOn event. Called by application Scene controllers.</summary>
-        public void FirePauseOn() {
-            GermioLog.Write(message: "[Germio GameSystem] FirePauseOn relay");
-            OnPauseOn?.Invoke();
+        /// <summary>Fires the Paused event. Called by application Scene controllers.</summary>
+        public void FirePaused() {
+            GermioLog.Write(message: "[Germio GameSystem] FirePaused relay");
+            Paused?.Invoke();
         }
 
-        /// <summary>Fires the OnPauseOff event.</summary>
-        public void FirePauseOff() {
-            GermioLog.Write(message: "[Germio GameSystem] FirePauseOff relay");
-            OnPauseOff?.Invoke();
+        /// <summary>Fires the Resumed event.</summary>
+        public void FireResumed() {
+            GermioLog.Write(message: "[Germio GameSystem] FireResumed relay");
+            Resumed?.Invoke();
         }
 
-        /// <summary>Fires the OnStartLevel event.</summary>
-        public void FireStartLevel() {
-            GermioLog.Write(message: "[Germio GameSystem] FireStartLevel relay");
-            OnStartLevel?.Invoke();
+        /// <summary>Fires the LevelStarted event.</summary>
+        public void FireLevelStarted() {
+            GermioLog.Write(message: "[Germio GameSystem] FireLevelStarted relay");
+            LevelStarted?.Invoke();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +188,8 @@ namespace Germio.Systems {
             );
             // -----------------------------------------------
 
-            // hotfix1: Push reversal — Scene-side controllers call FirePauseOn / FirePauseOff /
-            // FireStartLevel relay methods directly. GameSystem (Germio) does not import Stemic types.
+            // hotfix1: Push reversal — Scene-side controllers call FirePaused / FireResumed /
+            // FireLevelStarted relay methods directly. GameSystem (Germio) does not import Stemic types.
 
             if (HasHome()) {
                 // Gets the home.
@@ -195,12 +199,12 @@ namespace Germio.Systems {
                 /// Invokes the event when the player returns home.
                 /// </summary>
                 this.Home = false;
-                home.OnCameBack += () => {
-                    GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack fired");
+                home.Returned += () => {
+                    GermioLog.Write(message: "[Germio GameSystem] Home.Returned fired");
                     this.Home = true;
-                    OnCameBackHome?.Invoke();
+                    HomeReturned?.Invoke();
                 };
-                GermioLog.Write(message: "[Germio GameSystem] Home.OnCameBack subscription registered");
+                GermioLog.Write(message: "[Germio GameSystem] Home.Returned subscription registered");
             }
 
             /// <summary>

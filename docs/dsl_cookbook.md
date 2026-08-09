@@ -41,6 +41,7 @@ test suite.
 | a scene change (while running) | `command.request_transition`, inside a Rule | `"command": { "request_transition": "lv_02" }` |
 | a scene change (a hint only, not read while running) | `next[].id`, with an optional `condition` | `{ "id": "lv_02", "condition": "flags.goal == true" }` |
 | data shared across scenes | `state.persistence` / `set_persistence` | `{ "key": "player_name", "value": "Aria" }` |
+| a one-time UI notify (e.g. a "Level Clear!" message) | `command.request_notify` | `"command": { "request_notify": "level_clear" }` |
 
 ---
 

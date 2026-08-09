@@ -61,6 +61,13 @@ namespace Germio.Core {
                 mutated = true;
             }
 
+            // request_notify changes no saved state (it is a one-instant
+            // signal to the presentation layer, not a state mutation), so
+            // it never sets `mutated` on its own.
+            if (command.request_notify != null) {
+                store.RequestNotify(notify_id: command.request_notify);
+            }
+
             if (command.set_persistence != null) {
                 store.Scenario.initial_state.persistence[command.set_persistence.key] = command.set_persistence.value;
                 mutated = true;

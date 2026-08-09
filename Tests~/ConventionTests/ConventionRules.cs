@@ -228,14 +228,17 @@ namespace Germio.Tests.Convention {
 
             foreach (var ev in root.DescendantNodes().OfType<EventFieldDeclarationSyntax>()) {
                 if (has(ev.Modifiers, "override")) continue;
-                foreach (var variable in ev.Declaration.Variables)
+                foreach (var variable in ev.Declaration.Variables) {
                     check_casing(found, label, variable, variable.Identifier.ValueText, ev.Modifiers, "event");
+                    check_participle(found, label, variable, variable.Identifier.ValueText);
+                }
             }
 
             foreach (var ev in root.DescendantNodes().OfType<EventDeclarationSyntax>()) {
                 if (has(ev.Modifiers, "override")) continue;
                 if (ev.ExplicitInterfaceSpecifier != null) continue;
                 check_casing(found, label, ev, ev.Identifier.ValueText, ev.Modifiers, "event");
+                check_participle(found, label, ev, ev.Identifier.ValueText);
             }
 
             foreach (var each in root.DescendantNodes().OfType<ForEachStatementSyntax>()) {
@@ -429,6 +432,30 @@ namespace Germio.Tests.Convention {
             bool ok = want_pascal ? PASCAL.IsMatch(id) : CAMEL.IsMatch(id);
             if (!ok)
                 found.Add($"{label}:{line(node)}: {kind} '{id}' must be {(want_pascal ? "PascalCase" : "camelCase")}");
+        }
+
+        // An event name's last word must be a past participle (a single,
+        // completed happening — "Requested", "Started") or a present
+        // participle (an ongoing state — "Playbacking"), never the bare verb
+        // a command would use ("RequestTransition"). Checked as a plain
+        // suffix on the last word: "-ed" or "-ing". This is a shape check,
+        // not a true grammar check, and is only ever applied to the last
+        // word part of the identifier.
+        //
+        // Deliberately narrower than check_casing's signature: this rule has
+        // exactly one caller kind (an event), so it takes no `modifiers` or
+        // `kind` label. If a future member kind ever needs the same rule,
+        // widen the signature then — matching check_casing's shape today,
+        // before a second caller exists, would only be guessing at a shape
+        // no real second use has confirmed yet.
+        static void check_participle(List<string> found, string label, SyntaxNode node, string id)
+        {
+            if (is_naming_exception(node, id)) return;
+            var parts = word_parts(id).ToList();
+            if (parts.Count == 0) return;
+            var last = parts[parts.Count - 1].ToLowerInvariant();
+            if (last.EndsWith("ed") || last.EndsWith("ing")) return;
+            found.Add($"{label}:{line(node)}: event '{id}' must end in a past or present participle");
         }
 
         // ---- file name ------------------------------------------------------
@@ -803,7 +830,7 @@ namespace Germio.Tests.Convention {
             ("Properties", "public|private|protected|internal", "noun, adjective"),
             ("Methods", "public|private|protected|internal", "verb"),
             ("Classes", "inner|public|private|protected|internal", ""),
-            ("Events", "public|private|protected|internal", "verb, verb phrase"),
+            ("Events", "public|private|protected|internal", "verb"),
             ("Const", "", "nouns"),
             ("Enums", "public|private|protected|internal", "noun"),
             ("Interfaces", "public|private|protected|internal", ""),

@@ -44,13 +44,13 @@ namespace Germio.Triggers {
         GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb, verb phrase]
+        // public Events [verb]
 
         /// <summary>
-        /// Occurs when the player returns to the home object.
-        /// Retained for backward compatibility with observers (e.g., SoundSystem).
+        /// Fires once when the player has returned to the home object.
+        /// (past participle: a single, completed happening)
         /// </summary>
-        public event Action? OnCameBack;
+        public event Action? Returned;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private Methods [verb]
@@ -94,11 +94,11 @@ namespace Germio.Triggers {
                 .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
-                    // OnCameBack fires first so Level.cs can react (e.g. play sound).
+                    // Returned fires first so Level.cs can react (e.g. play sound).
                     // Publish fires second so SceneLoader resets
                     // Time.timeScale=1f before LoadScene, preventing the next scene
                     // from starting frozen.
-                    OnCameBack?.Invoke();
+                    Returned?.Invoke();
                     _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
@@ -109,7 +109,7 @@ namespace Germio.Triggers {
                 .Where(predicate: x =>
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
-                    OnCameBack?.Invoke();
+                    Returned?.Invoke();
                     _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
 
@@ -121,7 +121,7 @@ namespace Germio.Triggers {
                     x.Like(type: VEHICLE_TYPE) &&
                     _game_system.Beat)
                 .Subscribe(onNext: _ => {
-                    OnCameBack?.Invoke();
+                    Returned?.Invoke();
                     _game_system.Bus?.Publish("vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
