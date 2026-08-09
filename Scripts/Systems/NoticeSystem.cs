@@ -119,12 +119,18 @@ namespace Germio.Systems {
             /// <summary>
             /// Handles the event when the game has been paused.
             /// </summary>
-            GameSystem.Paused += () => { if (!GameSystem.Home) { MessageText.text = MESSAGE_GAME_PAUSE; }};
+            GameSystem.Paused += () => {
+                GermioLog.Write(message: "[Germio NoticeSystem] Paused fired");
+                if (!GameSystem.Home) { MessageText.text = MESSAGE_GAME_PAUSE; }
+            };
 
             /// <summary>
             /// Handles the event when the game has been resumed.
             /// </summary>
-            GameSystem.Resumed += () => { MessageText.text = string.Empty; };
+            GameSystem.Resumed += () => {
+                GermioLog.Write(message: "[Germio NoticeSystem] Resumed fired");
+                MessageText.text = string.Empty;
+            };
 
             /// <summary>
             /// Handles a notify request from the Store. The notify id is a
@@ -133,13 +139,20 @@ namespace Germio.Systems {
             /// is the one meaning this class currently knows.
             /// </summary>
             GameSystem.Store.NotifyRequested += (notify_id) => {
-                if (notify_id == "level_clear") { MessageText.text = MESSAGE_LEVEL_CLEAR; }
+                GermioLog.Write(message: $"[Germio NoticeSystem] NotifyRequested fired, notify_id='{notify_id}'");
+                if (notify_id == "level_clear") {
+                    MessageText.text = MESSAGE_LEVEL_CLEAR;
+                    GermioLog.Write(message: $"[Germio NoticeSystem] MessageText.text set to '{MESSAGE_LEVEL_CLEAR}'");
+                } else {
+                    GermioLog.Write(message: $"[Germio NoticeSystem] notify_id='{notify_id}' has no known meaning here, ignored");
+                }
             };
 
             /// <summary>
             /// Handles the event when a new level has started.
             /// </summary>
             GameSystem.LevelStarted += () => {
+                GermioLog.Write(message: "[Germio NoticeSystem] LevelStarted fired");
                 // Phase 5.13: Changed from switching based on the Unity Scene name (e.g., "Level_1")
                 // to displaying the 'name' property of the node in germio.json (e.g., "Level 1").
                 // Decoupled the Unity Scene filename from the display name (the human-readable string shown in the UI).

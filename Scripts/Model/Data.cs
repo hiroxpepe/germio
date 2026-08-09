@@ -191,6 +191,45 @@ namespace Germio.Model {
         /// Clears all entries from <c>State.inventory</c>. (Phase 5.8 v2 fix6 extension)
         /// </summary>
         public bool reset_inventory { get; set; } = false;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>
+        /// Builds a full, human-readable line describing every field this
+        /// Command actually has set, for logging. Only set fields are
+        /// shown, so a log line stays short for the common case (one
+        /// field set) while still showing everything when more than one
+        /// field is combined on the same Rule.
+        /// </summary>
+        public string ToLogString() {
+            var parts = new List<string>();
+            if (set_flag != null) {
+                parts.Add($"set_flag={{key='{set_flag.key}', value={set_flag.value}}}");
+            }
+            if (update_counter != null) {
+                parts.Add($"update_counter={{key='{update_counter.key}', delta={update_counter.delta}, op={update_counter.op}}}");
+            }
+            if (update_inventory != null) {
+                parts.Add($"update_inventory={{key='{update_inventory.key}', delta={update_inventory.delta}}}");
+            }
+            if (request_transition != null) {
+                parts.Add($"request_transition='{request_transition}'");
+            }
+            if (request_notify != null) {
+                parts.Add($"request_notify='{request_notify}'");
+            }
+            if (set_persistence != null) {
+                parts.Add($"set_persistence={{key='{set_persistence.key}', value='{set_persistence.value}'}}");
+            }
+            if (record_event != null) {
+                parts.Add($"record_event={{kind='{record_event.kind}', target_id='{record_event.target_id}'}}");
+            }
+            if (reset_flags)     { parts.Add("reset_flags=True"); }
+            if (reset_counters)  { parts.Add("reset_counters=True"); }
+            if (reset_inventory) { parts.Add("reset_inventory=True"); }
+            return parts.Count == 0 ? "(none)" : string.Join(", ", parts);
+        }
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>

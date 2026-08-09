@@ -177,7 +177,7 @@ namespace Germio.Core {
                 Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' trigger matched, condition='{rule.condition}' → {condition_ok}");
                 if (!condition_ok) { continue; }
 
-                Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' executing command (request_transition='{rule.command?.request_transition}')");
+                Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' executing command ({rule.command?.ToLogString() ?? "(none)"})");
                 Executor.Execute(command: rule.command, store: this);
 
                 if (rule.once) {
