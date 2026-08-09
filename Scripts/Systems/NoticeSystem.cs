@@ -133,22 +133,6 @@ namespace Germio.Systems {
             };
 
             /// <summary>
-            /// Handles a notify request from the Store. The notify id is a
-            /// free-form string the game gives meaning to (the same way
-            /// Rule.trigger and HistoryEntry.kind already are). "level_clear"
-            /// is the one meaning this class currently knows.
-            /// </summary>
-            GameSystem.Store.NotifyRequested += (notify_id) => {
-                GermioLog.Write(message: $"[Germio NoticeSystem] NotifyRequested fired, notify_id='{notify_id}'");
-                if (notify_id == "level_clear") {
-                    MessageText.text = MESSAGE_LEVEL_CLEAR;
-                    GermioLog.Write(message: $"[Germio NoticeSystem] MessageText.text set to '{MESSAGE_LEVEL_CLEAR}'");
-                } else {
-                    GermioLog.Write(message: $"[Germio NoticeSystem] notify_id='{notify_id}' has no known meaning here, ignored");
-                }
-            };
-
-            /// <summary>
             /// Handles the event when a new level has started.
             /// </summary>
             GameSystem.LevelStarted += () => {
@@ -182,6 +166,25 @@ namespace Germio.Systems {
 
         // Start is called before the first frame update.
         void Start() {
+            // hotfix: subscribed here, not in Awake. GameSystem.Store (_store) is
+            // only assigned inside GameSystem's own Awake(); Unity does not
+            // guarantee Awake() order across different GameObjects, so reading
+            // GameSystem.Store from within THIS class's Awake() could throw a
+            // NullReferenceException before this point ever ran — silently
+            // skipping abilities_OnAwake() and everything after it, including
+            // the Countable ability's Target/Point wiring. Start() is safe:
+            // Unity guarantees every object's Awake() has already run by the
+            // time any object's Start() runs.
+            GameSystem.Store.NotifyRequested += (notify_id) => {
+                GermioLog.Write(message: $"[Germio NoticeSystem] NotifyRequested fired, notify_id='{notify_id}'");
+                if (notify_id == "level_clear") {
+                    MessageText.text = MESSAGE_LEVEL_CLEAR;
+                    GermioLog.Write(message: $"[Germio NoticeSystem] MessageText.text set to '{MESSAGE_LEVEL_CLEAR}'");
+                } else {
+                    GermioLog.Write(message: $"[Germio NoticeSystem] notify_id='{notify_id}' has no known meaning here, ignored");
+                }
+            };
+
             // Updates the UI with the latest game, vehicle, and FPS status.
             this.UpdateAsObservable()
                 .Subscribe(onNext: _ => {
