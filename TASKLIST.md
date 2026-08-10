@@ -401,3 +401,38 @@ whoever picks it up checks it off (`- [x]`) and commits the diff.
 
     **Where this stands**: a design mock only, shown and agreed on in
     chat. No real code for this tool has been written yet.
+
++ [ ] **Move germio from a git submodule to a Unity Package (a git URL
+      in the Package Manager)**: right now, every game repo (stemic,
+      flugi, tropika) pulls germio in as a git submodule. A plain user
+      most likely expects `Window > Package Manager > + > Add package
+      from git URL`, not a submodule, since Unity's own Package
+      Manager already supports a git URL out of the box.
+
+    **Why this does not clash with how germio itself gets built**: the
+    master builds germio in one role, and uses it in another. As the
+    builder, the master keeps a plain, separate git clone of germio (the
+    same kind of clone this whole long session ran tonight) to edit,
+    commit, and push from. As a user (working inside stemic, flugi, or
+    tropika), the master would then pull germio the same way any other
+    person would — through the Package Manager's git URL, pointed at
+    the latest tag or commit. Trying out a fresh, unpushed germio
+    change inside a game repo just means re-pointing that git URL once
+    the change has been pushed from the separate builder clone. The two
+    roles never fight each other.
+
+    **What is missing today**: `package.json` (the file Unity's
+    Package Manager reads to know a folder is a package at all) and
+    any `.asmdef` file (an assembly definition — not a hard need, but
+    it speeds up compiling and makes germio's own dependencies clear).
+    Neither exists in germio right now.
+
+    **The work this would take**:
+
+    1. add a `package.json` at germio's root (`name`, `version`,
+       `displayName`, and the rest of the standard UPM fields).
+    2. add an `.asmdef` covering `Scripts/`.
+    3. drop the `.gitmodules` entry in stemic, flugi, and tropika, and
+       bring germio back in through `Add package from git URL` in each.
+
+    **Where this stands**: not started, agreed on in chat only.
