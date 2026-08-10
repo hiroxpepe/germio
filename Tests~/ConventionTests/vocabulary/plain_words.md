@@ -317,7 +317,7 @@ The Basic English base itself lives in basic_words.md.
 + shadow shadows shadowed shadowing
 + share shares shared sharing
 + shell shells shelled shelling
-+ show shows showed showing
++ show shows showed shown showing
 + single singles
 + sink sinks sinked sinking
 + site sites sited siting

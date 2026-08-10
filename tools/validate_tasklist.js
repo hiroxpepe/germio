@@ -15,6 +15,8 @@ const DETAIL_HEADING = /^### (TASK-\d+)$/;
 export function validate_tasklist(text) {
   const errors = [];
   const lines = text.split('\n');
+  const detail_index = lines.findIndex(l => l.trim() === '## Detail');
+  const summary_lines = detail_index === -1 ? lines : lines.slice(0, detail_index);
 
   if (!text.includes('<!-- format: v1 | fields: status, id, title -->')) {
     errors.push('missing the format marker comment near the top of the file');
@@ -23,7 +25,7 @@ export function validate_tasklist(text) {
   const summary_ids = [];
   const seen_summary_ids = new Set();
 
-  for (const line of lines) {
+  for (const line of summary_lines) {
     if (!line.startsWith('+ [')) continue;
     const match = line.match(SUMMARY_LINE);
     if (!match) {

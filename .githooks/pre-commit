@@ -23,10 +23,17 @@ for file in $files; do
     exit 1
   fi
 
-  if [ "$(basename "$file")" = "TASKLIST.md" ]; then
+  base=$(basename "$file")
+  if [ "$base" = "TASKLIST.md" ]; then
     node tools/validate_tasklist_cli.js "$file" "$VOCAB_DIR" "$TECH_TERMS_PATH"
     if [ $? -ne 0 ]; then
       echo "pre-commit: TASKLIST.md check failed on $file — commit blocked."
+      exit 1
+    fi
+  elif [ "$base" = "HANDOFF.md" ] || [ "$base" = "CLAUDE.md" ]; then
+    node tools/basic_english_cli.js "$file" "$VOCAB_DIR" "$TECH_TERMS_PATH"
+    if [ $? -ne 0 ]; then
+      echo "pre-commit: Basic English check failed on $file — commit blocked."
       exit 1
     fi
   fi
