@@ -1,0 +1,35 @@
+#!/bin/sh
+# Runs before every commit. Blocks the commit if any staged .md file
+# fails markdownlint, or if a staged TASKLIST.md fails its own
+# structure check and Basic English word check. Shared across every
+# personal repo in this family — keep this file identical everywhere;
+# fix it once, in one place, and copy the fix out to the rest, the
+# same way .markdownlint.json itself is kept identical across repos.
+#
+# VOCAB_DIR and TECH_TERMS_PATH differ per repo (each repo's own
+# vocabulary/ folder sits at a different depth), so they are read from
+# a small, repo-specific config file instead of being hard-coded here.
+. ./.githooks/paths.sh 2>/dev/null || true
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.md$')
+if [ -z "$files" ]; then
+  exit 0
+fi
+
+for file in $files; do
+  npx --yes markdownlint-cli -c .markdownlint.json "$file"
+  if [ $? -ne 0 ]; then
+    echo "pre-commit: markdownlint failed on $file — commit blocked."
+    exit 1
+  fi
+
+  if [ "$(basename "$file")" = "TASKLIST.md" ]; then
+    node tools/validate_tasklist_cli.js "$file" "$VOCAB_DIR" "$TECH_TERMS_PATH"
+    if [ $? -ne 0 ]; then
+      echo "pre-commit: TASKLIST.md check failed on $file — commit blocked."
+      exit 1
+    fi
+  fi
+done
+
+exit 0
