@@ -315,3 +315,89 @@ whoever picks it up checks it off (`- [x]`) and commits the diff.
     real Unity playtest of the flugi fix this was all built for (the
     master's own next step, on the real Windows 11 build) — everything
     above was checked by unit test alone, never inside Unity itself.
+
++ [ ] **A germio.json viewer and editor, built without Unity**: a
+      single web page that opens a `germio.json` file, shows its full
+      tree in a clear way, and lets a person add, change, and remove a
+      Node or a Rule with forms — no need to type raw JSON by hand, and
+      no need for the Unity Editor to be open at all.
+
+    **Why this is wanted**: right now, the only way to change
+    `germio.json` is to hand-write JSON. This is a real risk for a
+    typo (a missing comma breaks the whole file) and a real barrier
+    for anyone who does not want to read raw JSON. A person should be
+    able to set up a full Scenario with just this page and a text
+    editor for `germio.json` — the Unity Editor is not a must.
+
+    **Reference used**: `Animo`'s own `Monitor/dashboard.html`. Its
+    live, frame-by-frame link (a WebSocket to a running C# engine) is
+    NOT wanted here — germio does not run on its own outside Unity the
+    way Animo's console can. What IS wanted, and was carried over
+    one-for-one, is its look: a retro, dense, engineering-tool style
+    (`--window` `--panel` `--field` `--line` color names, 1px hairline
+    borders, a grey button gradient, small 11-12px text, a panel
+    header with a bold label). A later pass added rounder button
+    corners (closer to the real Unity Editor's own look), drag-and-
+    drop node reordering, autocomplete lists on key fields (`trigger`,
+    `condition`, `value`), and a Properties grid styled like an old
+    Visual Studio (VB6-era) RAD tool — a label-and-value table with
+    alternating row colors.
+
+    **A first mock was shown and checked over 15 points.** None of the
+    15 are fixed yet — this whole entry exists to hold the fix plan
+    for later work:
+
+    1. no real file open/save yet — plan: the File System Access API
+       (`showOpenFilePicker` / `showSaveFilePicker`), with a plain
+       `<input type="file">` and a download link as a fallback for
+       browsers that lack it.
+    2. no screen for `initial_state` (`flags`, `counters`, `inventory`,
+       `persistence`) — plan: a "State" tab at the top of the left
+       panel, each kind as a list plus an add-row form.
+    3. no screen for `Node.next` (the hint-only transition list) —
+       plan: a "Next" block in the Node's own property grid, each row
+       holding an `id` and a `condition`.
+    4. no link to the Validator at all — plan: port the V001-V027
+       checks to JavaScript (or run the real `Validator.cs` compiled
+       to WASM) and run them on every change, showing warnings inline.
+    5. one flat "value" field cannot hold what every command kind
+       really needs (`set_flag` needs a key AND a bool, `update_counter`
+       needs a key AND a delta AND an op) — plan: swap the form shape
+       itself based on the chosen command kind.
+    6. only one command kind can be picked at a time, but a real Rule
+       can hold more than one at once — plan: turn the command picker
+       into a checklist; each checked kind shows its own small form.
+    7. the Node's own fields (`scene`, `name`) cannot be edited at all
+       — plan: add a "Node" block pinned above the Rule list in the
+       property grid.
+    8. a rule card does not show `once` without opening the full
+       editor — plan: add a small badge for it next to the existing
+       `trigger -> command` line on the card itself.
+    9. the tree uses a flat `parent` pointer that does not match
+       germio's real, nested `children` array, and carries no check
+       for a loop (the real V026 rule) — plan: rebuild the tree data
+       around real nested `children`, and block a drop that would
+       create a loop.
+    10. a new Node or Rule gets a random id with no duplicate check —
+        plan: check against every existing `Node.id` (must be unique
+        across the whole file) and `Rule.id` (must be unique inside
+        its own Node) before the add is allowed to go through.
+    11. a Node with a real problem (e.g. V021: a leaf node with no
+        `scene`) shows no warning mark at all — plan: a small warning
+        icon on that Node's own row in the tree, click for detail.
+    12. no undo — plan: keep a stack of full-file snapshots, one per
+        change, with a button (or Ctrl+Z) to step back one.
+    13. only 3 of the 10 `Command` fields can be picked at all — plan:
+        add the rest (`update_counter`, `update_inventory`,
+        `set_persistence`, `record_event`, the three `reset_*` flags)
+        to the same checklist from point 6.
+    14. the `condition` field is a bare text box, with no DSL help at
+        all — plan: autocomplete known keys after typing `flags.` /
+        `counters.` / `inventory.`, and run a small parser before save
+        that flags a broken condition the same way V009 would.
+    15. drag-and-drop reordering only works with a mouse — plan: add
+        up/down/indent/outdent buttons on each tree row, so the same
+        moves work from a keyboard or a touch screen.
+
+    **Where this stands**: a design mock only, shown and agreed on in
+    chat. No real code for this tool has been written yet.
