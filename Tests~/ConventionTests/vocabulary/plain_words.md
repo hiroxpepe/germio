@@ -388,3 +388,63 @@ The Basic English base itself lives in basic_words.md.
 + wrap wraps wrapped wrapping
 + write writes wrote written writing
 + zero zeroes zeroed zeroing
++ above
++ actually
++ an
++ another
++ anything
++ author authors authored
++ away
++ behind
++ below
++ blank
++ bug bugs
++ checkbox checkboxes
++ claim claims
++ clone clones
++ follow follows followed
++ fully
++ gap gaps
++ hide hides hid hidden hiding
++ instead
++ into
++ it its itself
++ job jobs
++ know knows knew known knowing
++ lesson lessons
++ logic
++ markdown
++ mean means meant meaning
++ meaning meanings
++ member members
++ mistake mistakes
++ moment moments
++ more
++ must
++ never
++ none
++ often
++ open opens opened opening
++ own
++ pass passes passed passing
++ plus
++ real
++ really
++ reuse reuses reused reusing
++ silent silently
++ stand stands stood standing
++ stay stays stayed staying
++ stray
++ sure
++ these
++ they them their theirs themselves
++ three
++ tied ties tie tying
++ truly
++ trust trusts trusted trusting
++ until
++ verb verbs
++ what
++ whose
++ widen widens widened widening
++ yet

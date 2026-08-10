@@ -36,6 +36,21 @@ if (vocab_dir && existsSync(vocab_dir)) {
 if (errors.length > 0) {
   console.error(`TASKLIST.md format errors in ${path}:`);
   for (const error of errors) console.error(`  - ${error}`);
+  console.error('');
+  console.error('What to do next for a "not Basic English" line:');
+  console.error('  - A plain English word: add it to draft_words.md in the');
+  console.error('    same vocabulary folder. Stop there.');
+  console.error('  - Never move a word from draft_words.md to');
+  console.error('    plain_words.md yourself. That move needs the');
+  console.error('    master\'s own, direct GO, every time — not a rule an');
+  console.error('    agent applies on its own, even when a word looks');
+  console.error('    needed in more than one repository.');
+  console.error('  - A real technical word, with a real reason for it: add');
+  console.error('    it to docs/standard/tech_terms.md instead, with a short,');
+  console.error('    plain sense for it, before you use the word again.');
+  console.error('  - Never widen basic_words.md. That file holds only');
+  console.error('    Ogden\'s own 850 words, checked against the source, not');
+  console.error('    a guess.');
   process.exit(1);
 }
 console.log(`${path}: TASKLIST.md format OK`);

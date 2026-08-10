@@ -170,7 +170,7 @@ many times it is run on the same input. A core need for the Generator.
 how Unity tracks a file's identity even after the file is renamed or moved.
 
 **PascalCase** — A way to write a name with no spaces, where each word
-starts with a capital letter, e.g. `LevelOne`.
+starts with a capital letter, say `LevelOne`.
 
 **task** — One piece of work, with its own id, on a `TASKLIST.md`.
 

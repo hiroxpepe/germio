@@ -11,6 +11,7 @@ the change in as a commit.
 + [ ] TASK-003: Add Command.request_notify (built; a real playtest is still open)
 + [x] TASK-004: Build a germio.json viewer and editor with no Unity (done)
 + [ ] TASK-005: Move germio to a Unity Package, off the git submodule
++ [ ] TASK-006: Put the rest of the docs into Basic English
 
 ## Detail
 
@@ -527,3 +528,23 @@ right now.
    from git URL` in each.
 
 **Where this stands**: not started, agreed on in chat only.
+
+### TASK-006
+
+`CLAUDE.md`, `TASKLIST.md`, `HANDOFF.md`, `writing_standard.md`,
+`coding_standard.md`, and `tech_terms.md` are all in Basic English now,
+in this repository and in `stemic`, `flugi`, `tropika`, `briko`, `animo`,
+and `opinio`. The rest of the docs are not: `README.md`, `overview_EN.md`,
+and every file under `docs/` (`dsl_spec.md`, `mcp_spec.md`,
+`security_spec.md`, `naming_spec.md`, `llm_design_spec.md`,
+`llm_workflow_guide.md`, `framework_roadmap.md`, `save_data_spec.md`,
+`dsl_cookbook.md`, `scene_code_sync_spec.md`) still fail the check, from
+tens of words to as many as 234 in one file.
+
+Also still open: words put into `draft_words.md` tonight, in a hurry, to
+get `coding_standard.md` and `tech_terms.md` to pass. Some of these are
+real technical words (`Constructor`, `Destructor`, `Indexer`, `Operator`,
+`alias`, `directive`, `algorithm`, `keyword`, and more) that should move
+to `tech_terms.md`, each with its own short sense, and not sit in
+`draft_words.md` with no sense given at all. This move needs the
+master's own GO first, word by word.

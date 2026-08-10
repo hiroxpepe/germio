@@ -36,6 +36,14 @@
 
 + Before you commit any markdown file, run the check and get no
   errors at all. Do not commit a markdown file that still has errors.
++ This check is two things in one: a form check that runs on every
+  markdown file, and a word check for plain English that runs only
+  on `CLAUDE.md`, `TASKLIST.md`, and `HANDOFF.md`. A word failed in
+  the word check goes into `draft_words.md` if it is a plain word
+  many people would use, or into `docs/standard/tech_terms.md` if it
+  is a real, needed hard word with its own sense given in one line.
+  Never put a new word into `basic_words.md`; that file holds only
+  Ogden's own 850 words, and nothing else.
 + The rules are set in `.markdownlint.json` at the root of the
   repository. Use that file, not your own idea of the rules.
 + The list mark is the plus sign. Use `+` for every list line, not

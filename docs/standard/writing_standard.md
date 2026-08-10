@@ -24,7 +24,7 @@ for the agent.
 
 The writing keeps close to Ogden's Basic English — a small set of about 850
 words, made to say much with little. But the set is from 1930, and some of its
-words are old or feel strange today. So the set is not kept as law.
+words are old or feel strange today. So the set is not kept as a fixed rule.
 
 **Make it better with good sense.** Keep the words simple, but do not keep a
 word only because Ogden had it. If a word is old or strange now, use a common
@@ -37,38 +37,43 @@ The aim is not to obey a 1930 list. The aim is clear, simple, current English.
 
 ## Rules
 
-1. **Keep sentences short.** One thought to a sentence where possible.
+1. **Keep a run of words short.** One thought to a run of words, where it can
+   be done.
 2. **Use common words.** If a longer word and a shorter word say the same
    thing, use the shorter one.
-3. **Say things straight.** Put the actor first, then the act. "The tool reads
-   the file," not "The file is read by the tool."
-4. **Do not use words that only experts know**, unless they are technical terms
-   (see below). For everyday sense, everyday words.
-5. **When a simple word is old or odd today, use the current common word.**
-   This is the refine step. Sense over list.
+3. **Say things in a straight line.** Put the one who does the act first,
+   then the act. "The tool reads the file," not "The file is read by the
+   tool."
+4. **Do not use words that only a small group of people know**, unless they
+   are hard words (see below). For everyday sense, everyday words.
+5. **When a simple word is old or odd today, use the current, common word.**
+   This is the make-better step. The sense of a word comes before its place
+   on a list.
 
 ---
 
-## Technical terms
+## Hard words
 
 Some words have no simple form. Words like `commit`, `push`, `repository`,
 `CLI`, `LLM` name one exact thing, and to say them in simple words would make
-the sense less clear, not more. For these, the simple-word rule is turned off.
+the sense less clear, not more. For these words, the simple-word rule is
+turned off.
 
-But such words are not free to use as one likes. Every technical term used in
-any document must be in the technical term reference (`tech_terms.md`). If a
-term is not in that reference, do not use it; add it there first. The reference
-is the one place where these terms are given their sense. The documents point
-to it; they do not give the sense again.
+But a word like this is not free to use as one likes. Every hard word used in
+any document must be in the hard-word list (`tech_terms.md`). If a word is
+not in that list, do not use it; add it there first. The list is the one
+place where these words are given their sense. The documents point to it;
+they do not give the sense again.
 
-So each document is made of two closed word sets:
-the simple word set (this standard), and the technical terms (the reference).
-Nothing else. This leaves the reader, and the agent, no room to be in doubt.
+So each document is made from two closed word sets: the simple word set
+(this standard), and the hard words (the list). Nothing else. This leaves
+the reader, and the agent, no room to be in doubt.
 
 ---
 
-## Scope
+## Range
 
-This standard is not only for this project. It is the writing standard for all
-of this maker's projects. It is kept here for now, with one working project to
-prove it. When it is well tested, it may be moved to its own shared place.
+This standard is not only for this project. It is the writing standard for
+all of this maker's projects. It is kept here for now, with one working
+project to show it works. When it has been checked well, it may be moved to
+its own shared place.
