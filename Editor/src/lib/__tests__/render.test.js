@@ -64,6 +64,13 @@ describe('render_tree', () => {
         expect(row.draggable).toBe(true);
     });
 
+    test('every row gets the node-row class, for the tool\'s own styling', () => {
+        const container = document.createElement('div');
+        render_tree(container, sample_tree(), null);
+        const row = container.querySelector('[data-node-id="levels"]');
+        expect(row.classList.contains('node-row')).toBe(true);
+    });
+
     test('the container itself gets role="tree", for a real accessibility tree', () => {
         const container = document.createElement('div');
         render_tree(container, sample_tree(), null);

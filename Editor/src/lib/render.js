@@ -44,6 +44,7 @@ export function render_tree(
     for (const row of rows) {
         const el = document.createElement('div');
         el.dataset.nodeId = row.id;
+        el.className = 'node-row';
         el.draggable = true;
         el.style.paddingLeft = `${row.depth * 14}px`;
         el.setAttribute('role', 'treeitem');

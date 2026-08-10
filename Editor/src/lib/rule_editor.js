@@ -69,7 +69,7 @@ export function render_rule_editor(container, rule, on_save, on_delete, known_st
                 ? fields.map(f => field_input(kind, f, state[kind][f.key])).join(' ')
                 : '';
             return `<div>
-        <label><input type="checkbox" data-command-kind="${kind}" ${enabled ? 'checked' : ''} /> ${kind}</label>
+        <label><input type="checkbox" data-command-kind="${kind}" ${enabled ? 'checked' : ''} /> <span class="badge badge-${kind}">${kind.replace('request_', '').replace('_', ' ')}</span></label>
         ${field_html}
       </div>`;
         }).join('');

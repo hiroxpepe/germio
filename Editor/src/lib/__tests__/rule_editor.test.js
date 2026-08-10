@@ -24,6 +24,13 @@ describe('render_rule_editor', () => {
         expect(container.querySelector('[data-command-kind="set_flag"]').checked).toBe(false);
     });
 
+    test('shows a colored badge next to each command kind in the checklist', () => {
+        const container = document.createElement('div');
+        render_rule_editor(container, sample_rule());
+        const row = container.querySelector('[data-command-kind="request_notify"]').closest('div');
+        expect(row.querySelector('.badge-request_notify')).not.toBeNull();
+    });
+
     test('calls on_save with an updated rule when Save is clicked', () => {
         const container = document.createElement('div');
         let saved_rule = null;
