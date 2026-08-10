@@ -422,20 +422,30 @@ whoever picks it up checks it off (`- [x]`) and commits the diff.
     + [ ] 6-3: `role="tree"`, `role="treeitem"`, `aria-expanded`,
           and the rest of the ARIA a real tree needs.
 
-    **Where this stands**: built and working, at `Editor/` in this
-    repo, with a Vitest test suite (144 tests) covering the pure logic
-    in `src/lib/`, plus real end-to-end integration tests that load
-    the actual `main.js` in a jsdom page and drive it through the
-    open/select/edit/save/undo flow. Every phase (0 through 6) and
-    every task under them is done; V009 (a true DSL parse check)
-    stays out of scope on purpose, replaced by a light,
-    best-effort sanity check in `condition_syntax.js`. A late pass
-    also found and fixed a real XSS hole (every user-supplied string
-    from the loaded file is now escaped before it ever touches
-    innerHTML) and a real risk of committing the whole `node_modules`
-    folder (a missing `.gitignore`, now added). Not yet done in
-    person: an actual look at it running in a real browser — every
-    check above ran through jsdom, never a true browser window.
+    **Where this stands**: built, working, and checked in a real
+    browser by the master on a real machine — done. `Editor/` in this
+    repo has a Vitest test suite (159 tests) covering the pure logic
+    in `src/lib/`, real end-to-end integration tests that load the
+    actual `main.js` in a jsdom page and drive it through the
+    open/select/edit/save/undo flow, and one test built from a real,
+    unmodified `germio.json` pulled from stemic itself (`real_data.test.js`)
+    — every earlier fixture in this suite had spelled out
+    `"children": []` on every leaf node by hand, which is not how a
+    real file looks (germio's own C# JSON writer skips an empty array
+    field entirely), and this gap only surfaced once the master opened
+    the tool in a real browser and hit a real, live error. Every phase
+    (0 through 6) and every task under them is done; V009 (a true DSL
+    parse check) stays out of scope on purpose, replaced by a light,
+    best-effort sanity check in `condition_syntax.js`. Two real bugs
+    were found and fixed along the way: an XSS hole (every
+    user-supplied string from the loaded file is now escaped before it
+    ever touches innerHTML) and a missing `.gitignore` that would have
+    committed the whole `node_modules` folder. The look was reworked
+    twice more after the first pass shipped — first away from a
+    retro, Windows-95-style bevel look (too dated), then rebuilt with
+    a real 8px spacing scale, colored badges per command kind, and a
+    proper "Selected node" header, matched detail-for-detail against
+    an agreed design mock rather than left as a rough first pass.
 
     **How to run it**: `Editor/` ships as part of germio itself, so it
     reaches a game repo (stemic, flugi, tropika) the same way the rest
