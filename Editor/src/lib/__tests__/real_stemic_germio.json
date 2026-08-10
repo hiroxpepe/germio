@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "initial_state": {
+    "flags": {
+      "player_at_home": false,
+      "is_beat": false
+    },
+    "counters": {},
+    "inventory": {},
+    "persistence": {},
+    "current_node": "title",
+    "current_team": ""
+  },
+  "root": {
+    "id": "world",
+    "name": "World",
+    "kind": "world",
+    "scene": "",
+    "children": [
+      {
+        "id": "title",
+        "name": "Title",
+        "kind": "title",
+        "scene": "Title",
+        "rules": [
+          {
+            "id": "rule_title_to_select",
+            "trigger": "signal_btn_select_pressed",
+            "command": { "request_transition": "select" },
+            "once": false
+          },
+          {
+            "id": "rule_title_to_level_1",
+            "trigger": "signal_btn_start_pressed",
+            "command": { "request_transition": "level_1" },
+            "once": false
+          },
+          {
+            "id": "rule_title_reset",
+            "trigger": "_on_enter_node",
+            "command": {
+              "reset_flags": true,
+              "reset_counters": true,
+              "reset_inventory": true
+            },
+            "once": false
+          }
+        ]
+      },
+      {
+        "id": "select",
+        "name": "Select",
+        "kind": "select",
+        "scene": "Select",
+        "rules": [
+          {
+            "id": "rule_select_to_title",
+            "trigger": "signal_btn_start_pressed",
+            "command": { "request_transition": "title" },
+            "once": false
+          }
+        ]
+      },
+      {
+        "id": "levels",
+        "name": "Levels",
+        "kind": "world",
+        "scene": "",
+        "children": [
+          {
+            "id": "level_1",
+            "name": "Level 1",
+            "kind": "level",
+            "scene": "Level_1",
+            "rules": [
+              {
+                "id": "rule_level_1_show_clear",
+                "trigger": "vol_home",
+                "condition": "flags.is_beat",
+                "command": { "request_notify": "level_clear" },
+                "once": false
+              },
+              {
+                "id": "rule_level_1_to_level_2",
+                "trigger": "signal_btn_start_pressed",
+                "condition": "flags.player_at_home && flags.is_beat",
+                "command": { "request_transition": "level_2" },
+                "once": false
+              },
+              {
+                "id": "rule_level_1_restart_select",
+                "trigger": "signal_btn_select_pressed",
+                "command": { "request_transition": "level_1" },
+                "once": false
+              },
+              {
+                "id": "rule_level_1_restart_despawn",
+                "trigger": "sig_despawn",
+                "command": { "request_transition": "level_1" },
+                "once": false
+              }
+            ]
+          },
+          {
+            "id": "level_2",
+            "name": "Level 2",
+            "kind": "level",
+            "scene": "Level_2",
+            "rules": [
+              {
+                "id": "rule_level_2_show_clear",
+                "trigger": "vol_home",
+                "condition": "flags.is_beat",
+                "command": { "request_notify": "level_clear" },
+                "once": false
+              },
+              {
+                "id": "rule_level_2_to_level_3",
+                "trigger": "signal_btn_start_pressed",
+                "condition": "flags.player_at_home && flags.is_beat",
+                "command": { "request_transition": "level_3" },
+                "once": false
+              },
+              {
+                "id": "rule_level_2_restart_select",
+                "trigger": "signal_btn_select_pressed",
+                "command": { "request_transition": "level_2" },
+                "once": false
+              },
+              {
+                "id": "rule_level_2_restart_despawn",
+                "trigger": "sig_despawn",
+                "command": { "request_transition": "level_2" },
+                "once": false
+              }
+            ]
+          },
+          {
+            "id": "level_3",
+            "name": "Level 3",
+            "kind": "level",
+            "scene": "Level_3",
+            "rules": [
+              {
+                "id": "rule_level_3_show_clear",
+                "trigger": "vol_home",
+                "condition": "flags.is_beat",
+                "command": { "request_notify": "level_clear" },
+                "once": false
+              },
+              {
+                "id": "rule_level_3_to_ending",
+                "trigger": "signal_btn_start_pressed",
+                "condition": "flags.player_at_home && flags.is_beat",
+                "command": { "request_transition": "ending" },
+                "once": false
+              },
+              {
+                "id": "rule_level_3_restart_select",
+                "trigger": "signal_btn_select_pressed",
+                "command": { "request_transition": "level_3" },
+                "once": false
+              },
+              {
+                "id": "rule_level_3_restart_despawn",
+                "trigger": "sig_despawn",
+                "command": { "request_transition": "level_3" },
+                "once": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ending",
+        "name": "Ending",
+        "kind": "ending",
+        "scene": "Ending",
+        "rules": [
+          {
+            "id": "rule_ending_to_title",
+            "trigger": "signal_btn_start_pressed",
+            "command": { "request_transition": "title" },
+            "once": false
+          }
+        ]
+      }
+    ]
+  }
+}

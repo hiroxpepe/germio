@@ -43,6 +43,43 @@ describe('parse_scenario', () => {
         expect(scenario.root.children[0].id).toBe('levels');
     });
 
+    test('fills in an empty children array on a leaf node missing it entirely', () => {
+        // germio's own C# JSON writer omits an empty array/collection
+        // field rather than writing "children": [] — a real leaf node
+        // in a real germio.json has no "children" key at all.
+        const text = JSON.stringify({
+            schema_version: 1,
+            initial_state: { flags: {}, counters: {}, inventory: {}, persistence: {}, current_node: 'a' },
+            root: { id: 'a', scene: '', name: '', rules: [], next: [] },
+        });
+        const scenario = parse_scenario(text);
+        expect(scenario.root.children).toEqual([]);
+    });
+
+    test('fills in a missing rules and next array too, for the same reason', () => {
+        const text = JSON.stringify({
+            schema_version: 1,
+            initial_state: { flags: {}, counters: {}, inventory: {}, persistence: {}, current_node: 'a' },
+            root: { id: 'a', scene: 'S', name: '' },
+        });
+        const scenario = parse_scenario(text);
+        expect(scenario.root.rules).toEqual([]);
+        expect(scenario.root.next).toEqual([]);
+    });
+
+    test('fills in a missing children array on a node nested deep, not just the root', () => {
+        const text = JSON.stringify({
+            schema_version: 1,
+            initial_state: { flags: {}, counters: {}, inventory: {}, persistence: {}, current_node: 'a' },
+            root: {
+                id: 'a', scene: '', name: '', rules: [], next: [],
+                children: [{ id: 'b', scene: 'S', name: '' }],
+            },
+        });
+        const scenario = parse_scenario(text);
+        expect(scenario.root.children[0].children).toEqual([]);
+    });
+
     test('throws a clear error on text that is not valid JSON at all', () => {
         expect(() => parse_scenario('{ not json')).toThrow();
     });
