@@ -1,0 +1,16 @@
+{
+  "name": "germio-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.8"
+  }
+}

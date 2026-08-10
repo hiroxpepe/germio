@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>germio.json editor</title>
+<style>
+  :root {
+    --window: #c2c2c2; --panel: #cbcbcb; --field: #ffffff; --header: #bcbcbc;
+    --line: #939393; --line-soft: #b0b0b0; --text: #1a1a1a; --dim: #5b5b5b;
+    --accent: #3a72b0;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px; margin: 12px; background: #f0f0f0; color: var(--text);
+  }
+  #app { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; max-width: 960px; }
+  #topbar {
+    display: flex; align-items: center; justify-content: space-between; height: 28px;
+    padding: 0 8px; background: var(--header); border-bottom: 1px solid var(--line);
+  }
+  button { border-radius: 4px; border: 1px solid var(--line); background: linear-gradient(#e8e8e8, #d2d2d2); padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 12px; }
+  input, select { border: 1px solid var(--line); border-radius: 2px; font-family: inherit; font-size: 12px; padding: 1px 3px; }
+  #status { font-size: 11px; color: var(--dim); }
+  #body { display: grid; grid-template-columns: 200px 1fr; background: var(--window); min-height: 420px; }
+  #tree-panel { border-right: 1px solid var(--line); padding: 4px; }
+  #tree > div { padding: 3px 6px; cursor: pointer; border-radius: 3px; margin-bottom: 1px; display: flex; align-items: center; gap: 4px; justify-content: space-between; }
+  #tree > div[aria-selected="true"] { background: var(--accent); color: #fff; }
+  #tree > div button { padding: 0 4px; font-size: 10px; }
+  #main-panel { padding: 8px; }
+  #tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+  #tabs button[aria-selected="true"] { background: var(--accent); color: #fff; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  #rule-list > div { background: #fff; border: 1px solid var(--line-soft); border-radius: 3px; padding: 5px 8px; margin-bottom: 4px; cursor: pointer; }
+  #rule-list > div[aria-selected="true"] { outline: 1px solid var(--accent); }
+  #rule-editor-panel { border-top: 1px solid var(--line-soft); margin-top: 8px; padding-top: 8px; }
+  #warnings { margin-top: 8px; }
+  #warnings > div { font-size: 11px; padding: 3px 6px; border-radius: 3px; margin-bottom: 2px; }
+  .level-error { background: #f7d7d7; }
+  .level-warning { background: #f7ecc0; }
+  #command-kinds > div { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+  <div id="app">
+    <div id="topbar">
+      <div>
+        <button id="open-btn">Open germio.json</button>
+        <button id="save-btn" disabled>Save</button>
+        <button id="undo-btn" disabled>Undo</button>
+        <button id="copy-log-btn">Copy log</button>
+        <button id="download-log-btn">Download log</button>
+      </div>
+      <div id="status">no file open</div>
+    </div>
+    <div id="body">
+      <div id="tree-panel">
+        <div id="tree"></div>
+        <button id="add-node-btn" disabled>+ add node</button>
+        <button id="delete-node-btn" disabled>delete node</button>
+      </div>
+      <div id="main-panel">
+        <div id="tabs">
+          <button data-tab="rules" aria-selected="true">Rules</button>
+          <button data-tab="node" aria-selected="false">Node</button>
+          <button data-tab="state" aria-selected="false">State</button>
+        </div>
+        <div class="tab-content active" id="tab-rules">
+          <div id="rule-list"></div>
+          <button id="add-rule-btn" disabled>+ add rule</button>
+          <div id="rule-editor-panel"></div>
+        </div>
+        <div class="tab-content" id="tab-node">
+          <div id="node-panel"></div>
+        </div>
+        <div class="tab-content" id="tab-state">
+          <div id="state-panel"></div>
+        </div>
+        <div id="warnings"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
