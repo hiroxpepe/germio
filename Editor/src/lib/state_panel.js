@@ -16,16 +16,17 @@ function parse_value(category, raw) {
 export function render_state_panel(container, state, on_change) {
     container.innerHTML = `
     <div>
-      <label>current_node <input type="text" data-field="current_node" value="${escape_attr(state.current_node || '')}" /></label>
-      <button data-action="save-current-node">save</button>
+      <label>current_node</label>
+      <input type="text" data-field="current_node" value="${escape_attr(state.current_node || '')}" />
+      <button data-action="save-current-node">Save</button>
     </div>
     ${CATEGORIES.map(category => `
     <div>
-      <div>${category}</div>
+      <div class="section-label">${category}</div>
       <div data-list="${category}"></div>
       <input type="text" placeholder="key" data-add-key="${category}" />
       <input type="text" placeholder="value" data-add-value="${category}" />
-      <button data-action="add-${category}">+ add</button>
+      <button data-action="add-${category}">+ Add</button>
     </div>
   `).join('')}
   `;

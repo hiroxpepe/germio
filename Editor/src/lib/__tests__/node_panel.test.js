@@ -11,6 +11,14 @@ function sample_node() {
 }
 
 describe('render_node_panel', () => {
+    test('puts each field\'s label above its input, not inline beside it', () => {
+        const container = document.createElement('div');
+        render_node_panel(container, sample_node());
+        const scene_field = container.querySelector('[data-field="scene"]');
+        expect(scene_field.tagName).toBe('INPUT');
+        expect(scene_field.parentElement.tagName).not.toBe('LABEL');
+    });
+
     test('shows the node\'s own scene and name', () => {
         const container = document.createElement('div');
         render_node_panel(container, sample_node());

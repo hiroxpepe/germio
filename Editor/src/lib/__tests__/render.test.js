@@ -144,6 +144,20 @@ describe('render_rule_list', () => {
         expect(card.querySelector('.badge-request_notify')).not.toBeNull();
     });
 
+    test('shows the trigger and the command value as two separate pieces, not one long string', () => {
+        const container = document.createElement('div');
+        const node = {
+            id: 'level_1',
+            rules: [
+                { id: 'rule_a', trigger: 'vol_home', command: { request_notify: 'level_clear' }, once: true },
+            ],
+        };
+        render_rule_list(container, node, null);
+        const card = container.querySelector('[data-rule-id="rule_a"]');
+        expect(card.querySelector('[data-trigger]').textContent).toBe('vol_home');
+        expect(card.querySelector('[data-command-value]').textContent).toBe('level_clear');
+    });
+
     test('shows a plain message when the node has no rules yet', () => {
         const container = document.createElement('div');
         render_rule_list(container, { id: 'title', rules: [] }, null);

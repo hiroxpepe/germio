@@ -2,7 +2,6 @@
 // takes a plain data object and a container element, and only ever
 // writes into that container — no global state, no other side effect
 // — so each one can be checked on its own with jsdom.
-import { format_rule_summary } from './rule_summary.js';
 import { escape_html } from './escape.js';
 
 const COMMAND_KIND_FIELDS = [
@@ -15,6 +14,19 @@ function command_kind_badges(command) {
         .filter(kind => command[kind] !== undefined && command[kind] !== null)
         .map(kind => `<span class="badge badge-${kind}">${kind.replace('request_', '').replace('_', ' ')}</span>`)
         .join('');
+}
+
+// The first command field a rule actually has set, shown as the
+// card's own "value" — a rule combining more than one kind still
+// shows every kind as its own badge; this is only for the single
+// right-aligned value shown next to them.
+function main_command_value(command) {
+    for (const kind of COMMAND_KIND_FIELDS) {
+        if (command[kind] === undefined || command[kind] === null) continue;
+        const value = command[kind];
+        return typeof value === 'object' ? JSON.stringify(value) : String(value);
+    }
+    return '';
 }
 
 function walk_for_rows(node, depth, rows) {
@@ -102,7 +114,7 @@ export function render_tree(
 }
 
 /**
- * Renders one card per rule on the given node, using format_rule_summary
+ * Renders one card per rule on the given node: a colored badge per
  * for the card's own text. on_select, if given, is called with a
  * rule's id when its card is clicked.
  */
@@ -118,8 +130,9 @@ export function render_rule_list(container, node, selected_id, on_select) {
         const card = document.createElement('div');
         card.className = 'rule-card';
         card.dataset.ruleId = rule.id;
-        const badges = command_kind_badges(rule.command || {});
-        card.innerHTML = `${badges}<span>${escape_html(rule.id)}: ${escape_html(format_rule_summary(rule))}</span>`;
+        const command = rule.command || {};
+        const badges = command_kind_badges(command);
+        card.innerHTML = `${badges}<span data-trigger>${escape_html(rule.trigger)}</span><span data-command-value>${escape_html(main_command_value(command))}</span>`;
         card.setAttribute('aria-selected', rule.id === selected_id ? 'true' : 'false');
         if (on_select) card.addEventListener('click', () => on_select(rule.id));
         container.appendChild(card);

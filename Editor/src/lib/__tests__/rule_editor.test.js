@@ -85,6 +85,16 @@ describe('render_rule_editor', () => {
         expect(container.querySelector('[data-condition-error]').textContent).toContain('Unbalanced');
     });
 
+    test('puts a command-kind sub-field\'s label above its input, not inline beside it', () => {
+        const container = document.createElement('div');
+        render_rule_editor(container, sample_rule());
+        // set_flag is not enabled on sample_rule(), so turn it on first.
+        container.querySelector('[data-command-kind="set_flag"]').checked = true;
+        container.querySelector('[data-command-kind="set_flag"]').dispatchEvent(new Event('change'));
+        const key_field_after = container.querySelector('[data-kind-field="set_flag:key"]');
+        expect(key_field_after.parentElement.tagName).not.toBe('LABEL');
+    });
+
     test('fixing a broken condition and saving again works normally', () => {
         const container = document.createElement('div');
         let saved_rule = null;

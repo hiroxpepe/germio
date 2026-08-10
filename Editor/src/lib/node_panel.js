@@ -7,11 +7,20 @@ import { escape_attr } from './escape.js';
 
 export function render_node_panel(container, node, on_change) {
     container.innerHTML = `
-    <div><label>scene <input type="text" data-field="scene" value="${escape_attr(node.scene || '')}" /></label></div>
-    <div><label>name <input type="text" data-field="name" value="${escape_attr(node.name || '')}" /></label></div>
-    <button data-action="save-node">save node</button>
-    <div id="next-list"></div>
-    <button data-action="add-next">+ add next</button>
+    <div>
+      <label>scene</label>
+      <input type="text" data-field="scene" value="${escape_attr(node.scene || '')}" />
+    </div>
+    <div>
+      <label>name</label>
+      <input type="text" data-field="name" value="${escape_attr(node.name || '')}" />
+    </div>
+    <button data-action="save-node">Save node</button>
+    <div>
+      <label>next</label>
+      <div id="next-list"></div>
+      <button data-action="add-next">+ Add next</button>
+    </div>
   `;
 
     container.querySelector('[data-action="save-node"]').addEventListener('click', () => {

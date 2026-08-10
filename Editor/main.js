@@ -16,6 +16,7 @@ import { is_node_id_unique, is_rule_id_unique } from './src/lib/validation.js';
 import { write as log, get_all_text as log_text } from './src/lib/editor_log.js';
 
 const tree_el = document.getElementById('tree');
+const selected_node_name_el = document.getElementById('selected-node-name');
 const rule_list_el = document.getElementById('rule-list');
 const rule_editor_el = document.getElementById('rule-editor-panel');
 const node_panel_el = document.getElementById('node-panel');
@@ -161,6 +162,7 @@ function render() {
     );
 
     const node = selected_node_id ? find_node_by_id(selected_node_id) : scenario.root;
+    selected_node_name_el.textContent = node ? node.id : '';
 
     if (node) {
         render_rule_list(rule_list_el, node, selected_rule_id, (id) => {
@@ -170,6 +172,7 @@ function render() {
         });
 
         if (selected_rule_id) {
+            rule_editor_el.style.display = 'block';
             const rule = node.rules.find(r => r.id === selected_rule_id);
             render_rule_editor(
                 rule_editor_el, rule,
@@ -187,6 +190,7 @@ function render() {
                 scenario.initial_state
             );
         } else {
+            rule_editor_el.style.display = 'none';
             rule_editor_el.innerHTML = '';
         }
 

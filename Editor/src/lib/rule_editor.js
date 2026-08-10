@@ -24,15 +24,15 @@ const KIND_FIELDS = {
 function field_input(kind, field, current) {
     const value = current !== undefined ? current : '';
     if (field.type === 'checkbox') {
-        return `<label>${field.label} <input type="checkbox" data-kind-field="${kind}:${field.key}" ${value ? 'checked' : ''} /></label>`;
+        return `<label><input type="checkbox" data-kind-field="${kind}:${field.key}" ${value ? 'checked' : ''} /> ${field.label}</label>`;
     }
     if (field.type === 'select') {
         const options = field.options.map(o => `<option value="${escape_attr(o)}" ${o === value ? 'selected' : ''}>${o}</option>`).join('');
-        return `<label>${field.label} <select data-kind-field="${kind}:${field.key}">${options}</select></label>`;
+        return `<div><label>${field.label}</label><select data-kind-field="${kind}:${field.key}">${options}</select></div>`;
     }
     const value_attr = kind in { request_transition: 1, request_notify: 1 } && field.key === 'value'
         ? ` data-value-field="${kind}"` : '';
-    return `<label>${field.label} <input type="${field.type}" data-kind-field="${kind}:${field.key}"${value_attr} value="${escape_attr(value)}" /></label>`;
+    return `<div><label>${field.label}</label><input type="${field.type}" data-kind-field="${kind}:${field.key}"${value_attr} value="${escape_attr(value)}" /></div>`;
 }
 
 export function render_rule_editor(container, rule, on_save, on_delete, known_state) {

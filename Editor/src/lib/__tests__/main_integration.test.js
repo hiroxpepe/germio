@@ -35,6 +35,7 @@ beforeEach(() => {
     <button id="add-rule-btn" disabled>+ add rule</button>
     <div id="status"></div>
     <div id="tree"></div>
+    <div id="selected-node-name"></div>
     <div id="tabs">
       <button data-tab="rules" aria-selected="true">Rules</button>
       <button data-tab="node" aria-selected="false">Node</button>
@@ -83,6 +84,22 @@ describe('main.js, wired end to end through a real (jsdom) page', () => {
         expect(document.getElementById('add-rule-btn').disabled).toBe(false);
     });
 
+    test('shows the selected node\'s own id in the main panel header', async () => {
+        const fake_file = { text: () => Promise.resolve(sample_json_text()) };
+        const fake_handle = { getFile: () => Promise.resolve(fake_file) };
+        window.showOpenFilePicker = vi.fn().mockResolvedValue([fake_handle]);
+
+        vi.resetModules();
+        await import('../../../main.js');
+        document.getElementById('open-btn').click();
+        await new Promise((r) => setTimeout(r, 0));
+        await new Promise((r) => setTimeout(r, 0));
+
+        document.querySelector('[data-node-id="levels"]').click();
+
+        expect(document.getElementById('selected-node-name').textContent).toBe('levels');
+    });
+
     test('selecting the node with a rule shows that rule\'s card', async () => {
         const fake_file = { text: () => Promise.resolve(sample_json_text()) };
         const fake_handle = { getFile: () => Promise.resolve(fake_file) };
@@ -98,6 +115,21 @@ describe('main.js, wired end to end through a real (jsdom) page', () => {
         const rule_card = document.querySelector('[data-rule-id="rule_a"]');
         expect(rule_card).not.toBeNull();
         expect(rule_card.textContent).toContain('level_clear');
+    });
+
+    test('the rule editor panel is fully hidden, not just empty, when no rule is selected', async () => {
+        const fake_file = { text: () => Promise.resolve(sample_json_text()) };
+        const fake_handle = { getFile: () => Promise.resolve(fake_file) };
+        window.showOpenFilePicker = vi.fn().mockResolvedValue([fake_handle]);
+
+        vi.resetModules();
+        await import('../../../main.js');
+        document.getElementById('open-btn').click();
+        await new Promise((r) => setTimeout(r, 0));
+        await new Promise((r) => setTimeout(r, 0));
+
+        const panel = document.getElementById('rule-editor-panel');
+        expect(panel.style.display).toBe('none');
     });
 
     test('a real problem in the file shows up as a warning row', async () => {
