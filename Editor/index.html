@@ -5,47 +5,87 @@
 <title>germio.json editor</title>
 <style>
   :root {
-    --window: #c2c2c2; --panel: #cbcbcb; --field: #ffffff; --header: #bcbcbc;
-    --line: #939393; --line-soft: #b0b0b0; --text: #1a1a1a; --dim: #5b5b5b;
-    --accent: #3a72b0;
+    --surface-0: #f7f7f5; --surface-1: #ffffff; --surface-2: #f1f1ef;
+    --border: #e4e4e0; --border-strong: #d0d0cb;
+    --text-primary: #1a1a18; --text-secondary: #6b6b65; --text-muted: #9a9a93;
+    --accent: #2f6fb3; --accent-bg: #e8f0f9; --accent-border: #2f6fb3;
+    --success: #1f8a5f; --success-bg: #e6f4ec;
+    --warning: #a3690f; --warning-bg: #faf1e0;
+    --danger: #c23b3b; --danger-bg: #fbeaea;
+    --radius: 8px;
+    --font-sans: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", "JetBrains Mono", Consolas, "Cascadia Code", monospace;
   }
   body {
-    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 12px; margin: 12px; background: #f0f0f0; color: var(--text);
+    font-family: var(--font-sans); font-size: 13px; color: var(--text-primary);
+    margin: 1.5rem; background: var(--surface-0);
   }
-  #app { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; max-width: 960px; }
+  #app { max-width: 980px; }
+  button {
+    border-radius: var(--radius); border: 0.5px solid var(--border-strong);
+    background: var(--surface-1); color: var(--text-primary);
+    padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 13px;
+  }
+  button:hover { background: var(--surface-2); }
+  button:disabled { opacity: 0.4; cursor: default; }
+  input, select {
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius);
+    font-family: inherit; font-size: 13px; padding: 5px 8px; background: var(--surface-1);
+    color: var(--text-primary);
+  }
   #topbar {
-    display: flex; align-items: center; justify-content: space-between; height: 28px;
-    padding: 0 8px; background: var(--header); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.75rem 1.25rem; background: var(--surface-1);
+    border: 0.5px solid var(--border); border-radius: 12px 12px 0 0; border-bottom: none;
   }
-  button { border-radius: 4px; border: 1px solid var(--line); background: linear-gradient(#e8e8e8, #d2d2d2); padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 12px; }
-  input, select { border: 1px solid var(--line); border-radius: 2px; font-family: inherit; font-size: 12px; padding: 1px 3px; }
-  #status { font-size: 11px; color: var(--dim); }
-  #body { display: grid; grid-template-columns: 200px 1fr; background: var(--window); min-height: 420px; }
-  #tree-panel { border-right: 1px solid var(--line); padding: 4px; }
-  #tree > div { padding: 3px 6px; cursor: pointer; border-radius: 3px; margin-bottom: 1px; display: flex; align-items: center; gap: 4px; justify-content: space-between; }
-  #tree > div[aria-selected="true"] { background: var(--accent); color: #fff; }
-  #tree > div button { padding: 0 4px; font-size: 10px; }
-  #main-panel { padding: 8px; }
-  #tabs { display: flex; gap: 4px; margin-bottom: 8px; }
-  #tabs button[aria-selected="true"] { background: var(--accent); color: #fff; }
+  #status { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  #status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block; }
+  #body {
+    display: grid; grid-template-columns: 1.2fr 1fr;
+    border: 0.5px solid var(--border); border-radius: 0 0 12px 12px; overflow: hidden;
+    background: var(--surface-1);
+  }
+  #tree-panel { border-right: 0.5px solid var(--border); }
+  #tree[role="tree"] { padding: 4px 0; }
+  .node-row {
+    padding: 8px 20px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    border-bottom: 0.5px solid var(--border); font-family: var(--font-mono); font-size: 13px;
+  }
+  .node-row[aria-selected="true"] { background: var(--accent-bg); color: var(--accent); }
+  .node-row button { padding: 1px 5px; font-size: 11px; border-radius: 5px; }
+  #tree-panel > button { margin: 10px 20px; }
+  #main-panel { padding: 1.125rem 1.25rem; }
+  #tabs button { font-size: 13px; margin-right: 4px; }
+  #tabs button[aria-selected="true"] { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  #rule-list > div { background: #fff; border: 1px solid var(--line-soft); border-radius: 3px; padding: 5px 8px; margin-bottom: 4px; cursor: pointer; }
-  #rule-list > div[aria-selected="true"] { outline: 1px solid var(--accent); }
-  #rule-editor-panel { border-top: 1px solid var(--line-soft); margin-top: 8px; padding-top: 8px; }
-  #warnings { margin-top: 8px; }
-  #warnings > div { font-size: 11px; padding: 3px 6px; border-radius: 3px; margin-bottom: 2px; }
-  .level-error { background: #f7d7d7; }
-  .level-warning { background: #f7ecc0; }
-  #command-kinds > div { margin-bottom: 4px; }
+  .rule-card {
+    background: var(--surface-2); border-radius: var(--radius); padding: 8px 12px;
+    margin-bottom: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 12px;
+    color: var(--text-secondary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .rule-card[aria-selected="true"] { box-shadow: 0 0 0 1.5px var(--accent); }
+  .badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 5px; text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .badge-request_transition, .badge-set_persistence { background: var(--accent-bg); color: var(--accent); }
+  .badge-request_notify, .badge-record_event { background: var(--success-bg); color: var(--success); }
+  .badge-set_flag, .badge-update_counter, .badge-update_inventory { background: var(--warning-bg); color: var(--warning); }
+  #rule-editor-panel { background: var(--surface-2); border-radius: var(--radius); padding: 1rem 1.125rem; margin-top: 0.75rem; }
+  #rule-editor-panel label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  #rule-editor-panel input { font-family: var(--font-mono); width: 100%; box-sizing: border-box; }
+  #command-kinds > div { margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #warnings { margin-top: 1rem; }
+  .level-Error { background: var(--danger-bg); color: var(--danger); padding: 4px 8px; border-radius: 5px; font-size: 12px; margin-bottom: 3px; }
+  .level-Warning { background: var(--warning-bg); color: var(--warning); padding: 4px 8px; border-radius: 5px; font-size: 12px; margin-bottom: 3px; }
 </style>
 </head>
 <body>
   <div id="app">
     <div id="topbar">
       <div>
-        <button id="open-btn">Open germio.json</button>
+        <button id="open-btn"><i></i>Open germio.json</button>
         <button id="save-btn" disabled>Save</button>
         <button id="undo-btn" disabled>Undo</button>
         <button id="copy-log-btn">Copy log</button>

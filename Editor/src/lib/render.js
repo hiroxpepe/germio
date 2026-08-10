@@ -3,6 +3,19 @@
 // writes into that container — no global state, no other side effect
 // — so each one can be checked on its own with jsdom.
 import { format_rule_summary } from './rule_summary.js';
+import { escape_html } from './escape.js';
+
+const COMMAND_KIND_FIELDS = [
+    'set_flag', 'update_counter', 'update_inventory',
+    'request_transition', 'request_notify', 'set_persistence', 'record_event',
+];
+
+function command_kind_badges(command) {
+    return COMMAND_KIND_FIELDS
+        .filter(kind => command[kind] !== undefined && command[kind] !== null)
+        .map(kind => `<span class="badge badge-${kind}">${kind.replace('request_', '').replace('_', ' ')}</span>`)
+        .join('');
+}
 
 function walk_for_rows(node, depth, rows) {
     rows.push({ id: node.id, depth });
@@ -102,8 +115,10 @@ export function render_rule_list(container, node, selected_id, on_select) {
     }
     for (const rule of node.rules) {
         const card = document.createElement('div');
+        card.className = 'rule-card';
         card.dataset.ruleId = rule.id;
-        card.textContent = `${rule.id}: ${format_rule_summary(rule)}`;
+        const badges = command_kind_badges(rule.command || {});
+        card.innerHTML = `${badges}<span>${escape_html(rule.id)}: ${escape_html(format_rule_summary(rule))}</span>`;
         card.setAttribute('aria-selected', rule.id === selected_id ? 'true' : 'false');
         if (on_select) card.addEventListener('click', () => on_select(rule.id));
         container.appendChild(card);

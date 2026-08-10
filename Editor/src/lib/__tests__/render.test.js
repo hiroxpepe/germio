@@ -124,6 +124,19 @@ describe('render_rule_list', () => {
         expect(card.textContent).toContain('level_clear');
     });
 
+    test('gives each rule card a colored badge per command kind it uses', () => {
+        const container = document.createElement('div');
+        const node = {
+            id: 'level_1',
+            rules: [
+                { id: 'rule_a', trigger: 'vol_home', command: { request_notify: 'level_clear' }, once: true },
+            ],
+        };
+        render_rule_list(container, node, null);
+        const card = container.querySelector('[data-rule-id="rule_a"]');
+        expect(card.querySelector('.badge-request_notify')).not.toBeNull();
+    });
+
     test('shows a plain message when the node has no rules yet', () => {
         const container = document.createElement('div');
         render_rule_list(container, { id: 'title', rules: [] }, null);
