@@ -9,7 +9,7 @@
  * valid JSON at all.
  */
 export function parse_scenario(json_text) {
-  return JSON.parse(json_text);
+    return JSON.parse(json_text);
 }
 
 /**
@@ -18,10 +18,10 @@ export function parse_scenario(json_text) {
  * (schema_version, then initial_state, then root).
  */
 export function serialize_scenario(scenario) {
-  const ordered = {
-    schema_version: scenario.schema_version,
-    initial_state: scenario.initial_state,
-    root: scenario.root,
-  };
-  return JSON.stringify(ordered, null, 2);
+    const ordered = {
+        schema_version: scenario.schema_version,
+        initial_state: scenario.initial_state,
+        root: scenario.root,
+    };
+    return JSON.stringify(ordered, null, 2);
 }

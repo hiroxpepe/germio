@@ -6,14 +6,14 @@
 // of value="..." to add its own onfocus="..." attribute, say).
 
 export function escape_html(text) {
-  return String(text)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 export function escape_attr(text) {
-  return escape_html(text)
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    return escape_html(text)
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }

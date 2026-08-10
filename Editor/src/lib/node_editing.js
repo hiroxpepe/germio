@@ -9,13 +9,13 @@
  * node_id set to value. Every other node is left as it was.
  */
 export function update_node_field(root, node_id, field, value) {
-  if (root.id === node_id) {
-    return { ...root, [field]: value };
-  }
-  return {
-    ...root,
-    children: root.children.map(child => update_node_field(child, node_id, field, value)),
-  };
+    if (root.id === node_id) {
+        return { ...root, [field]: value };
+    }
+    return {
+        ...root,
+        children: root.children.map(child => update_node_field(child, node_id, field, value)),
+    };
 }
 
 /**
@@ -23,10 +23,10 @@ export function update_node_field(root, node_id, field, value) {
  * is one of "flags", "counters", "inventory", "persistence".
  */
 export function set_state_entry(state, category, key, value) {
-  return {
-    ...state,
-    [category]: { ...state[category], [key]: value },
-  };
+    return {
+        ...state,
+        [category]: { ...state[category], [key]: value },
+    };
 }
 
 /**
@@ -34,9 +34,9 @@ export function set_state_entry(state, category, key, value) {
  * category, leaving every other key untouched.
  */
 export function remove_state_entry(state, category, key) {
-  const updated_category = { ...state[category] };
-  delete updated_category[key];
-  return { ...state, [category]: updated_category };
+    const updated_category = { ...state[category] };
+    delete updated_category[key];
+    return { ...state, [category]: updated_category };
 }
 
 /**
@@ -44,12 +44,12 @@ export function remove_state_entry(state, category, key) {
  * its own next[] array.
  */
 export function add_next_entry(node, id, condition) {
-  return { ...node, next: [...node.next, { id, condition }] };
+    return { ...node, next: [...node.next, { id, condition }] };
 }
 
 /**
  * Returns a new node with the next[] entry at the given index removed.
  */
 export function remove_next_entry(node, index) {
-  return { ...node, next: node.next.filter((_, i) => i !== index) };
+    return { ...node, next: node.next.filter((_, i) => i !== index) };
 }

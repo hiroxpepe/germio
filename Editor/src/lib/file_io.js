@@ -13,27 +13,27 @@
  * fallback (a plain File object cannot be written back to).
  */
 export async function open_file() {
-  if (window.showOpenFilePicker) {
-    const [handle] = await window.showOpenFilePicker();
-    const file = await handle.getFile();
-    const text = await file.text();
-    return { text, handle };
-  }
+    if (window.showOpenFilePicker) {
+        const [handle] = await window.showOpenFilePicker();
+        const file = await handle.getFile();
+        const text = await file.text();
+        return { text, handle };
+    }
 
-  return new Promise((resolve) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
-    input.style.display = 'none';
-    document.body.appendChild(input);
-    input.addEventListener('change', async () => {
-      const file = input.files[0];
-      const text = await file.text();
-      document.body.removeChild(input);
-      resolve({ text, handle: null });
+    return new Promise((resolve) => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+        input.addEventListener('change', async () => {
+            const file = input.files[0];
+            const text = await file.text();
+            document.body.removeChild(input);
+            resolve({ text, handle: null });
+        });
+        input.click();
     });
-    input.click();
-  });
 }
 
 /**
@@ -45,27 +45,27 @@ export async function open_file() {
  * downloaded file has no handle to write back to later).
  */
 export async function save_file(text, handle) {
-  if (handle) {
-    const writable = await handle.createWritable();
-    await writable.write(text);
-    await writable.close();
-    return handle;
-  }
+    if (handle) {
+        const writable = await handle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        return handle;
+    }
 
-  if (window.showSaveFilePicker) {
-    const new_handle = await window.showSaveFilePicker();
-    const writable = await new_handle.createWritable();
-    await writable.write(text);
-    await writable.close();
-    return new_handle;
-  }
+    if (window.showSaveFilePicker) {
+        const new_handle = await window.showSaveFilePicker();
+        const writable = await new_handle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        return new_handle;
+    }
 
-  const blob = new Blob([text], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'germio.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  return null;
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'germio.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    return null;
 }

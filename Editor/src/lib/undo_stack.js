@@ -5,21 +5,21 @@
 // works in most everyday editors.
 
 export function create_undo_stack() {
-  const snapshots = [];
-  let position = -1;
+    const snapshots = [];
+    let position = -1;
 
-  return {
-    push(snapshot) {
-      snapshots.length = position + 1;
-      snapshots.push(snapshot);
-      position = snapshots.length - 1;
-    },
-    can_undo() {
-      return position > 0;
-    },
-    undo() {
-      position -= 1;
-      return snapshots[position];
-    },
-  };
+    return {
+        push(snapshot) {
+            snapshots.length = position + 1;
+            snapshots.push(snapshot);
+            position = snapshots.length - 1;
+        },
+        can_undo() {
+            return position > 0;
+        },
+        undo() {
+            position -= 1;
+            return snapshots[position];
+        },
+    };
 }

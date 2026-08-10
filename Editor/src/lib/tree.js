@@ -8,12 +8,12 @@
  * node itself, or null if no node in the tree has that id.
  */
 export function find_node(root, id) {
-  if (root.id === id) return root;
-  for (const child of root.children) {
-    const found = find_node(child, id);
-    if (found !== null) return found;
-  }
-  return null;
+    if (root.id === id) return root;
+    for (const child of root.children) {
+        const found = find_node(child, id);
+        if (found !== null) return found;
+    }
+    return null;
 }
 
 /**
@@ -21,13 +21,13 @@ export function find_node(root, id) {
  * child, a grandchild, and so on). A node is never its own descendant.
  */
 export function is_descendant(root, ancestor_id, candidate_id) {
-  const ancestor = find_node(root, ancestor_id);
-  if (ancestor === null) return false;
-  for (const child of ancestor.children) {
-    if (child.id === candidate_id) return true;
-    if (is_descendant(root, child.id, candidate_id)) return true;
-  }
-  return false;
+    const ancestor = find_node(root, ancestor_id);
+    if (ancestor === null) return false;
+    for (const child of ancestor.children) {
+        if (child.id === candidate_id) return true;
+        if (is_descendant(root, child.id, candidate_id)) return true;
+    }
+    return false;
 }
 
 /**
@@ -38,28 +38,28 @@ export function is_descendant(root, ancestor_id, candidate_id) {
  * Returns a brand new tree; the one passed in is never changed.
  */
 export function move_node(root, node_id, new_parent_id) {
-  if (is_descendant(root, node_id, new_parent_id) || node_id === new_parent_id) {
-    throw new Error(
-      `moving '${node_id}' under '${new_parent_id}' would create a loop`
-    );
-  }
-  const moving_node = find_node(root, node_id);
-
-  function remove_from(node) {
-    return {
-      ...node,
-      children: node.children
-        .filter(c => c.id !== node_id)
-        .map(remove_from),
-    };
-  }
-
-  function add_to(node) {
-    if (node.id === new_parent_id) {
-      return { ...node, children: [...node.children, moving_node] };
+    if (is_descendant(root, node_id, new_parent_id) || node_id === new_parent_id) {
+        throw new Error(
+            `moving '${node_id}' under '${new_parent_id}' would create a loop`
+        );
     }
-    return { ...node, children: node.children.map(add_to) };
-  }
+    const moving_node = find_node(root, node_id);
 
-  return add_to(remove_from(root));
+    function remove_from(node) {
+        return {
+            ...node,
+            children: node.children
+                .filter(c => c.id !== node_id)
+                .map(remove_from),
+        };
+    }
+
+    function add_to(node) {
+        if (node.id === new_parent_id) {
+            return { ...node, children: [...node.children, moving_node] };
+        }
+        return { ...node, children: node.children.map(add_to) };
+    }
+
+    return add_to(remove_from(root));
 }

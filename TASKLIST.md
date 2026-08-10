@@ -422,8 +422,38 @@ whoever picks it up checks it off (`- [x]`) and commits the diff.
     + [ ] 6-3: `role="tree"`, `role="treeitem"`, `aria-expanded`,
           and the rest of the ARIA a real tree needs.
 
-    **Where this stands**: a design mock only, shown and agreed on in
-    chat. No real code for this tool has been written yet.
+    **Where this stands**: built and working, at `Editor/` in this
+    repo, with a Vitest test suite (144 tests) covering the pure logic
+    in `src/lib/`, plus real end-to-end integration tests that load
+    the actual `main.js` in a jsdom page and drive it through the
+    open/select/edit/save/undo flow. Every phase (0 through 6) and
+    every task under them is done; V009 (a true DSL parse check)
+    stays out of scope on purpose, replaced by a light,
+    best-effort sanity check in `condition_syntax.js`. A late pass
+    also found and fixed a real XSS hole (every user-supplied string
+    from the loaded file is now escaped before it ever touches
+    innerHTML) and a real risk of committing the whole `node_modules`
+    folder (a missing `.gitignore`, now added). Not yet done in
+    person: an actual look at it running in a real browser — every
+    check above ran through jsdom, never a true browser window.
+
+    **How to run it**: `Editor/` ships as part of germio itself, so it
+    reaches a game repo (stemic, flugi, tropika) the same way the rest
+    of germio's own Scripts do — through the git submodule at
+    `game/Assets/Plugins/Germio/`. From that path:
+
+        cd game/Assets/Plugins/Germio/Editor
+        npm install
+        npm run dev
+
+    Then open the printed `http://localhost` address in a browser, and
+    use the "Open germio.json" button to browse to the real file for
+    that game — for stemic, that is
+    `game/Assets/StreamingAssets/germio.json`, three directories up
+    from `Editor/` itself. ES modules, the File System Access API, and
+    the Clipboard API all need a real server behind `http://`, not a
+    plain double-clicked `file://` page — `npm run dev` is what gives
+    that.
 
 + [ ] **Move germio from a git submodule to a Unity Package (a git URL
       in the Package Manager)**: right now, every game repo (stemic,

@@ -5,8 +5,8 @@
 // unchanged id as a false duplicate.
 
 function collect_node_ids(node, ids) {
-  ids.push(node.id);
-  for (const child of node.children) collect_node_ids(child, ids);
+    ids.push(node.id);
+    for (const child of node.children) collect_node_ids(child, ids);
 }
 
 /**
@@ -15,9 +15,9 @@ function collect_node_ids(node, ids) {
  * existing node) so the node is not flagged as a duplicate of itself.
  */
 export function is_node_id_unique(root, id, excluding_id = null) {
-  const ids = [];
-  collect_node_ids(root, ids);
-  return !ids.some(existing_id => existing_id === id && existing_id !== excluding_id);
+    const ids = [];
+    collect_node_ids(root, ids);
+    return !ids.some(existing_id => existing_id === id && existing_id !== excluding_id);
 }
 
 /**
@@ -25,5 +25,5 @@ export function is_node_id_unique(root, id, excluding_id = null) {
  * node. A rule id on a different node never counts as a duplicate.
  */
 export function is_rule_id_unique(node, id, excluding_id = null) {
-  return !node.rules.some(rule => rule.id === id && rule.id !== excluding_id);
+    return !node.rules.some(rule => rule.id === id && rule.id !== excluding_id);
 }
