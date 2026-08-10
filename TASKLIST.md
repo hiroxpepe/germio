@@ -343,61 +343,84 @@ whoever picks it up checks it off (`- [x]`) and commits the diff.
     Visual Studio (VB6-era) RAD tool — a label-and-value table with
     alternating row colors.
 
-    **A first mock was shown and checked over 15 points.** None of the
-    15 are fixed yet — this whole entry exists to hold the fix plan
-    for later work:
+    **A first mock was shown and checked over 15 points.** A flat list
+    of 15 mixed big and small jobs with no order was not a good split,
+    since some jobs depend on others and some are far bigger than
+    others. The work is now split into phases, each phase built on the
+    one before it, and each phase split into small, concrete tasks:
 
-    1. no real file open/save yet — plan: the File System Access API
-       (`showOpenFilePicker` / `showSaveFilePicker`), with a plain
-       `<input type="file">` and a download link as a fallback for
-       browsers that lack it.
-    2. no screen for `initial_state` (`flags`, `counters`, `inventory`,
-       `persistence`) — plan: a "State" tab at the top of the left
-       panel, each kind as a list plus an add-row form.
-    3. no screen for `Node.next` (the hint-only transition list) —
-       plan: a "Next" block in the Node's own property grid, each row
-       holding an `id` and a `condition`.
-    4. no link to the Validator at all — plan: port the V001-V027
-       checks to JavaScript (or run the real `Validator.cs` compiled
-       to WASM) and run them on every change, showing warnings inline.
-    5. one flat "value" field cannot hold what every command kind
-       really needs (`set_flag` needs a key AND a bool, `update_counter`
-       needs a key AND a delta AND an op) — plan: swap the form shape
-       itself based on the chosen command kind.
-    6. only one command kind can be picked at a time, but a real Rule
-       can hold more than one at once — plan: turn the command picker
-       into a checklist; each checked kind shows its own small form.
-    7. the Node's own fields (`scene`, `name`) cannot be edited at all
-       — plan: add a "Node" block pinned above the Rule list in the
-       property grid.
-    8. a rule card does not show `once` without opening the full
-       editor — plan: add a small badge for it next to the existing
-       `trigger -> command` line on the card itself.
-    9. the tree uses a flat `parent` pointer that does not match
-       germio's real, nested `children` array, and carries no check
-       for a loop (the real V026 rule) — plan: rebuild the tree data
-       around real nested `children`, and block a drop that would
-       create a loop.
-    10. a new Node or Rule gets a random id with no duplicate check —
-        plan: check against every existing `Node.id` (must be unique
-        across the whole file) and `Rule.id` (must be unique inside
-        its own Node) before the add is allowed to go through.
-    11. a Node with a real problem (e.g. V021: a leaf node with no
-        `scene`) shows no warning mark at all — plan: a small warning
-        icon on that Node's own row in the tree, click for detail.
-    12. no undo — plan: keep a stack of full-file snapshots, one per
-        change, with a button (or Ctrl+Z) to step back one.
-    13. only 3 of the 10 `Command` fields can be picked at all — plan:
-        add the rest (`update_counter`, `update_inventory`,
-        `set_persistence`, `record_event`, the three `reset_*` flags)
-        to the same checklist from point 6.
-    14. the `condition` field is a bare text box, with no DSL help at
-        all — plan: autocomplete known keys after typing `flags.` /
-        `counters.` / `inventory.`, and run a small parser before save
-        that flags a broken condition the same way V009 would.
-    15. drag-and-drop reordering only works with a mouse — plan: add
-        up/down/indent/outdent buttons on each tree row, so the same
-        moves work from a keyboard or a touch screen.
+  + [ ] **Phase 0 — the base: real nested data.** Every later phase
+          leans on this one.
+    + [ ] 0-1: rebuild the tree's own data around germio's real,
+          nested `children: []` array, not a flat `parent` pointer.
+    + [ ] 0-2: redraw the tree by walking `children` on its own.
+    + [ ] 0-3: redo drag-and-drop to add the dragged Node straight
+          into the drop target's own `children`.
+    + [ ] 0-4: before a drop is allowed, check the drop target is
+          not a descendant of the dragged Node itself (the same
+          loop check as the real V026 rule); block the drop if it
+          is.
+  + [ ] **Phase 1 — read and write a real file.**
+    + [ ] 1-1: open a file with `showOpenFilePicker`, for browsers
+          that support it.
+    + [ ] 1-2: a fallback open path with a plain
+          `<input type="file">`, for browsers that do not.
+    + [ ] 1-3: parse the read text into the Phase 0 data shape.
+    + [ ] 1-4: save back to the same file with
+          `showSaveFilePicker`, for browsers that support it.
+    + [ ] 1-5: a fallback save path with a plain download link.
+    + [ ] 1-6: turn the data shape back into germio.json's own
+          exact field order and types.
+  + [ ] **Phase 2 — widen what can be edited.**
+    + [ ] 2-1: check a new or renamed `Node.id` is unique across
+          the whole file.
+    + [ ] 2-2: check a new or renamed `Rule.id` is unique inside
+          its own Node.
+    + [ ] 2-3: a Node property block (`scene`, `name`) pinned
+          above the Rule list.
+    + [ ] 2-4: a "State" tab: `flags`, `counters`, `inventory`, and
+          `persistence`, each as a list plus an add-row form.
+    + [ ] 2-5: a "Next" block in the Node's property grid, each
+          row holding an `id` and a `condition`.
+    + [ ] 2-6: a small `once: true/false` badge on each rule card.
+  + [ ] **Phase 3 — a real Command editor (more than one kind at
+          once).**
+    + [ ] 3-1: turn the single command-kind picker into a
+          checklist; each checked kind shows its own small form.
+    + [ ] 3-2: a `set_flag` form (a key, plus a bool).
+    + [ ] 3-3: an `update_counter` form (a key, a delta, an op).
+    + [ ] 3-4: an `update_inventory` form (a key, a delta).
+    + [ ] 3-5: a `request_transition` / `request_notify` form (one
+          plain string each).
+    + [ ] 3-6: a `set_persistence` form (a key, plus a string
+          value).
+    + [ ] 3-7: a `record_event` form (a kind, a target_id).
+    + [ ] 3-8: a `reset_*` form (three bools: flags, counters,
+          inventory).
+    + [ ] 3-9: write out only the checked kinds into the Command
+          object on save.
+  + [ ] **Phase 4 — a safety net: undo.**
+    + [ ] 4-1: keep a stack of full-file JSON snapshots, one per
+          change made.
+    + [ ] 4-2: a button (and Ctrl+Z) that steps the stack back one
+          and redraws.
+  + [ ] **Phase 5 — link to the Validator (the biggest job here).**
+    + [ ] 5-1: pick how: hand-port the checks to JavaScript, or
+          compile the real `Validator.cs` to WASM and call it.
+    + [ ] 5-2: build all of V001-V027 under the picked way.
+    + [ ] 5-3: run every rule again after each change and keep the
+          results.
+    + [ ] 5-4: a small warning icon on a Node's own tree row when
+          it fails a rule, click for the detail.
+    + [ ] 5-5: autocomplete a known key right after typing
+          `flags.` / `counters.` / `inventory.` in a condition.
+    + [ ] 5-6: a small parser that flags a broken condition before
+          save, the same way V009 would.
+  + [ ] **Phase 6 — work without a mouse.**
+    + [ ] 6-1: up/down buttons on each tree row.
+    + [ ] 6-2: indent/outdent buttons on each tree row.
+    + [ ] 6-3: `role="tree"`, `role="treeitem"`, `aria-expanded`,
+          and the rest of the ARIA a real tree needs.
 
     **Where this stands**: a design mock only, shown and agreed on in
     chat. No real code for this tool has been written yet.
