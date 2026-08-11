@@ -506,3 +506,20 @@ form — a short form is put right in the code, and not kept here.
 + draft
 + basic
 + md
++ wish wishes
++ fair
++ honest honestly
++ plainly
++ reminder reminders
++ argue argues argued
++ leave leaves left leaving
++ mid
++ judgement judgements
++ layer layers
++ caller callers
++ sandbox sandboxes
++ device devices
++ runtime runtimes
++ develop develops developed developing
++ few
++ lay lays laid laying

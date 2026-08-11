@@ -348,6 +348,14 @@ files with `import` and `export`.
 
 **unmodified** — Not changed at all from how it first was.
 
+**TDD** — Short for "test-driven development": write a failing test
+first, then write the code that makes it pass.
+
+**roadmap** — A document that lays out a plan of work, in order, over
+time.
+
+## How to keep this list
+
 + One term, one sense. Give the sense in one place only — here.
 + Keep the sense in simple words, by the writing standard.
 + Add a term **before** it is first used in any document.

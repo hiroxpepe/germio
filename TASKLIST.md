@@ -12,6 +12,7 @@ the change in as a commit.
 + [x] TASK-004: Build a germio.json viewer and editor with no Unity (done)
 + [ ] TASK-005: Move germio to a Unity Package, off the git submodule
 + [ ] TASK-006: Put the rest of the docs into Basic English
++ [ ] TASK-007: Sync germio_roadmap.md's own state to the real code
 
 ## Detail
 
@@ -267,7 +268,7 @@ be true but never read from `Store`'s own real code, so
 for Daisenryaku only moves the whole problem into C#, it does not
 show `germio`'s own DSL saying anything about it. Both stand as
 open, real gaps against `germio`'s own claim that it works for
-any kind of game, in `framework_roadmap.md` §1.3 — put down here,
+any kind of game, in `germio_roadmap.md` §1.3 — put down here,
 not hidden away.
 
 **Why an `event`, and not a plain write of data**: `Executor` was
@@ -537,7 +538,7 @@ in this repository and in `stemic`, `flugi`, `tropika`, `briko`, `animo`,
 and `opinio`. The rest of the docs are not: `README.md`, `overview_EN.md`,
 and every file under `docs/` (`dsl_spec.md`, `mcp_spec.md`,
 `security_spec.md`, `naming_spec.md`, `llm_design_spec.md`,
-`llm_workflow_guide.md`, `framework_roadmap.md`, `save_data_spec.md`,
+`llm_workflow_guide.md`, `germio_roadmap.md`, `save_data_spec.md`,
 `dsl_cookbook.md`, `scene_code_sync_spec.md`) still fail the check, from
 tens of words to as many as 234 in one file.
 
@@ -548,3 +549,15 @@ real technical words (`Constructor`, `Destructor`, `Indexer`, `Operator`,
 to `tech_terms.md`, each with its own short sense, and not sit in
 `draft_words.md` with no sense given at all. This move needs the
 master's own GO first, word by word.
+
+### TASK-007
+
+`germio_roadmap.md` (2326 lines) holds both a record of real, done
+work and a plan for work still ahead, but its own last update was
+2026-05-04 — well before tonight's `request_notify` fix and the
+`germio.json` editor tool, and before that, a long stretch of other
+real work. Read through the document again, phase by phase, and mark
+each part done, still open, or no longer wanted, the way
+`animo_roadmap.md` and `docs/live_monitor_spec.md` were just brought
+up to date. Given the size of this document, split the work itself
+into a few smaller passes rather than one long one.
