@@ -86,3 +86,6 @@ vs.code-workspace.meta
 bin/
 obj/
 TestResults/
+# Markdown files are documentation, never a Unity-referenced asset;
+# no .meta for them is ever needed.
+*.md.meta
