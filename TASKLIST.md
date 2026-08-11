@@ -4,15 +4,15 @@ Work still open for this repository. Any person may put in a new
 item; the person who does the work marks it done (`+ [x]`) and puts
 the change in as a commit.
 
-<!-- format: v1 | fields: status, id, title -->
+<!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001: Build a Scene wiring checker and auto-fixer
-+ [ ] TASK-002: Add a timed event step-line to the DSL (play_sequence)
-+ [ ] TASK-003: Add Command.request_notify (built; a real playtest is still open)
-+ [x] TASK-004: Build a germio.json viewer and editor with no Unity (done)
-+ [ ] TASK-005: Move germio to a Unity Package, off the git submodule
-+ [ ] TASK-006: Put the rest of the docs into Basic English
-+ [ ] TASK-007: Sync germio_roadmap.md's own state to the real code
++ [ ] TASK-001 [PHASE-03]: Build a Scene wiring checker and auto-fixer
++ [ ] TASK-002 [PHASE-03]: Add a timed event step-line to the DSL (play_sequence)
++ [ ] TASK-003 [PHASE-03]: Add Command.request_notify (built; a real playtest is still open)
++ [x] TASK-004 [PHASE-03]: Build a germio.json viewer and editor with no Unity (done)
++ [ ] TASK-005 [PHASE-03]: Move germio to a Unity Package, off the git submodule
++ [ ] TASK-006 [PHASE-03]: Put the rest of the docs into Basic English
++ [ ] TASK-007 [PHASE-03]: Sync germio_roadmap.md's own state to the real code
 
 ## Detail
 

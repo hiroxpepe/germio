@@ -1,17 +1,8 @@
 #!/usr/bin/env node
-// CLI wrapper: node validate_tasklist_cli.js <TASKLIST.md path> <vocabulary dir> <tech_terms.md path>
-// The last two arguments are optional; if given, the file's own prose
-// is also checked against the shared Basic English word lists
-// (basic_words.md, plain_words.md, and the rest already used for
-// identifier naming, plus tech_terms.md), the same standard every
-// document in this repo family follows.
-//
-// A ROADMAP.md file, if found next to TASKLIST.md, is read too, and
-// every [PHASE-XX] tag in TASKLIST.md is checked against the real
-// phase ids it lists.
+// CLI wrapper: node validate_roadmap_cli.js <ROADMAP.md path> <vocabulary dir> <tech_terms.md path>
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { validate_tasklist } from './validate_tasklist.js';
+import { join } from 'node:path';
+import { validate_roadmap } from './validate_roadmap.js';
 import { load_vocabulary } from './load_vocabulary.js';
 import { check_basic_english } from './basic_english_check.js';
 
@@ -19,20 +10,12 @@ const path = process.argv[2];
 const vocab_dir = process.argv[3];
 const tech_terms_path = process.argv[4];
 if (!path) {
-  console.error('usage: node validate_tasklist_cli.js <path-to-TASKLIST.md> [vocabulary-dir] [tech_terms.md path]');
+  console.error('usage: node validate_roadmap_cli.js <path-to-ROADMAP.md> [vocabulary-dir] [tech_terms.md path]');
   process.exit(1);
 }
 
 const text = readFileSync(path, 'utf-8');
-
-let roadmap_phase_ids = null;
-const roadmap_path = join(dirname(path), 'ROADMAP.md');
-if (existsSync(roadmap_path)) {
-  const roadmap_text = readFileSync(roadmap_path, 'utf-8');
-  roadmap_phase_ids = [...roadmap_text.matchAll(/^\+ \[[ x~]\] (PHASE-\d{2}):/gm)].map(m => m[1]);
-}
-
-let errors = validate_tasklist(text, roadmap_phase_ids);
+let errors = validate_roadmap(text);
 
 if (vocab_dir && existsSync(vocab_dir)) {
   const vocab_files = readdirSync(vocab_dir)
@@ -46,7 +29,7 @@ if (vocab_dir && existsSync(vocab_dir)) {
 }
 
 if (errors.length > 0) {
-  console.error(`TASKLIST.md format errors in ${path}:`);
+  console.error(`ROADMAP.md format errors in ${path}:`);
   for (const error of errors) console.error(`  - ${error}`);
   console.error('');
   console.error('What to do next for a "not Basic English" line:');
@@ -65,4 +48,4 @@ if (errors.length > 0) {
   console.error('    a guess.');
   process.exit(1);
 }
-console.log(`${path}: TASKLIST.md format OK`);
+console.log(`${path}: ROADMAP.md format OK`);

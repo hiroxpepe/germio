@@ -354,6 +354,15 @@ first, then write the code that makes it pass.
 **roadmap** — A document that lays out a plan of work, in order, over
 time.
 
+**native** — Built right in, from the start, and not added on
+after.
+
+**dogfood** — To use one's own tool for real work, to find its own
+faults.
+
+**hardening** — Work put in to make a system stand up well to real,
+hard use.
+
 ## How to keep this list
 
 + One term, one sense. Give the sense in one place only — here.

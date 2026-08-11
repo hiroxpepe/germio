@@ -35,6 +35,13 @@ for file in $files; do
         exit 1
       fi
       ;;
+    ROADMAP.md)
+      node tools/validate_roadmap_cli.js "$file" "$VOCAB_DIR" "$TECH_TERMS_PATH"
+      if [ $? -ne 0 ]; then
+        echo "pre-commit: ROADMAP.md check failed on $file — commit blocked."
+        exit 1
+      fi
+      ;;
     *)
       node tools/basic_english_cli.js "$file" "$VOCAB_DIR" "$TECH_TERMS_PATH"
       if [ $? -ne 0 ]; then

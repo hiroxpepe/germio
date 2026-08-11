@@ -523,3 +523,7 @@ form — a short form is put right in the code, and not kept here.
 + develop develops developed developing
 + few
 + lay lays laid laying
++ spec specs
++ chart charts
++ play plays played playable
++ fault faults
