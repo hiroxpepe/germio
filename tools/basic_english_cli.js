@@ -33,7 +33,7 @@ if (errors.length > 0) {
   console.error('  - A plain English word: add it to draft_words.md in the');
   console.error('    same vocabulary folder. Stop there.');
   console.error('  - Never move a word from draft_words.md to');
-  console.error('    plain_words.md yourself. That move needs the');
+  console.error('    standard_words.md yourself. That move needs the');
   console.error('    master\'s own, direct GO, every time — not a rule an');
   console.error('    agent applies on its own, even when a word looks');
   console.error('    needed in more than one repository.');

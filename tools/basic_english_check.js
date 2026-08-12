@@ -1,6 +1,6 @@
 // Checks that a file's own prose (not its code, links, or markup)
 // only uses words from a given vocabulary — normally basic_words.md
-// plus a repo's own plain_words.md/tech_terms.md, the same
+// plus a repo's own standard_words.md/tech_terms.md, the same
 // vocabulary files ConventionRules.cs already uses for identifier
 // names, now applied to prose text instead.
 

@@ -2,7 +2,7 @@
 // CLI wrapper: node validate_tasklist_cli.js <TASKLIST.md path> <vocabulary dir> <tech_terms.md path>
 // The last two arguments are optional; if given, the file's own prose
 // is also checked against the shared Basic English word lists
-// (basic_words.md, plain_words.md, and the rest already used for
+// (basic_words.md, standard_words.md, and the rest already used for
 // identifier naming, plus tech_terms.md), the same standard every
 // document in this repo family follows.
 //
@@ -53,7 +53,7 @@ if (errors.length > 0) {
   console.error('  - A plain English word: add it to draft_words.md in the');
   console.error('    same vocabulary folder. Stop there.');
   console.error('  - Never move a word from draft_words.md to');
-  console.error('    plain_words.md yourself. That move needs the');
+  console.error('    standard_words.md yourself. That move needs the');
   console.error('    master\'s own, direct GO, every time — not a rule an');
   console.error('    agent applies on its own, even when a word looks');
   console.error('    needed in more than one repository.');

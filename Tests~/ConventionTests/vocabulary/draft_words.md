@@ -6,524 +6,453 @@ GO to are put into the shared word lists, and then taken out from here.
 A word here has to be a real word, said out in full, and not a short
 form — a short form is put right in the code, and not kept here.
 
-+ 2f
-+ abilities
-+ abort
-+ absolute
++ _default_local_position
++ _default_local_rotation
++ _horizontal_axis
++ _tab_count
++ _vertical_axis
 + acceleration
-+ accessor
-+ active
-+ aes
-+ align
-+ adjust adjusts adjusted adjusting
-+ already
-+ ancestor ancestors
-+ android
-+ anime
-+ args
-+ around
-+ asset assets
-+ assign assigns assigned assigning
-+ ast
-+ async
-+ attr
-+ axis
-+ azure
-+ backward
-+ beat
-+ bgm
-+ bus
-+ calculate calculates calculated calculating
-+ cancel
-+ candidate candidates
-+ cash
-+ circular
-+ climb climbs climbed climbing
-+ col
-+ code
-+ collect collects collected collecting
-+ column
-+ comma
-+ constraints
-+ consume
-+ container containers
-+ coroutine
-+ counter counters
-+ cs
-+ cutout
-+ cyan
-+ dashboard
-+ cycle
-+ decl
-+ decrypt
-+ delta
-+ depth
-+ descending
-+ despawn despawns despawned despawning
-+ diff
-+ differ differs differed differing
-+ difference differences
-+ dimension dimensions
-+ dir
-+ disable disables disabled disabling
-+ dispatch
-+ draft2020
-+ elapsed
-+ enc
-+ encrypt
-+ energy
-+ enums
-+ entity entities
-+ env
-+ eof
-+ eq
-+ err
-+ evaluator
-+ evt
-+ executor
-+ expect
-+ exporter exporters
-+ expr
-+ expression expressions
-+ extensions
-+ fps
-+ freeze
-+ func
-+ function functions
-+ gamepad
-+ grapher
-+ ground grounds
-+ grounded
-+ gt
-+ guid guids
-+ hierarchy hierarchies
-+ holdable
-+ human
-+ identifier
-+ idol
-+ importer importers
-+ indent
-+ initial
-+ inventory
-+ iv
-+ kv
-+ lbl
-+ ld
-+ lexer
-+ lime
-+ literal
-+ loader loaders
-+ lookup
-+ lt
-+ magenta
-+ mapper
-+ mcp
-+ mermaid
-+ mutated
-+ navigator
-+ negative
-+ normalize normalizes normalized normalizing
-+ num
-+ numeric
-+ obj
-+ once
-+ op
-+ opaque
-+ operand
-+ original
-+ output outputs
-+ panel panels
-+ paren
-+ parser parsers
-+ persistence
-+ pill
-+ platform platforms
-+ pos
-+ prefix
-+ previous
-+ project projects
-+ prop
-+ publish
-+ purple
-+ rb
-+ readable
-+ rec
-+ rect
-+ recursive
-+ ref
-+ references
-+ refs
-+ relative
-+ resolved
-+ rhs
-+ rotation rotations
-+ rx
-+ sanitize
-+ sb
-+ scan scans scanned scanning
-+ scenario
-+ scene scenes
-+ schema
-+ se
-+ se1
-+ semantic
-+ server
-+ session
-+ severity
-+ sfx
-+ signal
-+ similar
-+ since
-+ snap snaps snapped snapping
-+ snapper snappers
-+ snippet snippets
-+ sorter sorters
-+ spawn spawns spawned spawning
-+ speed
-+ sr
-+ stack
-+ structural
-+ sub
-+ subgraph
-+ success
-+ suggest
-+ suggested
-+ sw
-+ swap
-+ syncer
-+ synthetic
-+ team
-+ timestamp
-+ token tokens
-+ tokenize
-+ total
-+ track tracks tracked tracking
-+ transform
-+ transition transitions
-+ transparent
-+ trigger triggers triggered triggering
-+ two
-+ uc
-+ ui
-+ unary
-+ undefined
-+ utils
-+ val
-+ valid
-+ validate
-+ validation
-+ validator
-+ variant variants
-+ vault
-+ vector
-+ vehicle
-+ velocity
-+ vibrate
-+ vibration
-+ vibrator
-+ virtual
-+ visited
-+ warnings
-+ without
-+ writer writers
-+ zone zones
-
-+ agree agrees agreed
-+ agreed
-+ ahead
-+ alone
-+ along
-+ also
-+ always
-+ bold
-+ bomberman
-+ bool bools
-+ both
-+ browse browses
-+ browser browsers
-+ cannot
-+ commit commits committing committed
-+ committed
-+ content
-+ corner corners
-+ cross crosses crossed crossing
-+ daisenryaku
-+ download downloads
-+ dragon
-+ eat eats ate eaten eating
-+ entirely
-+ everything
-+ exact
-+ fail fails failed failing
-+ fast faster fastest
-+ final
-+ fine
-+ fit fits
-+ flugi
-+ game games
-+ goal goals
-+ grab grabs grabbed grabbing
-+ grow grows grew grown growing
-+ happen happens happened happening
-+ hear hears heard hearing
-+ inside
-+ just
-+ knowingly
-+ lean leans
-+ likely
-+ matter matters
-+ maybe
-+ mega
-+ miss misses
-+ missing
-+ module modules
-+ most
-+ neither
-+ nothing
-+ onto
-+ outside
-+ pac
-+ pay pays paid paying
-+ phase phases
-+ pick picks picked picking
-+ poll polls polled polling
-+ problem problems
-+ proper
-+ pure
-+ rather
-+ reach reaches reached reaching reachable
-+ redo redoes
-+ redraw redraws
-+ rename renames renamed renaming
-+ repo repos
-+ rework reworks reworked reworking
-+ risk risks
-+ row rows
-+ safety
-+ seventh
-+ shape shapes
-+ shaped
-+ sit sits sat sitting
-+ skip skips skipped skipping
-+ snapshot snapshots
-+ sonic
-+ soon
-+ spell spells spelled spelling
-+ spot spots
-+ stemic
-+ study studies studied studying
-+ suit suits
-+ super
-+ supply supplies supplied
-+ surface surfaces surfaced
-+ switch switches
-+ task tasks
-+ tokimeki
-+ tomb
-+ tonight
-+ tropika
-+ twice
-+ understanding
-+ unique
-+ untouched
-+ weak
-+ whether
-+ which
-+ whole
-+ win wins won winning
-+ worth
-+ ogden
-+ world worlds
-+ less
-+ feel feels felt feeling
-+ aim aims
-+ obey obeys
-+ unless
-+ everyday
-+ odd
-+ maker makers
-+ too
-+ english
-+ many
-+ today
-+ weigh weighs weighed weighing
-+ people
-+ standard standards
 + algorithm
 + alias
-+ apart
-+ appears
-+ belongs
-+ bend
++ align
++ alignafterhold
++ alignment
++ an
++ anchored
++ audio
++ authenticated
++ axis
++ badge
++ badges
++ blank
++ bold
++ bomberman
++ bools
++ browse
++ browsers
++ bug
++ bugs
++ builder
++ bytes
++ caller
 + camelcase
++ cannot
 + canonical
-+ caps
-+ clearly
-+ coding
-+ combinations
-+ comment
-+ comments
++ checkbox
++ clip
++ comma
 + commonly
-+ computes
 + consecutive
-+ constant
 + constructor
 + contiguous
-+ convention
-+ correct
++ counterop
++ daisenryaku
++ dashboard
 + declarations
-+ declare
++ decrypt
++ default
 + delegate
-+ depends
++ delta
++ despawn
 + destructor
 + directive
-+ disagree
++ directories
++ directory
 + divider
++ docs
++ dot
++ download
++ dragon
 + drift
-+ easier
-+ easiest
++ each_tab
++ eaten
 + ecosystem
-+ everywhere
-+ exactly
-+ expected
-+ explicit
-+ exposed
-+ external
-+ following
-+ four
-+ fourth
-+ gear
-+ grammar
-+ guessing
-+ helper
-+ hint
-+ immediately
-+ indexer
-+ indexers
-+ instant
-+ interfaces
-+ interleave
-+ inward
-+ keyword
-+ magazine
-+ meets
-+ modifier
-+ ness
-+ observed
-+ older
-+ omitted
-+ operator
-+ operators
-+ our
-+ ours
-+ outward
-+ participle
-+ payload
-+ piece
-+ plural
-+ priority
-+ ranks
-+ reappearing
-+ reordered
-+ require
-+ restyle
-+ ride
-+ riding
-+ scattered
-+ search
-+ section
-+ sections
-+ segment
-+ sheet
-+ slash
-+ slashes
-+ something
-+ steady
-+ strict
-+ technical
-+ tense
-+ unchecked
-+ unlabeled
-+ usings
-+ variable
-+ we
-+ whatever
-+ within
-+ agents
-+ anywhere
-+ area
-+ authenticated
-+ badly
-+ capital
-+ computer
-+ construction
-+ craft
-+ display
 + encrypted
 + encrypting
 + encryption
-+ extra
++ english
++ enums
++ evaluator
++ executor
++ exit
++ explicit
++ exporter
++ expr
++ flugi
 + foe
++ forward_vector
++ four
++ fourth
 + graph
-+ guess
-+ identity
++ grapher
++ hashing
++ header
++ helper
++ holdable
++ horizontal
++ icon
++ id
++ idle
++ indent
++ indexer
++ indexers
 + initialization
-+ judgment
-+ large
-+ larger
-+ lost
++ instant
++ interfaces
++ interleave
++ inventory
++ inward
++ its
++ judgement
++ keyword
++ knowingly
++ lexer
++ literal
++ loader
++ mapper
++ markdown
++ md
++ mega
++ mermaid
++ mid
++ modifier
++ navigator
++ ness
 + newer
 + newest
 + non
++ normalized
++ notify
++ obey
++ ogden
++ older
++ omitted
++ onzoneexit
++ op
++ opened
++ opening
++ our
++ ours
 + outer
++ outward
++ pac
++ pad
++ parameter
++ parameters
++ parse
++ parser
++ participle
 + password
-+ personal
++ payload
++ persistence
 + pkcs
-+ printable
-+ program
-+ programming
-+ programs
-+ proves
-+ someone
-+ stance
-+ tell
-+ telling
-+ tells
-+ terms
-+ tile
-+ tiny
-+ told
-+ toward
-+ trip
-+ tuned
-+ unchanged
-+ whoever
-+ docs
-+ ten tens
-+ hurry hurries hurried
-+ ones
-+ f
-+ draft
-+ basic
-+ md
-+ wish wishes
-+ fair
-+ honest honestly
 + plainly
-+ reminder reminders
-+ argue argues argued
-+ leave leaves left leaving
-+ mid
-+ judgement judgements
-+ layer layers
-+ caller callers
-+ sandbox sandboxes
-+ device devices
-+ runtime runtimes
-+ develop develops developed developing
-+ few
-+ lay lays laid laying
-+ spec specs
-+ chart charts
-+ play plays played playable
-+ fault faults
++ playable
++ plural
++ printable
++ programming
++ publish
++ readable
++ reappearing
++ rebuild
++ rebuilt
++ redo
++ redraw
++ redraws
++ reminders
++ renamed
++ reordered
++ repo
++ request_notify
++ reset
++ reset_counters
++ reset_flags
++ reset_inventory
++ resetlookaround
++ resetrotateview
++ restyle
++ reworked
++ rotate
++ rotateview
++ rotation
++ runtime
++ sandbox
++ scattered
++ scenario
++ schema
++ schema_version
++ script
++ scripting
++ set_persistence
++ setpersistence
++ seventh
++ shaped
++ shown
++ signal_id
++ skips
++ slash
++ slashes
++ snapshots
++ sonic
++ span
++ spec
++ spelled
++ stack
++ stance
++ stemic
++ styled
++ sub
++ super
++ surfaced
++ syncer
++ tab
++ tab_index
++ tabstate
++ tag
++ target_id
++ template
++ tens
++ tense
++ their
++ them
++ these
++ third
++ three
++ tile
++ token
++ tokimeki
++ tomb
++ tracked
++ tropika
++ two
++ typing
++ unchanged
++ unchecked
++ unlabeled
++ untouched
++ update_inventory
++ updateinventory
++ usings
++ validator
++ vault
++ vector
++ vertical
++ watcher
++ whoever
++ whose
++ widen
++ zone_id
++ _numeric_value
++ _operand
++ _prefix
++ accessor
++ accessornode
++ ast
++ cutout
++ despawned
++ diff
++ eq
++ eqeq
++ evaluategenericcomparison
++ evaluaterecursivewithhistory
++ execute
++ generic
++ genericcomparisonnode
++ getnumeric
++ gt
++ gteq
++ identifier
++ left_num
++ lt
++ max
++ max_entries
++ mutated
++ noteq
++ num
++ numeric
++ numericvalue
++ opaque
++ operand
++ prefix
++ recursive
++ rendering
++ renderingmode
++ right_num
++ timestamp
++ tokens
++ transparent
++ uc
++ ui
++ _idol
++ _pos
++ abort
++ abortjump
++ all_nodes
++ anime
++ backward
++ canbackward
++ col
++ coroutine
++ decl
++ eof
++ expecteof
++ fireresumed
++ fps
++ func
++ func_name
++ idol
++ initialize
++ initializestatecoroutine
++ ld
++ leftparen
++ node_decl
++ nodes
++ paren
++ parserhs
++ parseunaryexpr
++ pos
++ rb
++ render
++ rendernodetree
++ resumed
++ rhs
++ rightparen
++ sanitize
++ sb
++ sender
++ simpleanime
++ tokenize
++ unary
++ velocity
++ _disposed
++ _elapsed_time
++ _use_vibration
++ _use_virtual_controller
++ _virtual_controller_mode
++ ancestor
++ ancestor_list
++ ancestors
++ attr
++ controller
++ controller_names
++ dir
++ dispose
++ disposed
++ draft2020
++ elapsed
++ findancestorpath
++ fixrefs
++ gamepad
++ handlers
++ invoke
++ invokeafterready
++ invokeancestorhandlers
++ json_obj
++ lookup
++ mapgamepad
++ node_lookup
++ normalize
++ obj
++ output_dir
++ pending
++ pending_edges
++ prop
++ ref
++ ref_val
++ refs
++ schema_dir
++ settings
++ sfx
++ sfxclip
++ stopsfxclip
++ synthetic
++ synthetic_root
++ usevirtualcontroller
++ val
++ vibration
++ virtual
++ virtualcontrollermode
++ virtualcontrollerobject
++ _audio_source_bgm
++ _audio_source_se1
++ _bgm_beat_level_clip
++ _now_playing_clip_se1
++ _se_climb_clip
++ _se_grounded_clip
++ _se_item_clip
++ _se_jump_clip
++ _se_run_clip
++ _se_walk_clip
++ async
++ bgm
++ cs
++ decryptaesasync
++ delete
++ deletesnapshotasync
++ enc
++ enc_bytes
++ enc_full
++ enc_path
++ encryptaesasync
++ loadasync
++ loadsnapshotasync
++ path_enc
++ saveasync
++ savesnapshotasync
++ se
++ se1
++ slot
++ snapshotexistsasync
++ sr
++ sw
++ _azure
++ _cyan
++ _lime
++ _magenta
++ _purple
++ android
++ androidvibrator
++ args
++ azure
++ checkcircularreferences
++ checkcirculartransitions
++ checkundefinedkeywarnings
++ circular
++ condition_ok
++ contextsnippet
++ cyan
++ dispatch
++ dispatchtrigger
++ err
++ evt
++ evtargs
++ findsemanticerror
++ ids
++ isandroid
++ kv
++ lime
++ magenta
++ milliseconds
++ node_ids_seen
++ ok
++ purple
++ rule_ids_seen
++ semantic
++ semantic_err
++ snippet
++ swap
++ swaplocalpositiony
++ undefined
++ validate
++ validatecondition
++ validatenoderecursive
++ validation
++ validationlevel
++ validationresult
++ vibrate
++ vibrator
++ warnings
++ rec
++ rec_stack
++ severity
++ ones

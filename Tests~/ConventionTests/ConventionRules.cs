@@ -45,7 +45,7 @@ namespace Germio.Tests.Convention {
         //   unit_marks    — unit marks kept in print form (hz, db, ms, ...)
         static readonly HashSet<string> BASIC_WORDS = load_words("basic_words.md");
         static readonly HashSet<string> LANG_WORDS = load_words("lang_words.md");
-        static readonly HashSet<string> PLAIN_WORDS = load_words("plain_words.md");
+        static readonly HashSet<string> PLAIN_WORDS = load_words("standard_words.md");
         static readonly HashSet<string> DRAFT_WORDS = load_words("draft_words.md");
         static readonly HashSet<string> PROJECT_WORDS = load_words("project_words.md");
         static readonly HashSet<string> UNIT_WORDS = load_words("unit_words.md");

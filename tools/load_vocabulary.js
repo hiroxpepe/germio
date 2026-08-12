@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 
 // Reads the "+ base form1 form2 ..." vocabulary files ConventionRules.cs
-// already uses for identifier names (basic_words.md, plain_words.md,
+// already uses for identifier names (basic_words.md, standard_words.md,
 // and the rest), and also reads tech_terms.md's own "**Term** —
 // meaning" lines, flattening every word found into one plain word set
 // for prose checking.
