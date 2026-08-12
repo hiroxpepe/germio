@@ -377,3 +377,14 @@ form — a short form is put right in the code, and not kept here.
 + rec
 + severity
 + ones
++ dsl
++ mit
++ six
++ trait traits
++ com
++ five
++ graph graphs
++ https
++ namespace namespaces
++ theorem theorems
++ thirty

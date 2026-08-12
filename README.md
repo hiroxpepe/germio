@@ -1,25 +1,29 @@
 # Germio
 
-> **The LLM-Native Game Progression Framework for Unity.**
-> Describe your game in natural language. Let an LLM author the logic. Ship it.
+> **The LLM-Native Game Progress Framework for Unity.**
+> Say what your game is like, in plain words. Let an LLM write the
+> rules. Ship it.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
-[![Phase](https://img.shields.io/badge/phase-5-blue)]()
-[![Version](https://img.shields.io/badge/version-v0.5.48-orange)]()
+![Phase](https://img.shields.io/badge/phase-5-blue)
+![Version](https://img.shields.io/badge/version-v0.5.48-orange)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
 
 ## What is Germio?
 
-Germio is a Unity framework where **game progression logic lives entirely in a single JSON file** — authored by an LLM, validated automatically, and executed by a lightweight runtime. No visual scripting. No node graphs. No hand-written state machines.
+Germio is a Unity framework where **the game's own rules for moving
+forward all live in one, single JSON file** — written by an LLM,
+checked by machine on its own, and run by a light runtime. No
+visual scripting. No node graphs. No hand-written state machines.
 
 ```mermaid
 flowchart LR
-    HUMAN[Natural language\nrequirement] --> LLM[LLM\nClaude · GPT · Gemini]
-    LLM --> JSON[germio.json\nvalidated]
+    HUMAN[Plain words\nfor what is needed] --> LLM[LLM\nClaude · GPT · Gemini]
+    LLM --> JSON[germio.json\nchecked]
     JSON --> RUNTIME[Germio Runtime\non Unity]
-    RUNTIME --> GAME[Playable game]
+    RUNTIME --> GAME[A game you can play]
 
     style HUMAN fill:#4caf50,color:#fff
     style LLM  fill:#1976d2,color:#fff
@@ -29,7 +33,7 @@ flowchart LR
 
 ---
 
-## Four concepts. That is the whole model.
+## Four ideas: that is the whole model
 
 ```mermaid
 mindmap
@@ -57,23 +61,26 @@ mindmap
       condition
 ```
 
-Any Unity game progression you can name, expressed as **State · Rule · Command · Next**. No more concepts will ever be added to the core model.
+Any way a Unity game can move forward, put into words as
+**State · Rule · Command · Next**. No more ideas will ever be
+added to the core model.
 
 ---
 
 ## Why LLM-Native?
 
-Most data-driven frameworks were designed for human designers. Germio was designed so that an LLM can write the data **without help**.
+Most data-driven frameworks were made for a human designer. Germio
+was made so an LLM can write the data **with no help at all**.
 
 ```mermaid
 quadrantChart
-    title LLM affinity vs genre specificity
-    x-axis "Genre specific" --> "Genre agnostic"
-    y-axis "GUI binary" --> "Text declarative"
-    quadrant-1 "LLM and agnostic"
-    quadrant-2 "LLM and specific"
-    quadrant-3 "GUI and specific"
-    quadrant-4 "GUI and agnostic"
+    title LLM fit vs how tied to one game genre
+    x-axis "Tied to one genre" --> "Open to any genre"
+    y-axis "GUI, click-based" --> "Text, written out plain"
+    quadrant-1 "LLM-fit and open"
+    quadrant-2 "LLM-fit and tied"
+    quadrant-3 "GUI and tied"
+    quadrant-4 "GUI and open"
     "PlayMaker": [0.75, 0.15]
     "Unity Visual Scripting": [0.80, 0.15]
     "Yarn Spinner": [0.15, 0.85]
@@ -83,26 +90,28 @@ quadrantChart
     "Germio": [0.78, 0.97]
 ```
 
-Six measured properties make Germio LLM-Native:
+Six measured traits make Germio LLM-Native:
 
-| Property | Implementation |
-|---|---|
-| `snake_case` throughout all layers | G17 naming theorem |
-| Public JSON Schema (Draft 2020-12) | `schemas/germio.schema.json` |
-| Self-correcting validator errors | `Validator` → `ToLlmReadable()` G12 format |
-| Minimal closed DSL for conditions | `ExprLexer` + `ExprParser` + `Evaluator` |
-| Bidirectional Mermaid conversion | `Grapher.Export()` + `MermaidParser.Parse()` |
-| Multi-LLM neutral design | Claude / GPT-4 / Gemini prompt packs included |
+| Trait | How it is built |
+| --- | --- |
+| `snake_case` right through every layer | the G17 naming theorem |
+| An open JSON Schema (Draft 2020-12) | `schemas/germio.schema.json` |
+| Errors that check themselves and say why | `Validator` → `ToLlmReadable()`, in G12 form |
+| A small, closed DSL for conditions | `ExprLexer` + `ExprParser` + `Evaluator` |
+| Change both ways, between code and Mermaid | `Grapher.Export()` + `MermaidParser.Parse()` |
+| A design that plays no favorites among LLMs | prompt packs for Claude, GPT-4, and Gemini, all included |
 
 ---
 
-## A 30-second example
+## A thirty-second example
 
 You write:
 
-> Five stage action game. Each stage clears when the player reaches the goal. Three lives total.
+> A game of five stages. Each stage is won once the player reaches
+> the goal. Three lives, in all.
 
-LLM produces a validated `germio.json`. The Germio runtime plays it.
+The LLM makes a `germio.json` that has already been checked. The
+Germio runtime plays it.
 
 ```mermaid
 sequenceDiagram
@@ -111,23 +120,23 @@ sequenceDiagram
     participant Val as Validator
     participant Unity as Unity Runtime
 
-    Dev->>LLM: system prompt + JSON Schema + requirement
+    Dev->>LLM: system prompt + JSON Schema + what is needed
     LLM-->>Dev: germio.json
     Dev->>Val: Validator.Validate(scenario)
-    Val-->>Dev: ValidationResult list (G12 format)
+    Val-->>Dev: ValidationResult list (G12 form)
     alt errors found
         Dev->>LLM: ToLlmReadable() error feedback
-        LLM-->>Dev: corrected germio.json
+        LLM-->>Dev: a fixed germio.json
     else clean
         Note over Dev,Val: ready to play
     end
-    Dev->>Unity: place in StreamingAssets · press Play
-    Unity-->>Dev: running game
+    Dev->>Unity: put it in StreamingAssets - press Play
+    Unity-->>Dev: the game is running
 ```
 
 ---
 
-## Runtime flow
+## How the runtime moves through the game
 
 ```mermaid
 flowchart TD
@@ -136,7 +145,7 @@ flowchart TD
         STORAGE --> STORE[Store]
     end
 
-    subgraph TICK[Every trigger]
+    subgraph TICK[Each trigger]
         ZONE[Zone / Bus.Publish] --> DISPATCH[Store.DispatchTrigger]
         DISPATCH --> EVAL[Evaluator\nrule.condition]
         EVAL -->|pass| EXEC[Executor\nrule.command]
@@ -145,8 +154,7 @@ flowchart TD
     end
 
     subgraph SAVE[Save]
-        STORE --> SNAP[Snapshot
-snapshot_N.json]
+        STORE --> SNAP[Snapshot\nsnapshot_N.json]
     end
 
     STORE --> TICK
@@ -155,7 +163,7 @@ snapshot_N.json]
 
 ---
 
-## Data model
+## The data model
 
 ```mermaid
 classDiagram
@@ -218,7 +226,7 @@ classDiagram
 
 ---
 
-## Namespace architecture
+## How the namespaces are built
 
 ```mermaid
 flowchart TB
@@ -227,7 +235,7 @@ flowchart TB
     SCHEMA[Germio.Schema\nSchemaExporter]
     EDITOR[Germio.Editor\nDashboard · McpServerMenu\nSceneCodeSyncer · SceneCodeSyncMenu\nSchemaExportMenu]
     SYSTEMS[Germio.Systems\nGameSystem · SceneLoader · Bus\nZone · SoundSystem · CameraSystem]
-    GAMEDEV[GameDev\ngame-specific scripts]
+    GAMEDEV[GameDev\nscripts made for one game alone]
 
     MODEL --> CORE
     CORE --> SCHEMA
@@ -247,60 +255,62 @@ flowchart TB
 
 ## Files
 
-| File | Role | LLM-editable |
-|---|---|---|
-| `StreamingAssets/germio.json` | Scenario definition (static, plaintext) | ✅ Yes |
-| `StreamingAssets/germio.dat` | Scenario, AES-CBC encrypted (release) | ❌ No |
-| `StreamingAssets/snapshot_{slot}.json` | Runtime snapshot per save slot (plaintext) | ❌ No |
-| `StreamingAssets/snapshot_{slot}.dat` | Runtime snapshot per save slot (encrypted) | ❌ No |
-| `StreamingAssets/germio_key.bin` | AES-256 key (48 bytes) | ❌ No |
-| `schemas/germio.schema.json` | JSON Schema Draft 2020-12 | ✅ Reference |
+| File | What it holds | Can an LLM change it |
+| --- | --- | --- |
+| `StreamingAssets/germio.json` | the scenario itself (fixed, plain text) | Yes |
+| `StreamingAssets/germio.dat` | the scenario, coded with AES-CBC (for release) | No |
+| `StreamingAssets/snapshot_{slot}.json` | a runtime snapshot, per save slot (plain text) | No |
+| `StreamingAssets/snapshot_{slot}.dat` | a runtime snapshot, per save slot (coded) | No |
+| `StreamingAssets/germio_key.bin` | the AES-256 key (48 bytes) | No |
+| `schemas/germio.schema.json` | the JSON Schema, Draft 2020-12 | as a guide only |
 
 ---
 
-## Editor menus
+## The Editor's own menus
 
-| Menu | Role |
-|---|---|
-| `Germio > Dashboard` | Load `germio.json`, run Validator, view scenario tree |
-| `Tools > Germio > Export Schema to Clipboard` | Copy `germio.schema.json` for LLM prompts |
-| `Tools > Germio > Sync Scene Code` | Sync C# Scene classes with `germio.json` |
-| `Tools > Germio > MCP Server > Start MCP Server` | *(stub — Phase 7)* |
-| `Tools > Germio > MCP Server > Stop MCP Server` | *(stub — Phase 7)* |
+| Menu | What it does |
+| --- | --- |
+| `Germio > Dashboard` | loads `germio.json`, runs the Validator, shows the scenario as a tree |
+| `Tools > Germio > Export Schema to Clipboard` | copies `germio.schema.json`, for use in an LLM prompt |
+| `Tools > Germio > Sync Scene Code` | keeps the C# Scene classes in step with `germio.json` |
+| `Tools > Germio > MCP Server > Start MCP Server` | *(a stand-in only — for Phase 7)* |
+| `Tools > Germio > MCP Server > Stop MCP Server` | *(a stand-in only — for Phase 7)* |
 
 ---
 
 ## Getting started
 
 ```sh
-# Use as a submodule
+# Use it as a submodule
 git submodule add https://github.com/hiroxpepe/germio.git \
     game/Assets/Plugins/Germio
 
-# Or copy the folder directly into your Unity project
-# Requires: Unity 6 LTS + Newtonsoft.Json (com.unity.nuget.newtonsoft-json)
+# Or copy the folder straight into your own Unity project
+# Needs: Unity 6 LTS + Newtonsoft.Json (com.unity.nuget.newtonsoft-json)
 ```
 
-1. Place your scenario at `Assets/StreamingAssets/germio.json`
-2. Open `Germio > Dashboard` in the Unity Editor to validate
+1. Put your own scenario at `Assets/StreamingAssets/germio.json`
+2. Open `Germio > Dashboard`, in the Unity Editor, to check it
 3. Press Play
 
 ---
 
-## Documentation
+## Papers
 
-| Document | Purpose |
-|---|---|
-| [LLM Workflow Guide](../../docs/llm_workflow_guide.md) | End-to-end LLM authoring guide |
+| Paper | What it is for |
+| --- | --- |
+| [LLM Workflow Guide](../../docs/llm_workflow_guide.md) | a start-to-end guide for writing with an LLM |
 | [Pattern Library Cookbook](../../docs/germio_cookbook.md) | 32 ready-to-use patterns |
-| [DSL Specification](../../docs/germio_dsl_spec.md) | EBNF grammar for conditions |
-| [LLM-First Design](../../docs/llm_first_design.md) | Design principles G9–G21 |
-| [Naming Convention](../../docs/naming_convention.md) | G16–G18 naming theorem |
-| [Security Model](../../docs/germio_security_model.md) | AES key management |
-| [Save Data Format](../../docs/germio_save_data_format.md) | Snapshot format and schema |
-| [MCP Design](../../docs/mcp_design.md) | Future MCP server design (Phase 7) |
+| [DSL Specification](../../docs/germio_dsl_spec.md) | the EBNF grammar for conditions |
+| [LLM-First Design](../../docs/llm_first_design.md) | design rules G9-G21 |
+| [Naming Convention](../../docs/naming_convention.md) | the G16-G18 naming theorem |
+| [Security Model](../../docs/germio_security_model.md) | AES key handling |
+| [Save Data Format](../../docs/germio_save_data_format.md) | the snapshot's own form and schema |
+| [MCP Design](../../docs/mcp_design.md) | a future MCP server design (Phase 7) |
 
-**Reference game**: [Stemic](https://github.com/hiroxpepe/stemic) — a full Unity 3D action game built on Germio.
+**A game built to show this working**:
+[Stemic](https://github.com/hiroxpepe/stemic) — a full Unity 3D
+action game, built on Germio.
 
 ---
 
