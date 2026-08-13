@@ -51,6 +51,25 @@
 + Commit and push are one move. Once the GO is given, push in the
   same step.
 
+### The exact rule for a commit message
+
+A `commit-msg` hook, in this repository, stops any commit that
+breaks one of these rules:
+
++ The line must start with one of: `feat:` `fix:` `docs:` `chore:`
+  `refactor:` `test:` `style:`.
++ Right after the mark `:` and one space, the first word must be
+  `Add` or `Update` — no other verb at all.
++ The whole, one line must hold between 57 and 61 letters, in all.
++ No second line holds any real word at all — a summary, one line
+  alone, with nothing more.
++ The name of this repository must not show, anywhere in the line.
++ No mark `-` at all, anywhere in the line.
++ None of these words, used only to pad out the count of letters:
+  `now`, `so`, `this time`, `just`, `simply`, `really`, `actually`,
+  `basically`, `essentially`, `indeed`, `truly`, `quite`, `rather`,
+  `somewhat`, `fairly`, `pretty`, `very`.
+
 ## Style reminders that came up
 
 + No personal names in code, in a comment, in a log, or in output;

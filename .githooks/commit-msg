@@ -1,0 +1,51 @@
+#!/bin/sh
+# Runs on every commit message. Blocks the commit if the message
+# breaks any of the rules in docs/standard/developing_standard.md
+# (under "The exact rule for a commit message"). Shared across
+# every personal repo in this family — keep this file identical
+# everywhere; fix it once, in one place, and copy the fix out to
+# the rest, the same way .markdownlint.json itself is kept
+# identical across repos.
+MSG_FILE="$1"
+LINE1=$(head -n1 "$MSG_FILE")
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
+
+fail() {
+  echo "commit-msg: REJECTED — $1"
+  echo "commit-msg: line was: $LINE1"
+  exit 1
+}
+
+if ! echo "$LINE1" | grep -qE '^(feat|fix|docs|chore|refactor|test|style): '; then
+  fail "prefix must be one of feat:/fix:/docs:/chore:/refactor:/test:/style:"
+fi
+
+VERB=$(echo "$LINE1" | sed -E 's/^[a-z]+: //' | awk '{print $1}')
+if [ "$VERB" != "Add" ] && [ "$VERB" != "Update" ]; then
+  fail "verb must be 'Add' or 'Update' (found: $VERB)"
+fi
+
+LEN=$(echo -n "$LINE1" | wc -c | tr -d ' ')
+if [ "$LEN" -lt 57 ] || [ "$LEN" -gt 61 ]; then
+  fail "line length must be 57 to 61 chars (found: $LEN)"
+fi
+
+BODY=$(tail -n +2 "$MSG_FILE" | grep -v '^[[:space:]]*$' | grep -v '^#')
+if [ -n "$BODY" ]; then
+  fail "no body allowed; one summary line only"
+fi
+
+if echo "$LINE1" | grep -qi "$REPO_NAME"; then
+  fail "must not contain the repository name ($REPO_NAME)"
+fi
+
+if echo "$LINE1" | grep -q '-'; then
+  fail "must not contain a hyphen"
+fi
+
+PADDING="now|so|this time|just|simply|really|actually|basically|essentially|indeed|truly|quite|rather|somewhat|fairly|pretty|very"
+if echo "$LINE1" | grep -qiE "\\b($PADDING)\\b"; then
+  fail "must not contain a padding word"
+fi
+
+exit 0
