@@ -34,7 +34,7 @@ namespace Germio.Triggers {
         GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Fires once when the player has been despawned from the scene.
@@ -70,7 +70,7 @@ namespace Germio.Triggers {
                 .Subscribe(onNext: _ => {
                     Despawned?.Invoke();
                     LoadScene(sceneName: GetActiveScene().name);
-                    _game_system.Bus?.Publish("sig_despawn");
+                    _game_system.Bus?.Publish(signal_id: "sig_despawn");
                 }).AddTo(gameObjectComponent: this);
         }
     }

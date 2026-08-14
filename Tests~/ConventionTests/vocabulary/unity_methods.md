@@ -18,3 +18,4 @@ skipped.
 + OnSceneOpened
 + OnSceneGUI
 + OnInspectorGUI
++ OnAnimatorIK

@@ -1718,7 +1718,7 @@ This file is frozen once put in place, the same as basic_words.md.
 + sick sicker sickest
 + sigh sighed sighing sighs
 + sight sights
-+ signal signals
++ signal signals signaled signaling
 + significance significances
 + significant
 + significantly

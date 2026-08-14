@@ -44,7 +44,7 @@ namespace Germio.Triggers {
         GameSystem _game_system = null!;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Fires once when the player has returned to the home object.
@@ -99,7 +99,7 @@ namespace Germio.Triggers {
                     // Time.timeScale=1f before LoadScene, preventing the next scene
                     // from starting frozen.
                     Returned?.Invoke();
-                    _game_system.Bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish(signal_id: "vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -110,7 +110,7 @@ namespace Germio.Triggers {
                     x.Like(type: PLAYER_TYPE))
                 .Subscribe(onNext: _ => {
                     Returned?.Invoke();
-                    _game_system.Bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish(signal_id: "vol_home");
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
@@ -122,7 +122,7 @@ namespace Germio.Triggers {
                     _game_system.Beat)
                 .Subscribe(onNext: _ => {
                     Returned?.Invoke();
-                    _game_system.Bus?.Publish("vol_home");
+                    _game_system.Bus?.Publish(signal_id: "vol_home");
                 }).AddTo(gameObjectComponent: this);
         }
     }

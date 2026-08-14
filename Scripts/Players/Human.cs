@@ -96,7 +96,7 @@ namespace Germio.Players {
         protected SoundSystem SoundSystem;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Occurs when the player is grounded.
@@ -176,7 +176,7 @@ namespace Germio.Players {
         void Awake() {
             DoUpdate = Human_DoUpdate.GetInstance();
             DoFixedUpdate = Human_DoFixedUpdate.GetInstance();
-            Acceleration = Human_Acceleration.GetInstance(this);
+            Acceleration = Human_Acceleration.GetInstance(parent: this);
             GameSystem = Find(name: GAME_SYSTEM).Get<GameSystem>();
             SoundSystem = Find(name: SOUND_SYSTEM).Get<SoundSystem>();
 

@@ -27,7 +27,7 @@ namespace Germio.Tests.Convention {
             found.Sort(StringComparer.Ordinal);
             Assert.That(found, Is.Empty,
                 $"{found.Count} member-order violation(s) (showing first 40):\n  "
-                + string.Join("\n  ", found.Take(999)));
+                + string.Join("\n  ", found.Take(40)));
         }
     }
 }

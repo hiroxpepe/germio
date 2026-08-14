@@ -44,7 +44,7 @@ namespace Germio.Systems {
         bool _beat;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Fires once when the game has been paused.
@@ -176,8 +176,8 @@ namespace Germio.Systems {
             // Create objects synchronously with an empty root so that Zone,
             // Home, and Despawn can safely obtain a reference to bus
             // in their Start() methods. The actual JSON config is loaded in Start().
-            _store = new Store(new Scenario());
-            _bus = new Bus(_store);
+            _store = new Store(scenario: new Scenario());
+            _bus = new Bus(store: _store);
             _scene_loader = new SceneLoader(
                 store:     _store,
                 load_scene: name => {

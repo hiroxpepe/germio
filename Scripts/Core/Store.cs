@@ -44,7 +44,7 @@ namespace Germio.Core {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // public Events [verb]
+        // public Events [verb, verb phrase]
 
         /// <summary>
         /// Fires once a command has requested a node transition.

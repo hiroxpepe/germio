@@ -120,7 +120,7 @@ namespace Germio.Players {
             /// </summary>
             /// <param name="parent">Parent Human object to associate with the new Human_Acceleration instance.</param>
             public static Human_Acceleration GetInstance(Human parent) {
-                return new Human_Acceleration(parent);
+                return new Human_Acceleration(parent: parent);
             }
         }
 

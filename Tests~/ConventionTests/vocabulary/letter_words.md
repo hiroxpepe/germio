@@ -9,7 +9,7 @@ check lower-cases them when it matches.
 + UI
 + DB
 + API
-+ URL
++ URL URLs
 + JSON
 + CSV
 + HTTP

@@ -325,7 +325,7 @@ namespace Germio.Core {
                             level:          ValidationLevel.Error,
                             rule_id:        "V006",
                             message:        $"Node '{node.id}' → next.id '{next.id}' does not exist in scenario.",
-                            cause_detail:   $"No node with id '{next.id}' was found.{suggestSimilar(next.id, node_map.Keys)}",
+                            cause_detail:   $"No node with id '{next.id}' was found.{suggestSimilar(target: next.id, candidates: node_map.Keys)}",
                             fix_suggestion: $"Add a node with id '{next.id}', or correct the typo.",
                             location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].next[{n_index}].id" }));
                     }
@@ -497,7 +497,7 @@ namespace Germio.Core {
                             level:          ValidationLevel.Warning,
                             rule_id:        "V001",
                             message:        $"Node '{node_id}' → {json_path}: flag key '{key}' is not defined in initial state.flags.",
-                            cause_detail:   $"The condition references flags.{key} but this key is absent from scenario.initial_state.flags.{suggestSimilar(key, state.flags.Keys)}",
+                            cause_detail:   $"The condition references flags.{key} but this key is absent from scenario.initial_state.flags.{suggestSimilar(target: key, candidates: state.flags.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": false' to scenario.initial_state.flags, or fix the key name.",
                             location:       new Location { JSONPath = json_path }));
                     } else if (prefix == "counters" && !state.counters.ContainsKey(key)) {
@@ -505,7 +505,7 @@ namespace Germio.Core {
                             level:          ValidationLevel.Warning,
                             rule_id:        "V002",
                             message:        $"Node '{node_id}' → {json_path}: counter key '{key}' is not defined in initial state.counters.",
-                            cause_detail:   $"The condition references counters.{key} but this key is absent from scenario.initial_state.counters.{suggestSimilar(key, state.counters.Keys)}",
+                            cause_detail:   $"The condition references counters.{key} but this key is absent from scenario.initial_state.counters.{suggestSimilar(target: key, candidates: state.counters.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.counters, or fix the key name.",
                             location:       new Location { JSONPath = json_path }));
                     } else if (prefix == "inventory" && !state.inventory.ContainsKey(key)) {
@@ -513,7 +513,7 @@ namespace Germio.Core {
                             level:          ValidationLevel.Warning,
                             rule_id:        "V003",
                             message:        $"Node '{node_id}' → {json_path}: inventory key '{key}' is not defined in initial state.inventory.",
-                            cause_detail:   $"The condition references inventory.{key} but this key is absent from scenario.initial_state.inventory.{suggestSimilar(key, state.inventory.Keys)}",
+                            cause_detail:   $"The condition references inventory.{key} but this key is absent from scenario.initial_state.inventory.{suggestSimilar(target: key, candidates: state.inventory.Keys)}",
                             fix_suggestion: $"Add '\"{ key }\": 0' to scenario.initial_state.inventory, or fix the key name.",
                             location:       new Location { JSONPath = json_path }));
                     }
