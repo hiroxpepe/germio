@@ -8,8 +8,13 @@
 
 + Run `git config core.hooksPath .githooks` once for each clone. This
   makes `git commit` run the shared checks in `.githooks/pre-commit`
-  on every markdown file staged for the commit, before the commit is
-  let through.
+  and `.githooks/commit-msg` on every commit, before the commit is
+  let through. **Without this one command, neither hook runs at all
+  — a broken commit message, or a markdown file still holding an
+  error, would pass straight through, with nothing to stop it.**
+  Check it is truly set, with `git config core.hooksPath`, which must
+  answer `.githooks`. Running a hook by hand, on a file, is **not**
+  proof the hook itself is live; only a true `git commit` proves that.
 
 ## Documents
 
