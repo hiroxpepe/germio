@@ -388,3 +388,12 @@ form — a short form is put right in the code, and not kept here.
 + namespace namespaces
 + theorem theorems
 + thirty
++ loop loops
++ tablet tablets
++ zero
++ bullet bullets
++ manual manuals
++ desktop
++ checklist checklists
++ reuse reuses reused
++ eight

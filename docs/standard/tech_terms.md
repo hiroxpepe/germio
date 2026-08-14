@@ -369,3 +369,26 @@ hard use.
 + Keep the sense in simple words, by the writing standard.
 + Add a term **before** it is first used in any document.
 + When a term is no longer used anywhere, it may be taken out.
+
+**byte / bytes** — A small block of computer memory, eight bits wide. A MIDI
+message is written as a short run of eight-bit values.
+
+**garbage collector** — The part of a managed language that clears out heap
+memory no longer in use, on its own, with no word from the program itself.
+
+**heap** — The part of computer memory a program asks for, and gives back,
+while it runs. A managed language's own "garbage collector" clears out heap
+memory no longer in use.
+
+**tick / ticks** — One small step forward, in time. A clock or a sequencer moves
+forward, one tick at a time.
+
+**generational** — A way a garbage collector may sort held room by how new
+it is, so it can sweep the newest, most short-lived room first, and fast.
+
+**closure** — A method, built on the spot, that reads a value held outside
+itself — the value it reads is held, together with the method, as one,
+single, new object.
+
+**sequencer** — A program that reads a song's own score, and sends out a
+note, at the right moment, to make music.
