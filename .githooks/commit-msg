@@ -43,7 +43,7 @@ if echo "$LINE1" | grep -q '-'; then
   fail "must not contain a hyphen"
 fi
 
-PADDING="now|so|this time|just|simply|really|actually|basically|essentially|indeed|truly|quite|rather|somewhat|fairly|pretty|very|too|own|in place|work"
+PADDING="now|so|this time|just|simply|really|actually|basically|essentially|indeed|truly|quite|rather|somewhat|fairly|pretty|very|too|own|in place|work|here"
 if echo "$LINE1" | grep -qiE "\\b($PADDING)\\b"; then
   fail "must not contain a padding word"
 fi
