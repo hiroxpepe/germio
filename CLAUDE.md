@@ -66,7 +66,7 @@ npx --yes markdownlint-cli -c .markdownlint.json <file>
 + The form is `type: Verb subject`. The verb is one of Add, Update,
   or Delete. The type is one of `feat`, `fix`, `refactor`, `docs`,
   `chore`, or `test`.
-+ Keep the first line between 57 and 60 letters long.
++ Keep the first line between 57 and 61 letters long.
 + Do not put square marks or forward lines in the message; keep it
   plain.
 
