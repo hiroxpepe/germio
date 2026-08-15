@@ -287,6 +287,7 @@ namespace Germio.Tests.Convention {
 
             foreach (var member in root.DescendantNodes().OfType<EnumMemberDeclarationSyntax>()) {
                 var id = member.Identifier.ValueText;
+                if (is_naming_exception(member, id)) continue;
                 if (!PASCAL.IsMatch(id))
                     found.Add($"{label}:{line(member)}: enum member '{id}' must be PascalCase");
             }

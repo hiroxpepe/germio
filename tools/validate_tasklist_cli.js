@@ -40,8 +40,12 @@ if (vocab_dir && existsSync(vocab_dir)) {
     .map(f => join(vocab_dir, f));
   if (tech_terms_path && existsSync(tech_terms_path)) vocab_files.push(tech_terms_path);
   const vocab = load_vocabulary(vocab_files);
+  // A checkbox mark is a state sign, not a word: strip every one of
+  // them before the Basic English check, so 'xx' (an archived task,
+  // kept out of the dashboard) is never read as a word.
+  const text_without_checkbox = text.replace(/^\+ \[(?: |x|xx|~)\] /gm, '+ ');
   errors = errors.concat(
-    check_basic_english(text, vocab).map(e => `not Basic English: ${e}`)
+    check_basic_english(text_without_checkbox, vocab).map(e => `not Basic English: ${e}`)
   );
 }
 
