@@ -56,7 +56,7 @@ Print form holds in every language, for every kind of name.
 ## Case shape by language
 
 The case shape (PascalCase, camelCase, snake_case, UPPER_SNAKE) follows idea 1:
-outward names take the standard of what they face; inward names read easiest.
+names facing out take the standard of what they face; names held inside read easiest.
 
 ### C\#
 
@@ -79,14 +79,14 @@ outward names take the standard of what they face; inward names read easiest.
 | ---------------- | ------------- | -------------- |
 | class            | `PascalCase`  | code (JS)      |
 | public function  | `snake_case`  | code (JS)      |
-| JSON key         | `snake_case`  | a JSON payload |
+| JSON key         | `snake_case`  | a JSON message |
 | private function | `snake_case`  | inward         |
 | local            | `snake_case`  | inward         |
 | constant         | `UPPER_SNAKE` | both           |
 | file name        | `snake_case`  | JS tools       |
 
 JavaScript leans on snake_case everywhere. This is not a break with the
-language: JavaScript used snake_case in its early browser days, before it
+language: JavaScript used snake_case in its early days inside a web page, before it
 copied Java's camelCase to ride Java's name; and a reader knows snake_case
 faster than camelCase. So snake_case is both the older form and the easier one.
 
@@ -103,7 +103,7 @@ The shapes line up more than they differ. These are the same in both languages:
 + **print form** — the same short-form, letter-word, and unit-mark rules
 
 What differs is narrow: the public method (C# `PascalCase`, JS `snake_case`) and
-the file name — each following the standard of its own ecosystem, which is idea
+the file name — each following the standard of its own true world of tools, which is idea
 1 at work, not a break in the rule.
 
 ---
@@ -111,7 +111,7 @@ the file name — each following the standard of its own ecosystem, which is ide
 ## Outside names are not ours to change
 
 A name that comes from a library — the .NET base library, Unity, an npm package
-— is fixed by that library. We do not restyle it. `transform.position` from
+— is fixed by that library. We do not give it a new look. `transform.position` from
 Unity stays `transform.position`, even though it breaks the .NET public rule;
 `JsonConvert` from the JSON library stays `JsonConvert`. The rules here apply
 only to names we declare. This keeps our code steady next to any outside code,
@@ -196,7 +196,7 @@ These cases are settled on purpose, and each has a test that holds the line:
 Every member in a type is checked on four points, in this priority: kind,
 then (for fields only) const/static/instance, then access level, then
 static before instance. A file that is already green on this order is what
-lets the section-header rule below group members by consecutive runs — same
+lets the section-header rule below group members by runs that follow, one after another — same
 kind, access, and static-ness always sit together, never split apart by
 something else in between.
 
@@ -222,9 +222,9 @@ a tie, `static` sits before instance.
 
 **Operator is a standing exception.** It shares rank 9 with Method rather
 than holding a rank of its own, so the order check does not require
-operators and methods to stay in separate runs — they may interleave. No
+operators and methods to stay in separate runs — they may mix, one kind among the other. No
 repository has an operator today, so the section-header rule below leaves
-Operator unlabeled until one appears and this gets settled for real, rather
+Operator with no label until one appears and this gets settled for real, rather
 than guessing at a shape now.
 
 ---
@@ -311,11 +311,11 @@ every modifier in play:
 
 | Case                                                      | What happens                                | Why                                                                                                                                                                                                                                                                              |
 | --------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fields / Properties, private + instance                   | access and `static` left off the label      | matches the omitted `private` keyword rule                                                                                                                                                                                                                                       |
-| Methods / Events, private + instance                      | `private` is still spelled out on the label | a class commonly mixes public and private methods; the label must say which without making the reader open every one                                                                                                                                                             |
-| a label is an exact `[access] [static] Kind [hint]` match | normalized to that canonical spelling       | close-but-off wording (`Private methods [verb, verb phrase]`, `Static fields`, `Public static methods`) is a spelling drift on a real Kind label, not free-form text                                                                                                             |
-| a label does not exactly match that shape                 | left as free-form, untouched                | the match is strict, not a loose keyword search — `Persona own-field merge` contains the word "field" but is not `Fields`, so it is never forced into that shape; this is what keeps `Menu items`, `GUI`, `Unity EditorWindow lifecycle`, and step-by-step algorithm labels safe |
-| divider not landing on column 103                         | flagged                                     | breaks the alignment across the file                                                                                                                                                                                                                                             |
+| Fields / Properties, private + instance                   | access and `static` left off the label      | matches the left-out `private` keyword rule                                                                                                                                                                                                                                      |
+| Methods / Events, private + instance                      | `private` is still spelled out on the label | a class most times mixes public and private methods; the label must say which without making the reader open every one                                                                                                                                                           |
+| a label is an exact `[access] [static] Kind [hint]` match | made to match that one, true spelling       | close-but-off wording (`Private methods [verb, verb phrase]`, `Static fields`, `Public static methods`) is a spelling drift on a real Kind label, not free-form text                                                                                                             |
+| a label does not exactly match that shape                 | left as free-form, with no change made      | the match is strict, not a loose keyword search — `Persona own-field merge` contains the word "field" but is not `Fields`, so it is never forced into that shape; this is what keeps `Menu items`, `GUI`, `Unity EditorWindow lifecycle`, and step-by-step algorithm labels safe |
+| divider not landing on column 103                         | flagged                                     | breaks the true line-up across the file                                                                                                                                                                                                                                          |
 
 ---
 
@@ -325,9 +325,9 @@ Every `using` directive falls into one of three groups, checked in this
 order: `System`, then any other outside library, then this project's own
 namespace. Within a group, usings are further grouped by their own root
 namespace (`UnityEngine`, `UniRx`, `Germio`, and so on); all usings that
-share one root stay in one contiguous run — once a different root has
-begun, an earlier root reappearing later is flagged, since that root's
-lines were left scattered instead of kept together.
+share one root stay in one run held whole, with no other root between — once a different root has
+begun, an earlier root coming back later is flagged, since that root's
+lines were left spread apart instead of kept together.
 
 A `using static` directive is grouped by the same root namespace as a
 plain `using` from that root — `using static UnityEngine.GameObject;`
@@ -338,11 +338,11 @@ plain form always sorts before any `using static` form drawn from that
 same root: the type itself is the root's main entry, its static members
 are a further detail, listed only once the plain form is in.
 
-A `using X = Y;` alias is left unchecked for grouping: the alias name is
+A `using X = Y;` alias is never checked for grouping: the alias name is
 ours to choose, and there is no single outside root to group it by. An
-alias stays anchored to whatever directive immediately followed it in
+alias stays fixed to whatever directive immediately followed it in
 the original file, riding along with that directive if the rest of the
-block is reordered.
+block is put in a new order.
 
 A file that is out of order on any of these points can be fixed in one
 paste: the check computes the whole correct order in a single pass and
