@@ -33,6 +33,7 @@
 ExportedObj/
 .consulo/
 *.csproj
+!Tests~/ConventionTests/*.csproj
 *.unityproj
 *.sln
 *.suo
