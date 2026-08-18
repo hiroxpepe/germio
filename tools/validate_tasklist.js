@@ -9,7 +9,7 @@
 // with a plain `node` call from a git hook, with no npm install step
 // in the way.
 
-const SUMMARY_LINE = /^\+ \[( |~|x|xx)\] (TASK-\d+) \[(PHASE-\d{2})\]: (.+)$/;
+const SUMMARY_LINE = /^\+ \[( |~|x|xx)\] (TASK-\d+) \[(P-(?:\d{2}|XX))\]: (.+)$/;
 const DETAIL_HEADING = /^### (TASK-\d+)$/;
 
 export function validate_tasklist(text, roadmap_phase_ids = null) {

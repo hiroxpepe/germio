@@ -29,7 +29,7 @@ let roadmap_phase_ids = null;
 const roadmap_path = join(dirname(path), 'ROADMAP.md');
 if (existsSync(roadmap_path)) {
   const roadmap_text = readFileSync(roadmap_path, 'utf-8');
-  roadmap_phase_ids = [...roadmap_text.matchAll(/^\+ \[[ x~]\] (PHASE-\d{2}):/gm)].map(m => m[1]);
+  roadmap_phase_ids = [...roadmap_text.matchAll(/^\+ \[[ x~]\] (P-(?:\d{2}|XX)):/gm)].map(m => m[1]);
 }
 
 let errors = validate_tasklist(text, roadmap_phase_ids);

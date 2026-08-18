@@ -1,4 +1,4 @@
-const SUMMARY_LINE = /^\+ \[([ x~])\] (PHASE-\d{2}): (.+)$/;
+const SUMMARY_LINE = /^\+ \[([ x~])\] (P-(?:\d{2}|XX)): (.+)$/;
 
 export function validate_roadmap(text) {
   const errors = [];

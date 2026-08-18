@@ -6,13 +6,19 @@ the change in as a commit.
 
 <!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001 [PHASE-03]: Build a Scene wiring checker and auto-fixer
-+ [ ] TASK-002 [PHASE-03]: Add a timed event step-line to the DSL (play_sequence)
-+ [ ] TASK-003 [PHASE-03]: Add Command.request_notify (built; a real playtest is still open)
-+ [x] TASK-004 [PHASE-03]: Build a germio.json viewer and editor with no Unity (done)
-+ [ ] TASK-005 [PHASE-03]: Move germio to a Unity Package, off the git submodule
-+ [ ] TASK-006 [PHASE-03]: Put the rest of the docs into Basic English
-+ [ ] TASK-007 [PHASE-03]: Sync germio_roadmap.md's own state to the real code
++ [ ] TASK-001 [P-XX]: Build a Scene wiring checker and auto-fixer
++ [ ] TASK-002 [P-XX]: Add a timed event step-line to the DSL (play_sequence)
++ [ ] TASK-003 [P-XX]: Add Command.request_notify (built; a real playtest is still open)
++ [x] TASK-004 [P-XX]: Build a germio.json viewer and editor with no Unity (done)
++ [ ] TASK-005 [P-XX]: Move germio to a Unity Package, off the git submodule
++ [ ] TASK-006 [P-XX]: Put the rest of the docs into Basic English
++ [ ] TASK-007 [P-XX]: Sync germio_roadmap.md's own state to the real code
++ [ ] TASK-008 [P-03]: Wait on signo's own true SE spec and sound brush-up
++ [ ] TASK-009 [P-03]: Wait on quyno's own true Germio-bridge entry point
++ [ ] TASK-010 [P-03]: Grow MusicClip from one true value to six, for stemic's own songs
++ [ ] TASK-011 [P-03]: Map SfxClip's own seven values against Signo's own eight SEType values
++ [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
++ [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 
 ## Detail
 
@@ -561,3 +567,54 @@ each part done, still open, or no longer wanted, the way
 `animo_roadmap.md` and `docs/live_monitor_spec.md` were just brought
 up to date. Given the size of this document, split the work itself
 into a few smaller passes rather than one long one.
+
+### TASK-008
+
+`signo`'s own TASK-027 (a true spec and a real, by-ear sound-quality
+pass for its own SE engine) is a true, needed step before this
+whole phase — a real check already found `SEType.Jump` not yet
+game-ready. A plain, given wait/check gate, marked done once that
+true work lands.
+
+### TASK-009
+
+`quyno`'s own P-06 (joining `Quyno` to a real `germio` game) is a
+true, needed step before this whole phase — `Quyno.Bridge` must
+give this repository a true, given call-in point (its own exact
+shape still open, held on `signo`'s own TASK-027 first). A plain,
+given wait/check gate, marked done once that true work lands.
+
+### TASK-010
+
+`SoundSystem.cs`'s own `MusicClip` enum holds one true value
+(`BeatLevel`) today. Grow it to at least six, to match `stemic`'s
+own true song set (`Title`, `Level1..3`, `Ending`, `BeatLevel`),
+given TASK-008/009 land first.
+
+### TASK-011
+
+`SoundSystem.cs`'s own `SfxClip` enum (seven true values:
+`Item`/`Jump`/`Climb`/`Walk`/`Run`/`Grounded`/`Push`) does not map
+one-to-one onto `Signo`'s own `SEType` (eight true values:
+`Laser`/`Explosion`/`Pickup`/`Powerup`/`Jump`/`Hit`/`Blip`/`Alarm`).
+Work out a true mapping between the two sets (`Push`, say, has no
+plain `Signo` match today; `Explosion`/`Powerup`/`Hit`/`Blip`/
+`Alarm` have no plain `SfxClip` match), given TASK-008/009 land
+first.
+
+### TASK-012
+
+Replace `SoundSystem.cs`'s own inner true work (today, a given
+`AudioClip` played through a plain Unity `AudioSource`) with a call
+through the true entry point TASK-009 built, given TASK-010/011
+settle the true shape first. **The public `Play(SfxClip)`/
+`Play(MusicClip)` shape must not change at all** — every game that
+already calls `SoundSystem` (`stemic`, `flugi`, `tropika`) must
+keep working with no change owed on its own true side.
+
+### TASK-013
+
+Play the true, live-built sound for real, inside `stemic` (the
+first game checked), and check every `SfxClip`/`MusicClip` value
+still plays true — the true, final check that closes this whole
+phase, before `flugi`/`tropika` are checked the same true way.

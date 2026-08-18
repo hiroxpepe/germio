@@ -2,13 +2,14 @@
 
 <!-- format: v1 | fields: status, phase, title -->
 
-+ [x] PHASE-01: Build the LLM-native DSL and its full test base
-+ [ ] PHASE-02: Have an LLM alone finish a real game (dogfood it)
-+ [~] PHASE-03: Work that came up outside the first plan
++ [x] P-01: Build the LLM-native DSL and its full test base
++ [ ] P-02: Have an LLM alone finish a real game (dogfood it)
++ [ ] P-03: Play real-time sound through Quyno and Signo
++ [~] P-XX: Work that came up outside the first plan
 
 ## Detail
 
-### PHASE-01
+### P-01
 
 Phases 1 through 5 of the older, detailed plan (in
 `germio_roadmap.md`) are done: the DSL itself, the JSON Schema, the
@@ -16,7 +17,7 @@ LLM system prompts, a two-way Mermaid link, and a hardening pass
 (Vault, persistence, a schema-version Migrator). Every `DoD` line
 for these phases reads `[x]` in the older, detailed plan.
 
-### PHASE-02
+### P-02
 
 The next big goal, once picked back up: hand a short game spec to
 an LLM alone, with no state chart, no JSON example, and no code
@@ -25,7 +26,31 @@ fixed up round after round from the Validator's own error messages.
 Every `DoD` line for this phase still reads `[ ]` in the older,
 detailed plan; none of it has begun.
 
-### PHASE-03
+### P-03
+
+**Master's own word, 2026-08-18.** Every `germio`-based game
+(`stemic` first) already calls `SoundSystem.Play(SfxClip)` and
+`SoundSystem.Play(MusicClip)` for its own sound. Today, inside
+`SoundSystem.cs`, this plays a given `AudioClip` through a plain
+Unity `AudioSource` — replace that inner true work alone with a
+call through to `Quyno`/`Signo`, with **no change at all owed to
+any game that calls `SoundSystem`** (`stemic`, `flugi`, `tropika`,
+all at once, given the one shared true class).
+
+**A germio-based game must never touch `Signo.Core` directly**
+(Master's own word) — every true call passes through `Quyno.Bridge`.
+`MusicClip` holds one true value today (`BeatLevel`); it must grow
+to at least six, to match `stemic`'s own true song set (`Title`,
+`Level1..3`, `Ending`, `BeatLevel`). `SfxClip` (seven true values:
+`Item`/`Jump`/`Climb`/`Walk`/`Run`/`Grounded`/`Push`) does not map
+one-to-one onto `Signo`'s own `SEType` (eight true values) — this
+mapping is still open. **This whole phase is held on `signo`'s own
+TASK-027 (a true SE spec and sound-quality pass) landing first** —
+a real check found `Signo`'s own SE sound not yet game-ready, the
+true root gate behind every later step here. See `TASKLIST.md` for
+the open work under this phase.
+
+### P-XX
 
 Real, day-to-day work on `flugi`'s own level-clear bug turned up
 gaps the older plan never named: `Command.request_notify` (a way
