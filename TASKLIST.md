@@ -19,6 +19,7 @@ the change in as a commit.
 + [ ] TASK-011 [P-03]: Map SfxClip's own seven values against Signo's own eight SEType values
 + [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
++ [ ] TASK-014 [P-XX]: Build one shared `Sensor`, for both a drop-off check and a target check
 
 ## Detail
 
@@ -618,3 +619,11 @@ Play the true, live-built sound for real, inside `stemic` (the
 first game checked), and check every `SfxClip`/`MusicClip` value
 still plays true — the true, final check that closes this whole
 phase, before `flugi`/`tropika` are checked the same true way.
+
+### TASK-014
+
+**Checked true, 2026-08-19, in a plan talk with Master, over a wish
+to give `stemic` a true, live pair of characters.** A true, shared
+`Sensor` class, for both a drop-off check and a target check. The
+full true design sits in `docs/sensor_spec.md` — this task closes
+once that spec is checked true and the class it calls for is built.
