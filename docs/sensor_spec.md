@@ -139,7 +139,53 @@ turned on.
 
 ---
 
-## 6. Open points
+## 6. What this costs on a phone
+
+**No real device check has been run yet.** What is below is a plain
+count of what this design asks of the CPU, given what is known
+today — not a true, measured number. A real check, on a real phone,
+is still owed before this task closes.
+
+### 6.1 How many characters this must run for
+
+`stemic`'s own current plan (`TASKLIST.md` TASK-013..024) calls for
+two characters, each holding an `Animo` mind. `Sensor` also gives its
+drop-off check to any character `Germio` moves, mind or not — a
+moving block, say (see §5 above). So the true count to plan against
+is not "how many minds", but "how many moving things sit in a scene
+at once". Today, with only the player (`Human.cs`) and two true
+characters, that count sits at three. This spec does not know what
+that count grows to as `stemic`'s own levels grow, or once `flugi`/
+`tropika` take up the same `Sensor` class.
+
+### 6.2 What runs, and how often
+
++ **Stage one** (the cheap, wide check) runs once a tick, for every
+  moving thing that holds a `Sensor` — a drop-off check for
+  movement, a target check at whatever rate §3.3 above ends up
+  setting.
++ **Stage two** (the true, single straight-line check) runs only
+  when stage one finds something — so its true cost scales with how
+  often characters truly sit near an edge or near each other, not
+  with how many characters a scene holds.
+
+`BoxCollider` (checked true on every `stemic` Ground/Block prefab,
+no `MeshCollider` at all, §3.3 above) keeps a single straight-line
+check cheap in itself; the true, open question is how many times a
+second this happens, times how many characters, added up.
+
+### 6.3 What is still owed
+
++ A real, device-run check (not a plan-only guess), once TASK-014
+  (this class itself) is built, with the true character count
+  `stemic`'s own level work ends up holding.
++ A plain, upper true limit on how many `Sensor`-holding characters
+  one scene may hold at once, set once that real check comes back —
+  today, no such limit is written down anywhere.
+
+---
+
+## 7. Open points
 
 + The true block-height point that tells a step-up apart from a
   true drop-off is still open — a number to set once real play on
