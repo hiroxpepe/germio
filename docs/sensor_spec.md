@@ -53,10 +53,14 @@ it in its own way, through plain settings alone.
 `stemic`, `flugi`, and `tropika` all hold the same, one `Germio` git
 submodule commit today (checked by `git submodule status` on
 2026-08-19). `Germio` is already the shared home for work more than one
-game needs — `Human.cs` (walk, jump, climb) sits there now, and
-`CameraSystem.cs`/`SoundSystem.cs` sit in `Scripts/Systems/` as shared,
-single-aim systems, tied to no one character. `Sensor` fits this same
-shape; it does not call for one more repository.
+game needs — `Human.cs` (walk, jump, and every shared move) sits there
+now, and `CameraSystem.cs`/`SoundSystem.cs` sit in `Scripts/Systems/` as
+shared, single-aim systems, tied to no one character. (`climb` itself is
+not in `Human.cs` at all: a check on 2026-08-19 found it lives in
+`stemic`'s own `Human_Climbable.cs`, a `partial` on `Human_Abilities`,
+one game's own added ability — the same shape `tropika` uses for its own
+`Human_Holdable`/`Human_Pushable`.) `Sensor` fits this same shape; it
+does not call for one more repository.
 
 ### 2.2 Why one class, not two
 
