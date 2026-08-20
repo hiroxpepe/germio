@@ -27,7 +27,7 @@ namespace Germio.Players {
             /// <summary>
             /// Indicates whether the player is idle.
             /// </summary>
-            bool _idol;
+            bool _idle;
 
             /// <summary>
             /// Indicates whether the player is running.
@@ -65,7 +65,7 @@ namespace Germio.Players {
             /// <summary>
             /// Gets whether the player is idle.
             /// </summary>
-            public bool Idol { get => _idol; }
+            public bool Idle { get => _idle; }
 
             /// <summary>
             /// Gets whether the player is running.
@@ -116,10 +116,10 @@ namespace Germio.Players {
             /// <param name="type">The FixedUpdate state to apply.</param>
             public void Apply(FixedUpdate type) {
                 switch (type) {
-                    case FixedUpdate.Idol: _idol = true; _run = _walk = _backward = _jump = false; break;
-                    case FixedUpdate.Run: _idol = _walk = _backward = false; _run = true; break;
-                    case FixedUpdate.Walk: _idol = _run = _backward = false; _walk = true; break;
-                    case FixedUpdate.Backward: _idol = _run = _walk = false; _backward = true; break;
+                    case FixedUpdate.Idle: _idle = true; _run = _walk = _backward = _jump = false; break;
+                    case FixedUpdate.Run: _idle = _walk = _backward = false; _run = true; break;
+                    case FixedUpdate.Walk: _idle = _run = _backward = false; _walk = true; break;
+                    case FixedUpdate.Backward: _idle = _run = _walk = false; _backward = true; break;
                     case FixedUpdate.Jump: _jump = true; break;
                     case FixedUpdate.AbortJump: _abort_jump = true; break;
                     case FixedUpdate.Stop: _stop = true; break;
@@ -132,7 +132,7 @@ namespace Germio.Players {
             /// <param name="type">The FixedUpdate state to cancel.</param>
             public void Cancel(FixedUpdate type) {
                 switch (type) {
-                    case FixedUpdate.Idol: break;
+                    case FixedUpdate.Idle: break;
                     case FixedUpdate.Run: _run = false; break;
                     case FixedUpdate.Walk: _walk = false; break;
                     case FixedUpdate.Backward: _backward = false; break;
@@ -155,7 +155,7 @@ namespace Germio.Players {
         /// <summary>
         /// Idle state.
         /// </summary>
-        Idol,
+        Idle,
 
         /// <summary>
         /// Running state.

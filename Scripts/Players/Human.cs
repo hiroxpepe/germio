@@ -207,7 +207,7 @@ namespace Germio.Players {
                 }).AddTo(gameObjectComponent: this);
 
             /// <summary>
-            /// Idol
+            /// Idle
             /// </summary>
             this.UpdateAsObservable()
                 .Where(predicate: _ => 
@@ -216,12 +216,12 @@ namespace Germio.Players {
                 .Subscribe(onNext: _ => {
                     SimpleAnime.Play(stateName: "Default");
                     SoundSystem.StopSfxClip();
-                    DoFixedUpdate.Apply(type: FixedUpdate.Idol);
+                    DoFixedUpdate.Apply(type: FixedUpdate.Idle);
                 }).AddTo(gameObjectComponent: this);
 
             this.FixedUpdateAsObservable()
                 .Where(predicate: _ => 
-                    !DoUpdate.Climbing && DoFixedUpdate.Idol)
+                    !DoUpdate.Climbing && DoFixedUpdate.Idle)
                 .Subscribe(onNext: _ => {
                     rb.useGravity = true;
                 }).AddTo(gameObjectComponent: this);
