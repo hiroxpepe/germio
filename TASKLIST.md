@@ -19,7 +19,7 @@ the change in as a commit.
 + [ ] TASK-011 [P-03]: Map SfxClip's own seven values against Signo's own eight SEType values
 + [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
-+ [ ] TASK-014 [P-XX]: Build one shared `Sensor`, for both a drop-off check and a target check
++ [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
 
 ## Detail
 
@@ -622,8 +622,26 @@ phase, before `flugi`/`tropika` are checked the same true way.
 
 ### TASK-014
 
-**Checked true, 2026-08-19, in a plan talk with Master, over a wish
-to give `stemic` a true, live pair of characters.** A true, shared
-`Sensor` class, for both a drop-off check and a target check. The
-full true design sits in `docs/sensor_spec.md` — this task closes
-once that spec is checked true and the class it calls for is built.
+**Dropped 2026-08-21, and moved to `modio`.** This once held a plan
+for a shared sensor class here, with its own full design in
+`docs/sensor_spec.md` (now taken away).
+
+Held up against what `modio` truly asks, that plan broke in three
+places, all from one cause: **seeking had been cut off from
+remembering.**
+
++ It picked things by `layer_mask`. `stemic` holds only Unity's own
+  five stock layers — no Block, Ground or Player layer at all — while
+  `germio` picks by name (`Like()`) through all three builds.
++ It gave back one thing only. "Find a Block not yet met" needs every
+  near thing, then a choice against memory; one thing back leaves no
+  second try.
++ No fading rate for that memory could be settled with seeking here
+  and memory there.
+
+The drop-off check went too. A character that walks to the same drop,
+turns away, and walks back again has taken in nothing: **knowing an
+edge is dangerous is remembering it.**
+
+`germio` holds no part of it. `modio` calls Unity's own `Physics`
+straight. See `modio`'s own `docs/modio_spec.md` §3.3.
