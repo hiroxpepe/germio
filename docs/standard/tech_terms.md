@@ -392,3 +392,7 @@ single, new object.
 
 **sequencer** — A program that reads a song's own score, and sends out a
 note, at the right moment, to make music.
+
+**deed** — One true thing done: a Behavior carried out over time,
+with a start, a middle, and an end. See `modio`'s own
+`docs/modio_spec.md`.

@@ -20,6 +20,10 @@ the change in as a commit.
 + [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 + [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
++ [ ] TASK-015 [P-XX]: Give every level piece a mark that holds, past a scene being read again
++ [ ] TASK-016 [P-XX]: Add actor to Rule, so a rule may belong to one character
++ [ ] TASK-017 [P-XX]: Add request_deed to Command, for work that takes time
++ [ ] TASK-018 [P-XX]: Add update_need to Command, the one way to reach Animo
 
 ## Detail
 
@@ -248,23 +252,23 @@ clean.
 **10 old games checked against a single-string notify, to see how
 far "one notify to a Rule" truly goes**:
 
-| Game | Moment checked | Does a single notify fit? |
-| --- | --- | --- |
-| Super Mario Bros. | touching the goal flag | yes — the moment is simple, and there is only one |
-| Super Mario 64 | grabbing a star | for the most part — one notify covers "cleared", but the pose/sound/walk *line of steps* after it still needs C#, or `play_sequence` later |
-| Tomb Raider | a many-switch door opening | yes — "door opened" is one notify; the movie's own content is always the game's own job, never the DSL's |
-| The Legend of Zelda (a dungeon clear) | boss put down, item shows | for the most part — one notify fires the sound, but the sound-then-item-shows staging still needs C#, or `play_sequence` later |
-| Dragon Quest (going up a level) | after a fight's own points are added | no — more than one party member can go up a level in the same fight; a single string cannot carry more than one at once |
-| Mega Man (a boss put down) | screen flash, way out, stage pick | for the most part — one notify fires it, but the flash-then-way-out-then-change staging still needs C#, or `play_sequence` later |
-| Pac-Man (clearing a board) | the last dot eaten | yes — one fixed, plain flash-then-move-on way |
-| Final Fantasy (a fight won) | the outcome screen | no — points, things won, and going up levels have to be shown all at once; one string cannot carry all 3 |
-| Sonic the Hedgehog (100-ring bonus) | the ring count going past 100 | for the most part — a sound and a life-count showing are two different things a single notify string is pushed hard to carry at once |
-| this `flugi` fix (Level Clear) | the A-button-held clear | yes — this is right what tonight's fix needs, and no more |
-| Bomberman (clearing a stage) | reaching the way out door | yes — the notify alone covers it; the door's own showing is a separate Rule |
-| Family Circuit (a race's end) | crossing the line | for the most part — the notify can fire the outcome screen, but rank and time are read from `counters` already there, not carried by the notify string itself |
-| Sky Kid (landing well) | landing on the carrier | yes — the bonus score itself runs through `update_counter` already there, next to the notify |
-| Tokimeki Memorial (a love-words event) | more than one game person's own liking crosses a line at once | no — this needs picking one out of many, which a single string cannot say on its own |
-| Daisenryaku (a turn's end report) | many fights and land-takes in one turn | no — this needs many different things that took place put together and grouped, which is `record_event` and History's own job, not one notify string's |
+| Game                                   | Moment checked                                                | Does a single notify fit?                                                                                                                                     |
+| -------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Super Mario Bros.                      | touching the goal flag                                        | yes — the moment is simple, and there is only one                                                                                                             |
+| Super Mario 64                         | grabbing a star                                               | for the most part — one notify covers "cleared", but the pose/sound/walk *line of steps* after it still needs C#, or `play_sequence` later                    |
+| Tomb Raider                            | a many-switch door opening                                    | yes — "door opened" is one notify; the movie's own content is always the game's own job, never the DSL's                                                      |
+| The Legend of Zelda (a dungeon clear)  | boss put down, item shows                                     | for the most part — one notify fires the sound, but the sound-then-item-shows staging still needs C#, or `play_sequence` later                                |
+| Dragon Quest (going up a level)        | after a fight's own points are added                          | no — more than one party member can go up a level in the same fight; a single string cannot carry more than one at once                                       |
+| Mega Man (a boss put down)             | screen flash, way out, stage pick                             | for the most part — one notify fires it, but the flash-then-way-out-then-change staging still needs C#, or `play_sequence` later                              |
+| Pac-Man (clearing a board)             | the last dot eaten                                            | yes — one fixed, plain flash-then-move-on way                                                                                                                 |
+| Final Fantasy (a fight won)            | the outcome screen                                            | no — points, things won, and going up levels have to be shown all at once; one string cannot carry all 3                                                      |
+| Sonic the Hedgehog (100-ring bonus)    | the ring count going past 100                                 | for the most part — a sound and a life-count showing are two different things a single notify string is pushed hard to carry at once                          |
+| this `flugi` fix (Level Clear)         | the A-button-held clear                                       | yes — this is right what tonight's fix needs, and no more                                                                                                     |
+| Bomberman (clearing a stage)           | reaching the way out door                                     | yes — the notify alone covers it; the door's own showing is a separate Rule                                                                                   |
+| Family Circuit (a race's end)          | crossing the line                                             | for the most part — the notify can fire the outcome screen, but rank and time are read from `counters` already there, not carried by the notify string itself |
+| Sky Kid (landing well)                 | landing on the carrier                                        | yes — the bonus score itself runs through `update_counter` already there, next to the notify                                                                  |
+| Tokimeki Memorial (a love-words event) | more than one game person's own liking crosses a line at once | no — this needs picking one out of many, which a single string cannot say on its own                                                                          |
+| Daisenryaku (a turn's end report)      | many fights and land-takes in one turn                        | no — this needs many different things that took place put together and grouped, which is `record_event` and History's own job, not one notify string's        |
 
 A first look said Tokimeki Memorial and Daisenryaku could be
 put right today with Rule order (first one to match wins) and
@@ -645,3 +649,78 @@ edge is dangerous is remembering it.**
 
 `germio` holds no part of it. `modio` calls Unity's own `Physics`
 straight. See `modio`'s own `docs/modio_spec.md` §3.3.
+
+### TASK-015
+
+**Checked true, 2026-08-21, by counting a real scene.** `modio` must
+be able to say "I have been to that one before". For that, each piece
+in a level needs a mark that means the same thing every time.
+
+Nothing on hand does the job:
+
+| What              | Why not                                                                                                                                                                          |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The object name   | **Not one to a piece.** `Level_1` holds 24 pieces, and three names are used twice over: `Ground_5.0x0.5x5.0_Green_2`, `Ground_5.0x0.5x5.0_Green_1`, `Block_1.0x1.0x1.0_Green_1`. |
+| `GetInstanceID()` | Made new on every scene load, and `Despawn.cs` loads the scene again each time the player falls.                                                                                 |
+| `GlobalObjectId`  | Editor only. Cannot be read while the game runs.                                                                                                                                 |
+
+Every way found in wide use — Unity's own team among them — comes to
+the same answer: **hold the mark in the object itself, saved with the
+scene.** `Common.cs` already holds `[SerializeField] protected bool
+_CAN_HOLD`; a mark of this kind sits in the same place, in the same
+shape.
+
+`briko` can fill it in while a level is being laid out.
+
+### TASK-016
+
+`Rule` today holds `id`, `trigger`, `condition`, `command`, `once` —
+and `Store` is one, for the whole game. So a rule cannot say **whose**
+rule it is.
+
+With two characters given minds by `animo`, both would answer the same
+rule, and nothing would tell them apart.
+
+Add `actor` (a plain name). Left empty, the rule belongs to the world,
+as every rule does today. Filled in, it belongs to that one character.
+
+### TASK-017
+
+Every `Command` on hand does its work at once: set a flag, add to a
+counter, ask for a change of node. **Nothing takes time.**
+
+A deed does. Walking to a place takes a long stretch, and may fail part
+way. `modio` holds that stretch of time (see its own
+`docs/modio_spec.md` §5), but something must start it.
+
+Add `request_deed`, beside `request_transition` and `request_notify` —
+all three ask for something that does not finish on the spot. It
+holds:
+
+| Field       | Sense                                                         |
+| ----------- | ------------------------------------------------------------- |
+| `target`    | what to look for: kind, reach, spread                         |
+| `condition` | which of the found ones to take (the same Evaluator as today) |
+| `motion`    | how the body moves, from the seven `FixedUpdate` states       |
+| `until`     | when the deed is done                                         |
+| `command`   | **a `Command`, held inside** — what to do once it lands       |
+
+The inner `command` is the same `Command` type, so `record_event`,
+`set_flag`, and `update_need` all work there with nothing new added.
+
+**`$target`** stands for whatever the deed found. It is put in place
+before the Evaluator runs, so `ExprLexer`, `ExprParser` and
+`Evaluator` need no change at all. `$` appears in no token kind today,
+so it runs into nothing else.
+
+### TASK-018
+
+`animo` is reached by one call alone: `Engine.Affect(need, delta)`.
+
+Add `update_need`, in the same shape as `update_counter` and
+`update_inventory`:
+
+    "update_need": { "key": "curiosity", "delta": -25 }
+
+**This is the only way anything may write into `animo`.** Everything
+else `modio` does — seeking, remembering, moving — stays on this side.

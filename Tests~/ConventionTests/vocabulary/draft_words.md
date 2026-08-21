@@ -456,3 +456,4 @@ form — a short form is put right in the code, and not kept here.
 + those
 + p seven
 + sensor sensors
++ curiosity
