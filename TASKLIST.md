@@ -84,6 +84,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
 + [x] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
 + [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
++ [x] TASK-061 [P-XX]: Read history inside and, or and not, however deep
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1277,3 +1278,33 @@ not exist in the current context`, from `Validator.cs`.
 
 This is the whole of what a game must do for these two — no other list
 names them.
+
+### TASK-061
+
+**Done 2026-08-22**, with 13 tests.
+
+`docs/dsl_spec.md` §6 held a limit: a `history.*` call "does not work right when nested inside `&&`, `||` or `!`", and a writer was told
+to split such a rule in two, or work the answer out ahead into a flag.
+
+**Measured that day, the limit was wider than written.** `true && true`
+gave back `false`. So did `false || true`, and `!false`. **No history
+call worked inside any of the three at all** — not a corner case, but
+the whole of it.
+
+The cause was plain once looked for. `AndNode` held `_left` and
+`_right` private, so `Evaluator` could not reach them; it fell back to
+reading plain state alone, where a history node throws, and the throw
+was caught and turned into `false`. The comment in the code said as
+much: *"we can't access the private _left and _right fields"*.
+
+**Both sides are now held open** — `AndNode.Left`, `AndNode.Right`,
+`OrNode.Left`, `OrNode.Right`, `NotNode.Operand` — and history is
+carried down through every one of the three, however deep.
+
+Why it matters here: a deed may ask two things of the past at once.
+`Explore` asks **not met before, and not like a fall** — two questions,
+one rule. Before this, that rule gave back `false` and the deed never
+began.
+
+Nothing that stood before was touched: a history call standing alone
+works as it did, and 513 tests in `stemic` are green.

@@ -47,6 +47,15 @@ namespace Germio.Core {
         public AndNode(ExprAST left, ExprAST right) { _left = left; _right = right; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>The side on the left. Held open so history may be read through it.</summary>
+        public ExprAST Left => _left;
+
+        /// <summary>The side on the right. Held open so history may be read through it.</summary>
+        public ExprAST Right => _right;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public override bool Evaluate(State state) => _left.Evaluate(state: state) && _right.Evaluate(state: state);
@@ -66,6 +75,15 @@ namespace Germio.Core {
         public OrNode(ExprAST left, ExprAST right) { _left = left; _right = right; }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>The side on the left. Held open so history may be read through it.</summary>
+        public ExprAST Left => _left;
+
+        /// <summary>The side on the right. Held open so history may be read through it.</summary>
+        public ExprAST Right => _right;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         public override bool Evaluate(State state) => _left.Evaluate(state: state) || _right.Evaluate(state: state);
@@ -82,6 +100,12 @@ namespace Germio.Core {
         // Constructor
 
         public NotNode(ExprAST operand) { _operand = operand; }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>What is turned about. Held open so history may be read through it.</summary>
+        public ExprAST Operand => _operand;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]

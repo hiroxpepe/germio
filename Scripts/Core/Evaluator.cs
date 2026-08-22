@@ -87,31 +87,25 @@ namespace Germio.Core {
         /// Evaluates an AndNode with history context.
         /// </summary>
         static bool evaluateAndWithHistory(AndNode node, State state, History history) {
-            // We need to evaluate both sides - but we can't access the private _left and _right fields
-            // Instead, we'll use reflection or a workaround
-            // For now, let's implement this by catching the exception pattern
-            try {
-                // The node itself should handle the evaluation if we give it what it needs
-                // But since it doesn't support history, we'll need a different approach
-                // Actually, let's make the evaluator simpler by using a different strategy
-                return evaluateRecursiveWithHistory(node: node, state: state, history: history);
-            } catch {
-                return false;
-            }
+            // Both sides are read the same way this node itself is read, so a
+            // history call works wherever it stands, however deep.
+            return evaluateRecursiveWithHistory(node: node.Left, state: state, history: history)
+                && evaluateRecursiveWithHistory(node: node.Right, state: state, history: history);
         }
 
         /// <summary>
         /// Evaluates an OrNode with history context.
         /// </summary>
         static bool evaluateOrWithHistory(OrNode node, State state, History history) {
-            return evaluateRecursiveWithHistory(node: node, state: state, history: history);
+            return evaluateRecursiveWithHistory(node: node.Left, state: state, history: history)
+                || evaluateRecursiveWithHistory(node: node.Right, state: state, history: history);
         }
 
         /// <summary>
         /// Evaluates a NotNode with history context.
         /// </summary>
         static bool evaluateNotWithHistory(NotNode node, State state, History history) {
-            return evaluateRecursiveWithHistory(node: node, state: state, history: history);
+            return !evaluateRecursiveWithHistory(node: node.Operand, state: state, history: history);
         }
 
         /// <summary>
@@ -119,19 +113,21 @@ namespace Germio.Core {
         /// For nodes without history support, falls back to regular evaluation.
         /// </summary>
         static bool evaluateRecursiveWithHistory(ExprAST node, State state, History history) {
-            // For composite nodes (And, Or, Not), we can't easily decompose them
-            // So we try to evaluate with state only, which will fail for history nodes
-            // This is a limitation of the current design
-            // The proper solution would be to pass history through the entire evaluation chain
-            // For now, we'll just return the state-based evaluation
-            // This means history.* functions won't work in nested expressions
-            // But we can still evaluate top-level history.* functions
-            try {
-                return node.Evaluate(state: state);
-            } catch (InvalidOperationException) {
-                // This is expected for history nodes evaluated without history context
-                return false;
-            }
+            // Every node kind is taken here, and history is carried down through
+            // And, Or and Not alike. So a history call works wherever it stands,
+            // however deep — which it did not before 2026-08-22.
+            return node switch {
+                AndNode and_node => evaluateAndWithHistory(node: and_node, state: state, history: history),
+                OrNode or_node => evaluateOrWithHistory(node: or_node, state: state, history: history),
+                NotNode not_node => evaluateNotWithHistory(node: not_node, state: state, history: history),
+                HistoryCountNode count_node => (int)evaluateHistoryCount(node: count_node, history: history) >= 0,
+                HistoryHasNode has_node => (bool)evaluateHistoryHas(node: has_node, history: history),
+                HistoryTimeSinceNode since_node => (float)evaluateHistoryTimeSince(node: since_node, history: history) >= 0,
+                HistorySessionCountNode session_node => (int)evaluateHistorySessionCount(node: session_node, state: state) >= 0,
+                HistoryTotalPlayTimeNode time_node => (float)evaluateHistoryTotalPlayTime(node: time_node, state: state) >= 0,
+                GenericComparisonNode comp_node => evaluateGenericComparison(node: comp_node, state: state, history: history),
+                _ => node.Evaluate(state: state)
+            };
         }
 
         /// <summary>
