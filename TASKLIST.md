@@ -56,6 +56,14 @@ the change in as a commit.
 + [ ] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
 + [ ] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
 + [ ] TASK-045 [P-XX]: Take like beside target_id, in every history call
++ [ ] TASK-051 [P-XX]: Hold V007 back where a rule names an actor
++ [ ] TASK-052 [P-XX]: Hold V008 back where a set_flag sits inside a deed
++ [ ] TASK-053 [P-XX]: Let V010 know the two new commands
++ [ ] TASK-054 [P-XX]: Put the three new words into the exported schema
++ [ ] TASK-055 [P-XX]: Give Rule and Command a deep copy of their own
++ [ ] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
++ [ ] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
++ [ ] TASK-058 [P-XX]: V036 — an actor no persona holds is an error
 
 ## Detail
 
@@ -923,9 +931,11 @@ three places.
 
 ### TASK-036
 
-**Test first:** every one of the 13 tests already in
-`ExecutorTests.cs` stays green. Nothing added here may break what
-stands.
+**Test first:** every test already standing stays green — not the 13
+in `ExecutorTests.cs` alone, but `CommandTests.cs` (17),
+`ValidatorTests.cs` (24), `NodeTests.cs`, `ScenarioTests.cs`,
+`HistoryTests.cs` and the rest. **Over 50 together.** Nothing added
+here may break what stands.
 
 ### TASK-037
 
@@ -1038,3 +1048,94 @@ changed.**
 
 `like` takes the same place `target_id` does, and the two are never
 written together.
+
+### TASK-051
+
+V007 warns where a rule holds an empty `condition`, since such a rule
+fires every time its trigger comes.
+
+**Every deed rule will hold one.** `animo` has already settled what to
+do (§7.10 in `modio`'s own spec); the rule's own `condition` is for
+the world, and a deed leaves it empty. Of the 10 the two given
+personas hold, **8 would warn every time**, and with 64 characters
+running the log would fill with warnings that mean nothing, hiding the
+ones that do.
+
+**Hold V007 back where `actor` is not empty.**
+
+### TASK-052
+
+V008 warns where `once` is false and the command holds `set_flag`,
+since such a rule could set the same flag over and over.
+
+**Every deed rule holds `once: false`**, and `Give` holds a `set_flag`
+inside its own deed. But a deed sets that flag only where it truly
+lands — once, at the end of a stretch of work — so there is no loop
+at all.
+
+**Hold V008 back where the `set_flag` sits inside a `request_deed`.**
+
+### TASK-053
+
+V010 warns of a command it does not know. Its list already grew once,
+for `reset_flags`, `reset_counters` and `reset_inventory`.
+
+**Add `request_deed` and `update_need`**, or every deed rule will read
+as unknown.
+
+### TASK-054
+
+`Scripts/Schema/SchemaExporter.cs` writes out the JSON schema a writer
+— or an LLM — reads to know what a `germio.json` may hold.
+
+**Add `actor` on `Rule`, and `request_deed` and `update_need` on
+`Command`**, with every part of each. Left out, nothing outside would
+know a deed may be written at all.
+
+### TASK-055
+
+`request_deed` holds a `Command` inside it, and that Command holds
+others again. Nothing in `germio` copies a `Rule` or a `Command`
+deeply today, so two rules built off one another would share what
+sits inside.
+
+`animo`'s own `Data.cs` gives every model type its own `DeepCopy()`
+for this reason.
+
+**Give `Rule`, `Command` and `RequestDeed` one each.**
+
+### TASK-056
+
+Two things are called `condition`, and they are not the same:
+
+| Where                    | Asks                          | Holds `$target`? |
+| ------------------------ | ----------------------------- | ---------------- |
+| `Rule.condition`         | should this deed begin at all | no               |
+| `request_deed.condition` | which found thing to take     | **yes**          |
+
+V009 checks a condition's types by reading it. **A deed condition
+cannot be read until `$target` is put in place**, and at check time no
+deed is running.
+
+**So V009 runs on `Rule.condition` as it does today, and on a deed
+condition only after a stand-in id is put in.** A well-formed
+stand-in (`g_0`) is enough to check the shape.
+
+### TASK-057
+
+`Rule.trigger` matches either a `Zone.zone_id` or a `Bus` signal. A
+Zone belongs to the world — a place a body walks into — not to any
+character.
+
+**Where a Zone fires a rule, `actor` is left empty**, so only the
+world's own rules answer. A character's rules are reached through
+`Bus.Publish` with an actor named, and no other way.
+
+### TASK-058
+
+V036: an `actor` names a persona. A slip in the name — an `O` for a
+`0` — would leave a rule that fires for nobody, and nothing would say
+so.
+
+**Check every `actor` against the `agent_id` list the personas hold.**
+**Error** where no persona answers to it.
