@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "initial_state": { "flags": {}, "counters": {}, "inventory": {}, "current_node": "lv_1" },
+  "root": {
+    "id": "lv_1",
+    "name": "Level 1",
+    "kind": "world",
+    "scene": "Level_1",
+    "children": [],
+    "next": [],
+    "rules": [
+      {
+        "id": "rule_explore",
+        "trigger": "sig_behavior_explore",
+        "actor": "place_curious_01",
+        "condition": "",
+        "command": {
+          "request_deed": {
+            "target": { "kind": "Ground", "reach": 15.0, "spread": 90.0 },
+            "condition": "history.time_since(kind=met, target_id=$target) > 60",
+            "motion": "walk",
+            "until": { "meets": "$target" },
+            "command": {
+              "update_need": [ { "key": "curiosity", "delta": -25.0 } ],
+              "record_event": { "kind": "met", "target_id": "$target" }
+            }
+          }
+        },
+        "once": false
+      },
+      {
+        "id": "rule_give",
+        "trigger": "sig_behavior_give",
+        "actor": "company_seeking_01",
+        "condition": "",
+        "command": {
+          "request_deed": {
+            "target": { "kind": "Human", "reach": 30.0, "spread": 120.0 },
+            "condition": "history.count(kind=gave, target_id=$target) == 0",
+            "motion": "walk",
+            "act": "hand_over",
+            "until": { "near": 1.5 },
+            "command": {
+              "update_need": [
+                { "key": "togetherness", "delta": -30.0 },
+                { "key": "loneliness", "delta": -20.0 }
+              ],
+              "record_event": { "kind": "gave", "target_id": "$target" },
+              "set_flag": { "key": "gift_given", "value": true }
+            }
+          }
+        },
+        "once": false
+      }
+    ]
+  }
+}

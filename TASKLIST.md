@@ -51,51 +51,51 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 + [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
 + [xx] TASK-015 [P-XX]: Give every level piece a mark — dropped, nothing is needed
-+ [ ] TASK-016 [P-XX]: Read actor off a Rule, out of the JSON
-+ [ ] TASK-017 [P-XX]: Take an actor on DispatchTrigger, and on Bus Publish
-+ [ ] TASK-018 [P-XX]: Fire a rule with no actor, whoever calls
-+ [ ] TASK-019 [P-XX]: Fire a rule with an actor only for that one
-+ [ ] TASK-020 [P-XX]: Read update_need as a list, out of the JSON
-+ [ ] TASK-021 [P-XX]: Fire a need out of the Store, one call to a list entry
-+ [ ] TASK-022 [P-XX]: V028 — an empty need key is an error
-+ [ ] TASK-023 [P-XX]: V029 — a delta of zero is a warning
-+ [ ] TASK-024 [P-XX]: Read request_deed, all five parts, out of the JSON
-+ [ ] TASK-025 [P-XX]: Read the Command held inside a request_deed
-+ [ ] TASK-026 [P-XX]: Let a request_deed stand with no target at all
-+ [ ] TASK-027 [P-XX]: Fire a deed out of the Store, once
-+ [ ] TASK-028 [P-XX]: V030 — a motion outside the seven is an error
-+ [ ] TASK-029 [P-XX]: V031 — an until with no key, or two, is an error
-+ [ ] TASK-030 [P-XX]: V032 — a request_deed inside a request_deed is an error
-+ [ ] TASK-031 [P-XX]: V033 — a kind outside the six type marks is an error
-+ [ ] TASK-032 [P-XX]: Put a found id in place of the $target mark
-+ [ ] TASK-033 [P-XX]: Leave text with no $target mark just as it stands
-+ [ ] TASK-034 [P-XX]: Swap every $target in a line, not the first alone
-+ [ ] TASK-046 [P-XX]: Leave $targets and $TARGET alone, mark or not
-+ [ ] TASK-047 [P-XX]: Swap once, and never look at what was put in
-+ [ ] TASK-048 [P-XX]: Reach every text field inside a held Command
-+ [ ] TASK-049 [P-XX]: Write out an id with a letter in front of it
-+ [ ] TASK-050 [P-XX]: Run a put-in-place condition through the Evaluator
-+ [ ] TASK-035 [P-XX]: Read a whole deed, end to end, off a real JSON file
-+ [ ] TASK-036 [P-XX]: Hold every Executor test already there, still green
-+ [ ] TASK-037 [P-XX]: Read act off a request_deed, and let it be left out
-+ [ ] TASK-038 [P-XX]: V034 — an act outside the three is an error
++ [x] TASK-016 [P-XX]: Read actor off a Rule, out of the JSON
++ [x] TASK-017 [P-XX]: Take an actor on DispatchTrigger, and on Bus Publish
++ [x] TASK-018 [P-XX]: Fire a rule with no actor, whoever calls
++ [x] TASK-019 [P-XX]: Fire a rule with an actor only for that one
++ [x] TASK-020 [P-XX]: Read update_need as a list, out of the JSON
++ [x] TASK-021 [P-XX]: Fire a need out of the Store, one call to a list entry
++ [x] TASK-022 [P-XX]: V028 — an empty need key is an error
++ [x] TASK-023 [P-XX]: V029 — a delta of zero is a warning
++ [x] TASK-024 [P-XX]: Read request_deed, all five parts, out of the JSON
++ [x] TASK-025 [P-XX]: Read the Command held inside a request_deed
++ [x] TASK-026 [P-XX]: Let a request_deed stand with no target at all
++ [x] TASK-027 [P-XX]: Fire a deed out of the Store, once
++ [x] TASK-028 [P-XX]: V030 — a motion outside the seven is an error
++ [x] TASK-029 [P-XX]: V031 — an until with no key, or two, is an error
++ [x] TASK-030 [P-XX]: V032 — a request_deed inside a request_deed is an error
++ [x] TASK-031 [P-XX]: V033 — a kind outside the six type marks is an error
++ [x] TASK-032 [P-XX]: Put a found id in place of the $target mark
++ [x] TASK-033 [P-XX]: Leave text with no $target mark just as it stands
++ [x] TASK-034 [P-XX]: Swap every $target in a line, not the first alone
++ [x] TASK-046 [P-XX]: Leave $targets and $TARGET alone, mark or not
++ [x] TASK-047 [P-XX]: Swap once, and never look at what was put in
++ [x] TASK-048 [P-XX]: Reach every text field inside a held Command
++ [x] TASK-049 [P-XX]: Write out an id with a letter in front of it
++ [x] TASK-050 [P-XX]: Run a put-in-place condition through the Evaluator
++ [x] TASK-035 [P-XX]: Read a whole deed, end to end, off a real JSON file
++ [x] TASK-036 [P-XX]: Hold every Executor test already there, still green
++ [x] TASK-037 [P-XX]: Read act off a request_deed, and let it be left out
++ [x] TASK-038 [P-XX]: V034 — an act outside the three is an error
 + [xx] TASK-039 [P-XX]: V035 — an until on a tie moving — dropped, no such until
-+ [ ] TASK-040 [P-XX]: Add a NeedRequested event to the Store, and fire it
-+ [ ] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
-+ [ ] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
++ [x] TASK-040 [P-XX]: Add a NeedRequested event to the Store, and fire it
++ [x] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
++ [x] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
 + [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
-+ [ ] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
++ [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
 + [xx] TASK-045 [P-XX]: Take like beside target_id — dropped, wrong build
-+ [ ] TASK-051 [P-XX]: Hold V007 back where a rule names an actor
-+ [ ] TASK-052 [P-XX]: Hold V008 back where a set_flag sits inside a deed
-+ [ ] TASK-053 [P-XX]: Let V010 know the two new commands
++ [x] TASK-051 [P-XX]: Hold V007 back where a rule names an actor
++ [x] TASK-052 [P-XX]: Hold V008 back where a set_flag sits inside a deed
++ [x] TASK-053 [P-XX]: Let V010 know the two new commands
 + [x] TASK-054 [P-XX]: Put the three new words into the exported schema
-+ [ ] TASK-055 [P-XX]: Give Rule and Command a deep copy of their own
-+ [ ] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
-+ [ ] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
-+ [ ] TASK-058 [P-XX]: V036 — an actor no persona holds is an error
++ [x] TASK-055 [P-XX]: Give Rule and Command a deep copy of their own
++ [x] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
++ [x] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
++ [x] TASK-058 [P-XX]: V036 — an actor no persona holds is an error
 
 ## Detail
 
@@ -956,10 +956,21 @@ false. `$` belongs to no token kind today, so nothing else is touched.
 
 ### TASK-035
 
-**Test first:** the whole deed in `modio`'s own
-`docs/modio_spec.md` §7.10 reads end to end off a real JSON file —
-`actor`, `request_deed`, the `Command` held inside, and `$target` in
-three places.
+**Done 2026-08-22**, with 7 tests reading
+`Tests~/ModelTests/TestData/deed_rule.json` off disk.
+
+Both rules `modio`'s own spec sets out are read end to end: an
+`Explore` that needs no act, and a `Give` that hands a thing over.
+`actor`, `request_deed` with all its parts, the `Command` held inside,
+and `$target` standing in three places — the condition, the `until`,
+and a `record_event`.
+
+Two things worth holding to are checked there:
+
++ **One arrival may quiet two wants at once.** `Give` carries two
+  `update_need` entries, or `Call` would win for ever.
++ **A deed may hold three commands at once**, since the Executor runs
+  a plain row of `if` checks and not a `switch`.
 
 ### TASK-036
 
