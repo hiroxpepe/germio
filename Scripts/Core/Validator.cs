@@ -170,15 +170,50 @@ namespace Germio.Core {
     ///   V025: Node hierarchy exceeds WarningNodeDepth (Warning)
     ///   V026: Circular reference detected (children contain an ancestor ID) (Error)
     ///   V027: command.request_notify is empty or whitespace-only (Warning)
+    ///   V028: an update_need entry has an empty key (Error)
+    ///   V029: an update_need entry has a delta of zero (Warning)
+    ///   V030: a request_deed motion is outside the seven doing-states (Error)
+    ///   V031: a request_deed until holds no key, or more than one (Error)
+    ///   V032: a request_deed is held inside another request_deed (Error)
+    ///   V033: a request_deed target kind is outside germio type marks (Error)
+    ///   V034: a request_deed act is outside the five (Error)
+    ///   V036: an actor no persona answers to (Error, only where names are given)
     /// 
     /// Phase 5.8 v2 fix6 changes:
     ///   - V010 now also recognises reset_flags / reset_counters / reset_inventory
     ///     as valid command effects.
+    /// 
+    /// Deed changes (2026-08-22):
+    ///   - V007 is held back where a rule names an actor: a deed rule leaves its
+    ///     own condition empty by design.
+    ///   - V008 is held back where the set_flag sits inside a request_deed: such
+    ///     a flag is set only where the deed truly lands.
+    ///   - V010 now also recognises update_need / request_deed as effects.
     ///   - The reserved trigger '_on_enter_node' is auto-fired by SceneLoader on
     ///     every transition (no Validator change required; trigger ids are free-form).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Validator {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Fields
+
+        /// <summary>The seven doing-states germio's own body knows (FixedUpdate).</summary>
+        static readonly HashSet<string> DEED_MOTIONS = new HashSet<string> {
+            "idle", "walk", "run", "backward", "jump", "abort_jump", "stop"
+        };
+
+        /// <summary>The type marks germio names a thing by (Env.cs).</summary>
+        static readonly HashSet<string> DEED_KINDS = new HashSet<string> {
+            Env.BLOCK_TYPE, Env.GROUND_TYPE, Env.WALL_TYPE, Env.ITEM_TYPE,
+            Env.COIN_TYPE, Env.BALLOON_TYPE, Env.PLAYER_TYPE, Env.VEHICLE_TYPE,
+            Env.HOME_TYPE, Env.SCENE_TYPE, Env.DESPAWN_TYPE
+        };
+
+        /// <summary>What a deed may do once it gets there. Most deeds do none of them.</summary>
+        static readonly HashSet<string> DEED_ACTS = new HashSet<string> {
+            "hand_over", "take_up", "put_down", "show", "tend"
+        };
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public static Methods [verb]
 
@@ -188,7 +223,13 @@ namespace Germio.Core {
         /// </summary>
         /// <param name="scenario">The Scenario to validate.</param>
         /// <returns>A list of ValidationResult items, possibly empty.</returns>
-        public static List<ValidationResult> Validate(Scenario scenario) {
+        /// <param name="known_actors">
+        /// The names every persona answers to. germio holds no persona of its
+        /// own, so these are handed in from outside: modio reads them off
+        /// animo.json. Given none (the default), V036 does not run at all.
+        /// </param>
+        public static List<ValidationResult> Validate(
+            Scenario scenario, IReadOnlyCollection<string>? known_actors = null) {
             var results = new List<ValidationResult>();
 
             // Early-exit rule: root must not be null.
@@ -270,6 +311,7 @@ namespace Germio.Core {
 
             // Traverse tree and validate each node.
             validateNodeRecursive(
+                known_actors: known_actors,
                 node: scenario.root,
                 node_map: node_map,
                 state: scenario.initial_state,
@@ -298,7 +340,8 @@ namespace Germio.Core {
         /// </summary>
         static void validateNodeRecursive(
             Node node, Map<string, Node> node_map, State state,
-            List<ValidationResult> results) {
+            List<ValidationResult> results,
+            IReadOnlyCollection<string>? known_actors = null) {
 
             // V011: dead end — no rules and no next
             if ((node.rules == null || node.rules.Count == 0) &&
@@ -354,7 +397,11 @@ namespace Germio.Core {
                     }
 
                     // V007: empty condition (always fires)
-                    if (string.IsNullOrWhiteSpace(rule.condition)) {
+                    // Held back where the rule names an actor: a deed rule leaves
+                    // its own condition empty by design, since what gates a deed
+                    // is animo's own choice of Behavior, not a line of DSL.
+                    if (string.IsNullOrWhiteSpace(rule.condition)
+                        && string.IsNullOrEmpty(value: rule.actor)) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
                             rule_id:        "V007",
@@ -371,7 +418,26 @@ namespace Germio.Core {
                             results: results);
                     }
 
+                    // V036: an actor no persona answers to
+                    // Only where names were handed in: with none, germio has
+                    // nothing to check against and says nothing at all.
+                    if (known_actors != null
+                        && !string.IsNullOrEmpty(value: rule.actor)
+                        && !System.Linq.Enumerable.Contains(source: known_actors, value: rule.actor)) {
+                        results.Add(new ValidationResult(
+                            level:          ValidationLevel.Error,
+                            rule_id:        "V036",
+                            message:        $"Rule '{rule.id}' in node '{node.id}' names an actor '{rule.actor}' no persona answers to.",
+                            cause_detail:   "An actor names a persona. A rule naming one that does not stand fires for nobody, and nothing else would say so.",
+                            fix_suggestion: "Check the name against the agent_id every persona holds; a slip of one letter is enough to break it.",
+                            location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].actor" }));
+                    }
+
                     // V008: once=false with set_flag
+                    // A set_flag held INSIDE a request_deed runs only where the
+                    // deed truly lands — once, at the end of a stretch of work —
+                    // so there is no loop at all. One sitting beside a deed, or
+                    // with no deed, still runs every time the rule fires.
                     if (!rule.once && rule.command?.set_flag != null) {
                         results.Add(new ValidationResult(
                             level:          ValidationLevel.Warning,
@@ -394,6 +460,115 @@ namespace Germio.Core {
                             location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.request_notify" }));
                     }
 
+                    // V028: an update_need entry names no Need at all
+                    // V029: an update_need entry moves nothing
+                    if (rule.command?.update_need != null) {
+                        for (int need_index = 0; need_index < rule.command.update_need.Count; need_index++) {
+                            var need = rule.command.update_need[need_index];
+                            if (string.IsNullOrWhiteSpace(need.key)) {
+                                results.Add(new ValidationResult(
+                                    level:          ValidationLevel.Error,
+                                    rule_id:        "V028",
+                                    message:        $"Rule '{rule.id}' in node '{node.id}' has an update_need entry with an empty key.",
+                                    cause_detail:   "An update_need key names which Need to move. An empty key names no Need at all, so nothing can act on it.",
+                                    fix_suggestion: "Set the key to a Need the persona holds, as animo names it.",
+                                    location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.update_need[{need_index}].key" }));
+                            }
+                            if (need.delta == 0f) {
+                                results.Add(new ValidationResult(
+                                    level:          ValidationLevel.Warning,
+                                    rule_id:        "V029",
+                                    message:        $"Rule '{rule.id}' in node '{node.id}' has an update_need entry with a delta of zero.",
+                                    cause_detail:   "A delta of zero moves the Need nowhere, so the entry does nothing at all — likely a slip.",
+                                    fix_suggestion: "Set a delta below zero to quiet a want, or above zero to raise one, or remove the entry.",
+                                    location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.update_need[{need_index}].delta" }));
+                            }
+                        }
+                    }
+
+                    // V030 to V034: a request_deed, checked part by part
+                    if (rule.command?.request_deed != null) {
+                        var deed = rule.command.request_deed;
+                        string deed_path = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.request_deed";
+
+                        // V030: motion must be one of germio's own seven doing-states
+                        if (!DEED_MOTIONS.Contains(value: deed.motion)) {
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V030",
+                                message:        $"Rule '{rule.id}' in node '{node.id}' has a request_deed with an unknown motion '{deed.motion}'.",
+                                cause_detail:   "A motion names how the body moves, and the body knows only seven: idle, walk, run, backward, jump, abort_jump, stop.",
+                                fix_suggestion: "Set motion to one of the seven doing-states.",
+                                location:       new Location { JSONPath = $"{deed_path}.motion" }));
+                        }
+
+                        // V031: until holds exactly one key
+                        int until_keys = 0;
+                        if (deed.until != null) {
+                            if (deed.until.near    != null) { until_keys++; }
+                            if (deed.until.meets   != null) { until_keys++; }
+                            if (deed.until.elapsed != null) { until_keys++; }
+                            if (deed.until.@while  != null) { until_keys++; }
+                        }
+                        if (until_keys != 1) {
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V031",
+                                message:        $"Rule '{rule.id}' in node '{node.id}' has a request_deed whose until holds {until_keys} keys, not one.",
+                                cause_detail:   "With no key the deed never ends; with more than one, which ends it is anyone's guess.",
+                                fix_suggestion: "Set exactly one of near, meets, elapsed or while.",
+                                location:       new Location { JSONPath = $"{deed_path}.until" }));
+                        }
+
+                        // V032: a deed inside a deed
+                        if (deed.command?.request_deed != null) {
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V032",
+                                message:        $"Rule '{rule.id}' in node '{node.id}' has a request_deed held inside another request_deed.",
+                                cause_detail:   "One stretch of time set running inside another leaves no way to say which lock holds.",
+                                fix_suggestion: "Take the inner request_deed out, and give it a rule of its own.",
+                                location:       new Location { JSONPath = $"{deed_path}.command.request_deed" }));
+                        }
+
+                        // V033: target.kind must be one of germio's own type marks
+                        if (deed.target != null && !DEED_KINDS.Contains(value: deed.target.kind)) {
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V033",
+                                message:        $"Rule '{rule.id}' in node '{node.id}' has a request_deed seeking an unknown kind '{deed.target.kind}'.",
+                                cause_detail:   "A kind names what to look for, and only germio's own type marks name anything in the world.",
+                                fix_suggestion: "Set kind to one of Block, Ground, Wall, Item, Coin, Balloon, Human, Vehicle, Home, Scene or Despawn.",
+                                location:       new Location { JSONPath = $"{deed_path}.target.kind" }));
+                        }
+
+                        // V034: act, where one is given, must be one of the five
+                        if (!string.IsNullOrEmpty(value: deed.act) && !DEED_ACTS.Contains(value: deed.act)) {
+                            results.Add(new ValidationResult(
+                                level:          ValidationLevel.Error,
+                                rule_id:        "V034",
+                                message:        $"Rule '{rule.id}' in node '{node.id}' has a request_deed with an unknown act '{deed.act}'.",
+                                cause_detail:   "An act names what is done once there, and only five things can be done: hand_over, take_up, put_down, show, tend.",
+                                fix_suggestion: "Set act to one of the five, or leave it out — most deeds need none.",
+                                location:       new Location { JSONPath = $"{deed_path}.act" }));
+                        }
+                        // V009 on the deed's own condition, which is not the
+                        // rule's own: it names which found thing to take, and it
+                        // holds $target, which ExprLexer knows nothing of. So a
+                        // well-formed stand-in id is put in first — enough to
+                        // check the shape of the line. Nothing is written back:
+                        // the mark stands until a deed truly runs.
+                        if (!string.IsNullOrWhiteSpace(deed.condition)) {
+                            validateCondition(
+                                condition: TargetMark.PutInPlace(
+                                    text: deed.condition, id: TargetMark.WriteID(instance_id: 0)),
+                                state:     state,
+                                node_id:   node.id,
+                                json_path: $"{deed_path}.condition",
+                                results:   results);
+                        }
+                    }
+
                     // V010: command has no effect
                     if (rule.command == null ||
                         (rule.command.set_flag        == null &&
@@ -403,6 +578,8 @@ namespace Germio.Core {
                          rule.command.request_notify == null &&
                          rule.command.set_persistence == null &&
                          rule.command.record_event == null &&
+                         rule.command.update_need == null &&
+                         rule.command.request_deed == null &&
                          !rule.command.reset_flags &&
                          !rule.command.reset_counters &&
                          !rule.command.reset_inventory)) {
@@ -424,7 +601,8 @@ namespace Germio.Core {
                         node: child,
                         node_map: node_map,
                         state: state,
-                        results: results);
+                        results: results,
+                        known_actors: known_actors);
                 }
             }
         }

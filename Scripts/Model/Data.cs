@@ -135,6 +135,28 @@ namespace Germio.Model {
 
         /// <summary>If true (default), this rule fires at most once per session.</summary>
         public bool once { get; set; } = true;
+
+        /// <summary>
+        /// Whose rule this is. Empty (default) means the world's own rule, which
+        /// fires whoever calls. A name here means the rule belongs to that one
+        /// character alone. See modio's own docs/modio_spec.md.
+        /// </summary>
+        public string actor { get; set; } = string.Empty;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>Gives back a copy holding nothing in common with this one.</summary>
+        public Rule DeepCopy() {
+            return new Rule {
+                id = this.id,
+                trigger = this.trigger,
+                condition = this.condition,
+                command = this.command != null ? this.command.DeepCopy() : new Command(),
+                once = this.once,
+                actor = this.actor
+            };
+        }
     }
 
     /// <summary>
@@ -155,6 +177,21 @@ namespace Germio.Model {
 
         /// <summary>Adds or removes items from State.inventory.</summary>
         public UpdateInventory? update_inventory { get; set; }
+
+        /// <summary>
+        /// Moves one or more Needs in animo. A list, always, even holding one:
+        /// a single arrival may quiet more than one want. Fires an event out of
+        /// the Store, once for each entry; nothing in germio hears it.
+        /// See modio's own docs/modio_spec.md §7.2.
+        /// </summary>
+        public List<UpdateNeed>? update_need { get; set; }
+
+        /// <summary>
+        /// Starts a deed: work that takes time, and may fail part way. Fires an
+        /// event out of the Store; nothing in germio hears it, and modio is what
+        /// carries the deed out. See modio own docs/modio_spec.md §7.3.
+        /// </summary>
+        public RequestDeed? request_deed { get; set; }
 
         /// <summary>Requests an immediate scene transition to the specified node ID.</summary>
         public string? request_transition { get; set; }
@@ -196,6 +233,33 @@ namespace Germio.Model {
         // public Methods [verb]
 
         /// <summary>
+        /// Gives back a copy holding nothing in common with this one, reaching
+        /// every part within — including a request_deed and the Command it holds.
+        /// </summary>
+        public Command DeepCopy() {
+            return new Command {
+                set_flag = this.set_flag == null ? null
+                    : new SetFlag { key = this.set_flag.key, value = this.set_flag.value },
+                update_counter = this.update_counter == null ? null
+                    : new UpdateCounter { key = this.update_counter.key, delta = this.update_counter.delta, op = this.update_counter.op },
+                update_inventory = this.update_inventory == null ? null
+                    : new UpdateInventory { key = this.update_inventory.key, delta = this.update_inventory.delta },
+                update_need = this.update_need == null ? null
+                    : copyNeeds(from: this.update_need),
+                request_transition = this.request_transition,
+                request_notify = this.request_notify,
+                request_deed = this.request_deed?.DeepCopy(),
+                set_persistence = this.set_persistence == null ? null
+                    : new SetPersistence { key = this.set_persistence.key, value = this.set_persistence.value },
+                record_event = this.record_event == null ? null
+                    : new RecordEvent { kind = this.record_event.kind, target_id = this.record_event.target_id },
+                reset_flags = this.reset_flags,
+                reset_counters = this.reset_counters,
+                reset_inventory = this.reset_inventory
+            };
+        }
+
+        /// <summary>
         /// Builds a full, human-readable line describing every field this
         /// Command actually has set, for logging. Only set fields are
         /// shown, so a log line stays short for the common case (one
@@ -230,6 +294,17 @@ namespace Germio.Model {
             if (reset_inventory) { parts.Add("reset_inventory=True"); }
             return parts.Count == 0 ? "(none)" : string.Join(", ", parts);
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
+
+        static List<UpdateNeed> copyNeeds(List<UpdateNeed> from) {
+            var made = new List<UpdateNeed>(capacity: from.Count);
+            foreach (var need in from) {
+                made.Add(item: new UpdateNeed { key = need.key, delta = need.delta });
+            }
+            return made;
+        }
     }
 
     /// <summary>Sets a named flag to a boolean value.</summary>
@@ -253,6 +328,149 @@ namespace Germio.Model {
         public string key { get; set; } = string.Empty;
         public float delta { get; set; }
         public CounterOp op { get; set; } = CounterOp.Add;
+    }
+
+    /// <summary>
+    /// Moves a named Need in animo. The one way anything reaches that engine:
+    /// see modio's own docs/modio_spec.md §7.2. Always written as a list, even
+    /// holding one, since a single arrival may quiet more than one want.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class UpdateNeed {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>Which Need, by the name animo holds it under.</summary>
+        public string key { get; set; } = string.Empty;
+
+        /// <summary>How far it moves. Below zero to quiet a want.</summary>
+        public float delta { get; set; }
+    }
+
+    /// <summary>
+    /// What a deed looks for: a kind of thing, within a reach and a spread.
+    /// Left out where a deed seeks nothing at all (standing still to rest, or
+    /// calling out). See modio's own docs/modio_spec.md §7.4.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class Target {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>One of germio's own type marks: Ground, Block, Human, Item, Home, and the rest.</summary>
+        public string kind { get; set; } = string.Empty;
+
+        /// <summary>How far out to look.</summary>
+        public float reach { get; set; }
+
+        /// <summary>How far round to look, in degrees.</summary>
+        public float spread { get; set; }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>Gives back a copy holding nothing in common with this one.</summary>
+        public Target DeepCopy() {
+            return new Target { kind = this.kind, reach = this.reach, spread = this.spread };
+        }
+    }
+
+    /// <summary>
+    /// When a deed is done. Exactly one of these holds a value; the rest stay
+    /// empty. See modio's own docs/modio_spec.md §7.6.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class Until {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>Done once within this far of the target.</summary>
+        public float? near { get; set; }
+
+        /// <summary>Done once the bodies touch. Holds $target.</summary>
+        public string? meets { get; set; }
+
+        /// <summary>Done once this many seconds have gone by.</summary>
+        public float? elapsed { get; set; }
+
+        /// <summary>
+        /// Never done of itself: held while the named state holds. A deed ending
+        /// this way ends Failed, never Done.
+        /// </summary>
+        public string? @while { get; set; }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>Gives back a copy holding nothing in common with this one.</summary>
+        public Until DeepCopy() {
+            return new Until {
+                near = this.near, meets = this.meets,
+                elapsed = this.elapsed, @while = this.@while
+            };
+        }
+    }
+
+    /// <summary>
+    /// Work that takes time, and may fail part way. Sits beside
+    /// request_transition and request_notify, all three asking for what does not
+    /// finish on the spot. germio starts it and hears no more: modio carries it
+    /// out. See modio's own docs/modio_spec.md §7.3.
+    /// </summary>
+    /// <author>h.adachi (STUDIO MeowToon)</author>
+    [UnityEngine.Scripting.Preserve]
+    public class RequestDeed {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
+        /// <summary>What to seek. Left out where a deed seeks nothing.</summary>
+        public Target? target { get; set; }
+
+        /// <summary>
+        /// Which of the found ones to take. Read by the same Evaluator as any
+        /// other condition, once $target is put in place. Empty takes the nearest.
+        /// </summary>
+        public string condition { get; set; } = string.Empty;
+
+        /// <summary>How the body moves: one of germio's own seven doing-states.</summary>
+        public string motion { get; set; } = string.Empty;
+
+        /// <summary>
+        /// What is done once there, on its own clock: hand_over, take_up,
+        /// put_down, show, tend. Most deeds need none.
+        /// </summary>
+        public string act { get; set; } = string.Empty;
+
+        /// <summary>When the deed is done.</summary>
+        public Until? until { get; set; }
+
+        /// <summary>
+        /// What to do once it lands. A whole Command, held inside, so every
+        /// command there is works here with nothing new added.
+        /// </summary>
+        public Command command { get; set; } = new Command();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Methods [verb]
+
+        /// <summary>
+        /// Gives back a copy holding nothing in common with this one, all the way
+        /// down to the Command held within. Putting a found id in place works on
+        /// a copy, and must never reach the rule that copy came from.
+        /// </summary>
+        public RequestDeed DeepCopy() {
+            return new RequestDeed {
+                target = this.target?.DeepCopy(),
+                condition = this.condition,
+                motion = this.motion,
+                act = this.act,
+                until = this.until?.DeepCopy(),
+                command = this.command != null ? this.command.DeepCopy() : new Command()
+            };
+        }
     }
 
     /// <summary>Changes the quantity of a named inventory item.</summary>

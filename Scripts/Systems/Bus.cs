@@ -76,9 +76,14 @@ namespace Germio.Systems {
         /// Use for events like player death ("sig_despawn") that can occur repeatedly.
         /// </summary>
         /// <param name="signal_id">The signal identifier, e.g. "sig_despawn".</param>
-        public void Publish(string signal_id) {
-            Germio.GermioLog.Write(message: $"[Germio Bus] Publish('{signal_id}')");
-            _store.DispatchTrigger(trigger_id: signal_id);
+        /// <param name="actor">
+        /// Whose signal this is. Empty (default) means the world's own signal.
+        /// Carried straight through to the Store, which uses it to pick which
+        /// rules answer. See modio's own docs/modio_spec.md §7.10.
+        /// </param>
+        public void Publish(string signal_id, string actor = "") {
+            Germio.GermioLog.Write(message: $"[Germio Bus] Publish('{signal_id}', actor='{actor}')");
+            _store.DispatchTrigger(trigger_id: signal_id, actor: actor);
         }
 
         /// <summary>

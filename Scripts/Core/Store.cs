@@ -62,6 +62,24 @@ namespace Germio.Core {
         /// </summary>
         public event Action<string>? NotifyRequested;
 
+        /// <summary>
+        /// Fired once for each update_need entry a command holds. germio knows
+        /// nothing of animo, so nothing here calls that engine: modio is what
+        /// hears this, and turns it into a call to Affect(need, delta).
+        /// See modio's own docs/modio_spec.md §7.11.
+        /// (past participle: a single, completed happening)
+        /// </summary>
+        public event Action<string, float>? NeedRequested;
+
+        /// <summary>
+        /// Fired once for each request_deed a command holds. germio starts a
+        /// deed and hears no more of it: modio is what carries it out, over
+        /// however long it takes, and decides how it ends.
+        /// See modio's own docs/modio_spec.md §7.11.
+        /// (past participle: a single, completed happening)
+        /// </summary>
+        public event Action<RequestDeed>? DeedRequested;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Properties [noun, adjective]
 
@@ -147,7 +165,12 @@ namespace Germio.Core {
         /// G2 once-guard: rules with once=true fire at most once per session.
         /// </summary>
         /// <param name="trigger_id">The trigger identifier, e.g. "vol_goal".</param>
-        public void DispatchTrigger(string trigger_id) {
+        /// <param name="actor">
+        /// Whose call this is. Empty (default) means the world's own call.
+        /// A rule with an empty actor fires whoever calls; a rule naming an actor
+        /// fires only when that same actor calls. See modio's own docs/modio_spec.md.
+        /// </param>
+        public void DispatchTrigger(string trigger_id, string actor = "") {
             string current_id = _scenario.initial_state.current_node;
             var node = FindNode(node_id: current_id);
             if (node == null) {
@@ -159,6 +182,14 @@ namespace Germio.Core {
             int matched = 0;
             foreach (var rule in node.rules) {
                 if (rule.trigger != trigger_id) { continue; }
+
+                // A rule with no actor belongs to the world, and fires whoever calls.
+                // A rule naming an actor fires only when that same actor calls.
+                if (!string.IsNullOrEmpty(value: rule.actor) && rule.actor != actor) {
+                    Germio.GermioLog.Write(message: $"[Germio Store]   rule '{rule.id}' skipped (actor '{rule.actor}' does not match '{actor}')");
+                    continue;
+                }
+
                 matched++;
 
                 if (rule.once) {
@@ -293,6 +324,22 @@ namespace Germio.Core {
         /// </summary>
         public void RequestTransition(string target_id) {
             TransitionRequested?.Invoke(target_id);
+        }
+
+        /// <summary>
+        /// Fires the NeedRequested event with the given need key and delta.
+        /// Called by Executor, once for each update_need entry.
+        /// </summary>
+        public void RequestNeed(string key, float delta) {
+            NeedRequested?.Invoke(key, delta);
+        }
+
+        /// <summary>
+        /// Fires the DeedRequested event with the given deed.
+        /// Called by Executor for request_deed commands.
+        /// </summary>
+        public void RequestDeedStart(RequestDeed deed) {
+            DeedRequested?.Invoke(deed);
         }
 
         /// <summary>

@@ -4,6 +4,36 @@ Work still open for this repository. Any person may put in a new
 item; the person who does the work marks it done (`+ [x]`) and puts
 the change in as a commit.
 
+## Before any change here is called done
+
+**Three test builds stand in `Tests~`, and all three must be green —
+not two.**
+
+| Build             | What it holds | Checks                                   |
+| ----------------- | ------------- | ---------------------------------------- |
+| `ModelTests`      | 39 tests      | the model types, and their JSON          |
+| `CoreTests`       | 130 tests     | the Store, Executor, Validator, and more |
+| `ConventionTests` | **106 tests** | **how every line of C# here is written** |
+
+`ConventionTests` is not about documents. **It reads every `.cs` file
+in `Scripts/`** and holds it to the house rules: how names are formed,
+what order members come in, where a section header goes, how wide a
+divider runs, where a blank line may sit.
+
+**Taken in the hard way, 2026-08-22.** 39 tasks were carried
+out with `ModelTests` and `CoreTests` run each time, and
+`ConventionTests` left alone throughout. 8 breaks of the rules had built up by
+the end: a method named `CopyNeeds` where it should have been
+`copyNeeds`, a `WriteId` where the house rule says `WriteID`, a
+`DeepCopy` dropped in among the properties and breaking their order,
+a section divider 4 letters short, `#nullable enable` in the wrong place,
+properties named `width` and `font` where neither word is allowed.
+
+**None of it would have shipped had the third build been run once.**
+
+Run all three, every time, before calling anything done. A change to
+one line of `Scripts/` is enough to need them.
+
 <!-- format: v1 | fields: status, id, title, phase -->
 
 + [ ] TASK-001 [P-XX]: Build a Scene wiring checker and auto-fixer
@@ -53,13 +83,15 @@ the change in as a commit.
 + [ ] TASK-040 [P-XX]: Add a NeedRequested event to the Store, and fire it
 + [ ] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
 + [ ] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
-+ [ ] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
++ [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
++ [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
++ [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [ ] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
-+ [ ] TASK-045 [P-XX]: Take like beside target_id, in every history call
++ [xx] TASK-045 [P-XX]: Take like beside target_id — dropped, wrong build
 + [ ] TASK-051 [P-XX]: Hold V007 back where a rule names an actor
 + [ ] TASK-052 [P-XX]: Hold V008 back where a set_flag sits inside a deed
 + [ ] TASK-053 [P-XX]: Let V010 know the two new commands
-+ [ ] TASK-054 [P-XX]: Put the three new words into the exported schema
++ [x] TASK-054 [P-XX]: Put the three new words into the exported schema
 + [ ] TASK-055 [P-XX]: Give Rule and Command a deep copy of their own
 + [ ] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
 + [ ] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
@@ -1022,32 +1054,89 @@ show what a character had in mind: "I change direction", "I wait...",
 eye**, and with `modio` driving characters, a great deal will need
 checking that way.
 
+**Split in two, 2026-08-22.** Drawing a line takes Unity; working out
+how big to draw it, and whether it is worth drawing at all, does not.
+
+| Part        | Where                        | Done?                               |
+| ----------- | ---------------------------- | ----------------------------------- |
+| The sums    | `Scripts/Core/SpeechSize.cs` | **yes** — 11 tests, no Unity at all |
+| The drawing | TASK-059 below               | no                                  |
+
+**Where it sits (not yet fixed, 2026-08-22).** `Scripts/` itself, beside
+`Env.cs` and `Utils.cs` — things any part may reach for. Not `Core/`,
+which holds what works on a `germio.json` (`Store`, `Executor`,
+`Validator`), and `SpeechSize` knows nothing of one. **This may move
+again; nothing rests on it.**
+
+`SpeechSize` carries over `super-nekokun`'s own sums: the box and the
+letters both get smaller as the reader stands further off, and neither
+ever comes out at nothing. `WorthDrawing` is asked first, and asked
+here where it is cheap — with 64 characters running, most lines are
+not worth drawing at all.
+
+### TASK-059
+
+Draw the line itself: a box over one character's head, holding a few
+words, sized by `SpeechSize` (TASK-043 above).
+
+**A shape to build to (not yet fixed, 2026-08-22 — this may change).**
+
+`germio` already holds `NoticeSystem`: it hears `NotifyRequested` off
+the `Store` and puts a line on the screen, for the whole screen.
+**A `SpeechSystem` would stand beside it, in the same shape**, and put
+a line over one character's head instead.
+
+|          | `NoticeSystem` (standing) | `SpeechSystem` (to build)    |
+| -------- | ------------------------- | ---------------------------- |
+| Hears    | `Store.NotifyRequested`   | a line asked for, by actor   |
+| Shows    | one line, whole screen    | one line, over one head      |
+| Sized by | the screen                | `SpeechSize`, by how far off |
+
+Why here, and not in a game: this build is handed out as a package,
+and every game taking it would otherwise write the same thing again.
+Why not in `modio`: that build holds no Unity drawing at all
+(`modio`'s own `docs/modio_spec.md` §3.6), and must not start.
+
+This part takes Unity — a Canvas, a text field, a look at where the
+character stands — and so cannot be checked by `dotnet test`.
+**Check it by eye, in a running game.** The sums behind it are checked
+already, and apart (TASK-043).
+
 ### TASK-044
 
 Rules for the world (no `actor`) and rules for each character (an
 `actor` named) sit side by side under one `Node`. With many
 characters, which rule belongs to which character grows hard to see.
 
-The Validator already walks every rule under every node. **Have it
-give back a list by `actor`**, so a reader may take one character's
-rules on their own.
+**Done 2026-08-22: `Grapher.RulesByActor(scenario)`**, with 7 tests.
+It walks the whole tree and gives back every rule under the name it
+answers to, the world's own under an empty name.
+
+**Nothing calls it yet, and that is right.** A reader is what calls
+it — a tool, a page, an editor — and none stands today. What is
+owed is that a reader be built; the sorting itself is here and ready.
 
 ### TASK-045
 
-`history.count(kind=..., target_id=...)` asks after one thing, named.
-**Add `like`, which asks after every row whose thing was of a sort
-with the one named.**
+**Dropped 2026-08-22, and moved to `modio`.** This asked for `like`
+beside `target_id`, so a rule could ask after every row of a sort with
+the one named.
 
-    history.count(kind=met,  target_id=$target)     this one
-    history.count(kind=edge, like=$target)          ones like it
+**The rows here cannot answer it.** `HistoryEntry` holds three things
+— `kind`, `target_id`, `timestamp` — while being of a sort is judged on what
+Perceive hands back: the kind, how far off, how far up or down
+(`modio`'s own `docs/modio_spec.md` §4.7.1). **Neither distance nor
+height is written down here, and neither belongs here.**
 
-This is how `modio` looks ahead: not by working a Need forward, but by
-asking how it went with things of this sort before (`modio`'s own
-`docs/modio_spec.md` §4.7). **The same table, the same call, one word
-changed.**
+There is a deeper reason. §4.2 of that spec sets out whose past each
+side holds: this `Store` holds **the world's** past, one for the whole
+game — "a rule fired", "a node was entered". `like` asks *"how did it
+go for **me**, with things of this sort"*, and that is a first-person
+question. **It belongs to the memory `modio` keeps for each character,
+not to the world's own record.**
 
-`like` takes the same place `target_id` does, and the two are never
-written together.
+Nothing is added here. `history.count(kind=..., target_id=...)` stands
+as it is.
 
 ### TASK-051
 
@@ -1085,12 +1174,22 @@ as unknown.
 
 ### TASK-054
 
-`Scripts/Schema/SchemaExporter.cs` writes out the JSON schema a writer
-— or an LLM — reads to know what a `germio.json` may hold.
+**Done 2026-08-22, and nothing had to be added.**
 
-**Add `actor` on `Rule`, and `request_deed` and `update_need` on
-`Command`**, with every part of each. Left out, nothing outside would
-know a deed may be written at all.
+`Scripts/Schema/SchemaExporter.cs` builds the schema off the C# types
+themselves, through NJsonSchema. **So the moment `actor`,
+`update_need` and `request_deed` stood in `Data.cs`, the schema knew
+them.**
+
+10 tests in `Tests~/CoreTests/SchemaDeedTests.cs` hold it that way:
+each of the three new words, each of the three new types with all its
+own parts, and every word that stood before, still standing.
+
+**One thing is owed elsewhere.** A game holding a static copy of the
+schema — `stemic` keeps one at `schemas/germio.schema.json` — must
+build it again. `stemic`'s own `SchemaExporterTests` holds a test for
+just that (`RegenerateStaticSchemaFile`), and it is that game's own
+work, not this build's.
 
 ### TASK-055
 
@@ -1139,3 +1238,31 @@ so.
 
 **Check every `actor` against the `agent_id` list the personas hold.**
 **Error** where no persona answers to it.
+
+**Done 2026-08-22**, with 7 tests. The names are handed in:
+
+    Validate(scenario)                       the check does not run
+    Validate(scenario, known_actors: [...])  the check runs
+
+`germio` holds no persona of its own, so it can only check against
+what it is given. **Nothing hands the names in yet**: `modio` is what
+will, once it reads them off `animo.json`. Until then the check stands
+ready and idle, and every caller today goes on as it was.
+
+### TASK-060
+
+Two files stand here now that did not before:
+
+    Scripts/Core/TargetMark.cs
+    Scripts/Core/SpeechSize.cs
+
+**A game holding this build as a copy must be told about both.**
+`stemic` keeps its own list at
+`game/tests/IntegrationTests/IntegrationTests.csproj`, naming every
+germio file its tests read, one `Compile Include` to a line. Left out,
+that project will not build at all: checked 2026-08-22, leaving
+`TargetMark.cs` out gives `error CS0103: The name 'TargetMark' does
+not exist in the current context`, from `Validator.cs`.
+
+This is the whole of what a game must do for these two — no other list
+names them.

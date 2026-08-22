@@ -66,6 +66,23 @@ namespace Germio.Core {
                 store.RequestNotify(notify_id: command.request_notify);
             }
 
+            // update_need changes no saved state here: germio holds no Needs at
+            // all. It fires one event for each entry, and modio is what hears
+            // them and calls animo's own Affect. A list, always, since a single
+            // arrival may quiet more than one want.
+            if (command.update_need != null) {
+                foreach (var need in command.update_need) {
+                    store.RequestNeed(key: need.key, delta: need.delta);
+                }
+            }
+
+            // request_deed changes no saved state here either: it hands the deed
+            // out and stops. The Command held inside it does NOT run now — modio
+            // runs that, and only where the deed truly lands.
+            if (command.request_deed != null) {
+                store.RequestDeedStart(deed: command.request_deed);
+            }
+
             if (command.request_transition != null) {
                 store.RequestTransition(target_id: command.request_transition);
                 mutated = true;

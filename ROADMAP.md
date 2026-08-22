@@ -58,5 +58,30 @@ for a Rule to ask for a message on screen, with no need to touch
 C#), and a browser-based `germio.json` editor tool, built with no
 Unity needed at all. Both are done and in use. The older plan's own
 phase numbers do not cover this kind of work; it is tracked here,
-and in `TASKLIST.md`, instead. See `TASKLIST.md` for the open work
+and in `TASKLIST.md`, instead.
+
+**A second body of work of this kind landed 2026-08-22: what `modio`
+needs.** `modio` is the HOW layer, standing between `animo` (WHY) and
+this build (WHAT), and carrying a want through as a deed that takes
+time. Four things were added here for it, each held to TDD, each with
+its own tests:
+
+| Added              | To        | What it does                             |
+| ------------------ | --------- | ---------------------------------------- |
+| `actor`            | `Rule`    | says whose rule this is                  |
+| `update_need`      | `Command` | the one way anything reaches `animo`     |
+| `request_deed`     | `Command` | starts work that takes time              |
+| the `$target` mark | —         | stands for what a deed has not yet found |
+
+Beside those: two events out of the `Store` (`NeedRequested`,
+`DeedRequested`), 9 new checks (V028 to V034, V036), a deep copy
+for `Rule` and `Command`, a way to sort rules by actor, and the sums
+behind a line spoken over a character's head.
+
+**Two test builds were opened here for it** — `Tests~/ModelTests` and
+`Tests~/CoreTests` — so this build now checks itself, rather than
+leaning on a game to do it. `animo` has held its own tests all along;
+this brings the same to a build made to be handed out as a package.
+
+See `TASKLIST.md` for the open work
 under this phase.

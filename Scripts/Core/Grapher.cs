@@ -38,6 +38,26 @@ namespace Germio.Core {
         /// </summary>
         /// <param name="scenario">The Scenario to render.</param>
         /// <returns>A Mermaid flowchart string ready for rendering.</returns>
+        /// <summary>
+        /// Sorts every rule in the whole tree by the actor it names.
+        ///
+        /// Rules for the world (no actor) and rules for each character sit side
+        /// by side under one Node, and with many characters, which rule belongs
+        /// to which grows hard to see. The world's own rules come back under an
+        /// empty name.
+        ///
+        /// The rules themselves are given back, not copies of them: a reader
+        /// looking at rules wants the rules.
+        /// </summary>
+        /// <param name="scenario">The scenario to walk through.</param>
+        public static Dictionary<string, List<Rule>> RulesByActor(Scenario scenario) {
+            var sorted = new Dictionary<string, List<Rule>>();
+            if (scenario?.root == null) { return sorted; }
+
+            sortNodeRulesByActor(node: scenario.root, sorted: sorted);
+            return sorted;
+        }
+
         public static string Export(Scenario scenario) {
             var sb = new StringBuilder();
             sb.AppendLine("graph TD");
@@ -75,6 +95,24 @@ namespace Germio.Core {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // private static Methods [verb]
+
+        /// <summary>Walks one node and every child under it, sorting rules by actor.</summary>
+        static void sortNodeRulesByActor(Node node, Dictionary<string, List<Rule>> sorted) {
+            if (node.rules != null) {
+                foreach (var rule in node.rules) {
+                    string actor = rule.actor ?? string.Empty;
+                    if (!sorted.ContainsKey(key: actor)) {
+                        sorted[actor] = new List<Rule>();
+                    }
+                    sorted[actor].Add(item: rule);
+                }
+            }
+            if (node.children != null) {
+                foreach (var child in node.children) {
+                    sortNodeRulesByActor(node: child, sorted: sorted);
+                }
+            }
+        }
 
         /// <summary>
         /// Recursively renders the Node tree as Mermaid syntax.
