@@ -39,7 +39,12 @@ the change in as a commit.
 + [ ] TASK-031 [P-XX]: V033 — a kind outside the six type marks is an error
 + [ ] TASK-032 [P-XX]: Put a found id in place of the $target mark
 + [ ] TASK-033 [P-XX]: Leave text with no $target mark just as it stands
-+ [ ] TASK-034 [P-XX]: Run a put-in-place condition through the Evaluator
++ [ ] TASK-034 [P-XX]: Swap every $target in a line, not the first alone
++ [ ] TASK-046 [P-XX]: Leave $targets and $TARGET alone, mark or not
++ [ ] TASK-047 [P-XX]: Swap once, and never look at what was put in
++ [ ] TASK-048 [P-XX]: Reach every text field inside a held Command
++ [ ] TASK-049 [P-XX]: Write out an id with a letter in front of it
++ [ ] TASK-050 [P-XX]: Run a put-in-place condition through the Evaluator
 + [ ] TASK-035 [P-XX]: Read a whole deed, end to end, off a real JSON file
 + [ ] TASK-036 [P-XX]: Hold every Executor test already there, still green
 + [ ] TASK-037 [P-XX]: Read act off a request_deed, and let it be left out
@@ -847,14 +852,63 @@ A deed cannot name up front what it has not yet found, so `$target`
 stands for it. Before the Evaluator or the Executor runs, the text is
 put aside for the id the deed found.
 
-**Test first:** `"target_id=$target"` with `g_0041` gives
-`"target_id=g_0041"`.
+**Test first:** `"target_id=$target"` with `g_1042` gives
+`"target_id=g_1042"`.
 
 ### TASK-033
 
 **Test first:** text holding no `$target` comes back just as it was.
+So does empty text, and so does text that is not there at all.
 
 ### TASK-034
+
+**Test first:** `"like=$target, target_id=$target"` takes the id in
+both places, not the first alone.
+
+### TASK-046
+
+`$target` is a whole word. `$targets` is another word, and `$targe` is
+not the mark at all. Big and small letters count, as they do
+everywhere else in `germio`.
+
+**Test first:** `$targets`, `$targe` and `$TARGET` all come back
+untouched.
+
+### TASK-047
+
+A value holding the mark inside it — were one ever to — must not be
+looked at a second time, or the change could run away with itself.
+
+**Test first:** putting a value that itself holds
+`$target` in place of the mark gives that value back once, and stops.
+
+### TASK-048
+
+`request_deed.command` holds a whole `Command`, and a `Command` holds
+other things again (`set_flag`, `record_event`, and the rest). **The
+mark must be reached wherever text sits inside it.**
+
+**Test first:** a `request_deed` whose held `Command` carries
+`record_event.target_id = "$target"` comes back with the id in place.
+
+**And nowhere else:** `Rule.trigger`, `Rule.id` and `actor` name the
+rule itself, never what a deed found, and are left alone.
+
+### TASK-049
+
+Measured 2026-08-21: a value inside
+`history.count(kind=..., target_id=...)` must be an Identifier, and
+`ExprLexer` reads an Identifier as `[a-zA-Z_][a-zA-Z0-9_-]*`. **It may
+not start with a number.**
+
+`GetInstanceID()` gives back a plain number, so `1042` on its own
+throws at parse time. **Write it out with a letter in front:
+`g_1042`.**
+
+**Test first:** an id of 1042 is written out as `g_1042`, and
+`"target_id=g_1042"` is read through with nothing thrown.
+
+### TASK-050
 
 **Test first:** `history.time_since(kind=met, target_id=$target) > 60`,
 once put in place, runs through the Evaluator and gives back a true or
