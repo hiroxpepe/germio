@@ -85,6 +85,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
 + [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
 + [x] TASK-061 [P-XX]: Read history inside and, or and not, however deep
++ [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1308,3 +1309,24 @@ began.
 
 Nothing that stood before was touched: a history call standing alone
 works as it did, and 513 tests in `stemic` are green.
+
+### TASK-062
+
+**Done 2026-08-22**, with 3 tests.
+
+`Target` now takes four more words: `not_in_memory`, `not_given_to`,
+`keep_from` and `new_again_after`. These are the questions a deed puts
+to its own past, and they are written on the target rather than in a
+`condition`.
+
+**Three reasons, each on its own enough** (`modio`'s own
+`docs/modio_spec.md` §7.4):
+
+| Why not a condition      | Measured                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| read too late            | the Evaluator reads it, and it holds `$target` — known only once modio has looked |
+| reads the wrong past     | `history.*` reads this `Store`, one for the whole game, not a character's own     |
+| `keep_from` will not fit | it matches on kind, reach and height, and `HistoryEntry` holds none of the three  |
+
+`condition` stands as it was, for what it was always for: gating a
+deed on plain state.

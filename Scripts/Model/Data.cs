@@ -349,7 +349,16 @@ namespace Germio.Model {
     }
 
     /// <summary>
-    /// What a deed looks for: a kind of thing, within a reach and a spread.
+    /// What a deed looks for: a kind of thing, within a reach and a spread,
+    /// and the questions it puts to its own past.
+    ///
+    /// Those questions are written here rather than in a condition, for three
+    /// reasons: a condition is read too late (it holds $target, known only once
+    /// modio has looked), it reads the world's own past rather than a
+    /// character's own, and keep_from cannot be written as an expression at all
+    /// — it matches on kind, reach and height, and HistoryEntry holds none of
+    /// the three.
+    ///
     /// Left out where a deed seeks nothing at all (standing still to rest, or
     /// calling out). See modio's own docs/modio_spec.md §7.4.
     /// </summary>
@@ -368,12 +377,40 @@ namespace Germio.Model {
         /// <summary>How far round to look, in degrees.</summary>
         public float spread { get; set; }
 
+        /// <summary>
+        /// Leave out anything this was already done to: met, gave, shown, edge.
+        /// Empty asks nothing of the past.
+        /// </summary>
+        public string not_in_memory { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Leave out any character this was already done with. A character has
+        /// no "like it", so this is always asked by name.
+        /// </summary>
+        public string not_given_to { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Leave out anything of a sort with what went badly before, matched on
+        /// kind, reach and height. This is the forward-facing question.
+        /// </summary>
+        public string keep_from { get; set; } = string.Empty;
+
+        /// <summary>
+        /// How long must pass before a thing already done to counts as new
+        /// again. Below zero (the default) says never.
+        /// </summary>
+        public float new_again_after { get; set; } = -1f;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // public Methods [verb]
 
         /// <summary>Gives back a copy holding nothing in common with this one.</summary>
         public Target DeepCopy() {
-            return new Target { kind = this.kind, reach = this.reach, spread = this.spread };
+            return new Target {
+                kind = this.kind, reach = this.reach, spread = this.spread,
+                not_in_memory = this.not_in_memory, not_given_to = this.not_given_to,
+                keep_from = this.keep_from, new_again_after = this.new_again_after
+            };
         }
     }
 

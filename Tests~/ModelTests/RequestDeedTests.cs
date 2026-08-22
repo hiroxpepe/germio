@@ -46,6 +46,47 @@ namespace Germio.Tests.Model {
             Assert.That(target.spread, Is.EqualTo(120.0f));
         }
 
+        [Test, Description("Target holds the four questions a deed puts to its own past")]
+        public void Target_Questions_SetCorrectly() {
+            Target target = new Target();
+            target.not_in_memory = "met";
+            target.not_given_to = "gave";
+            target.keep_from = "edge";
+            target.new_again_after = 60.0f;
+
+            Assert.That(target.not_in_memory, Is.EqualTo("met"));
+            Assert.That(target.not_given_to, Is.EqualTo("gave"));
+            Assert.That(target.keep_from, Is.EqualTo("edge"));
+            Assert.That(target.new_again_after, Is.EqualTo(60.0f));
+        }
+
+        [Test, Description("Target defaults to asking nothing of the past")]
+        public void Target_Questions_DefaultToAskingNothing() {
+            Target target = new Target();
+
+            Assert.That(target.not_in_memory, Is.EqualTo(string.Empty));
+            Assert.That(target.not_given_to, Is.EqualTo(string.Empty));
+            Assert.That(target.keep_from, Is.EqualTo(string.Empty));
+            Assert.That(target.new_again_after, Is.LessThan(0f),
+                "Below zero says never new again, which no true count of seconds can say.");
+        }
+
+        [Test, Description("Target reads the four questions from JSON")]
+        public void Target_Questions_ReadFromJson() {
+            string json = "{KIND,QA,QB,QC}"
+                .Replace("KIND", "\"kind\":\"Ground\"")
+                .Replace("QA", "\"not_in_memory\":\"met\"")
+                .Replace("QB", "\"keep_from\":\"edge\"")
+                .Replace("QC", "\"new_again_after\":60.0");
+
+            Target? target = JsonConvert.DeserializeObject<Target>(value: json);
+
+            Assert.That(target, Is.Not.Null);
+            Assert.That(target!.not_in_memory, Is.EqualTo("met"));
+            Assert.That(target.keep_from, Is.EqualTo("edge"));
+            Assert.That(target.new_again_after, Is.EqualTo(60.0f));
+        }
+
         ///////////////////////////////////////////////////////////////////////
         // Until
 
