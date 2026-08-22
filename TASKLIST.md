@@ -20,7 +20,7 @@ the change in as a commit.
 + [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 + [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
-+ [ ] TASK-015 [P-XX]: Give every level piece a mark that holds, past a scene being read again
++ [xx] TASK-015 [P-XX]: Give every level piece a mark — dropped, nothing is needed
 + [ ] TASK-016 [P-XX]: Add actor to Rule, so a rule may belong to one character
 + [ ] TASK-017 [P-XX]: Add request_deed to Command, for work that takes time
 + [ ] TASK-018 [P-XX]: Add update_need to Command, the one way to reach Animo
@@ -652,25 +652,25 @@ straight. See `modio`'s own `docs/modio_spec.md` §3.3.
 
 ### TASK-015
 
-**Checked true, 2026-08-21, by counting a real scene.** `modio` must
-be able to say "I have been to that one before". For that, each piece
-in a level needs a mark that means the same thing every time.
+**Dropped 2026-08-21.** This once asked for a mark on every level
+piece, so `modio` could say "I have been to that one before".
 
-Nothing on hand does the job:
+Nothing is needed. **Unity's own `GetInstanceID()` already gives every
+`GameObject` a mark, and it holds while that one thing stands.**
 
-| What              | Why not                                                                                                                                                                          |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The object name   | **Not one to a piece.** `Level_1` holds 24 pieces, and three names are used twice over: `Ground_5.0x0.5x5.0_Green_2`, `Ground_5.0x0.5x5.0_Green_1`, `Block_1.0x1.0x1.0_Green_1`. |
-| `GetInstanceID()` | Made new on every scene load, and `Despawn.cs` loads the scene again each time the player falls.                                                                                 |
-| `GlobalObjectId`  | Editor only. Cannot be read while the game runs.                                                                                                                                 |
+Three other ways were weighed first, and each was dropped:
 
-Every way found in wide use — Unity's own team among them — comes to
-the same answer: **hold the mark in the object itself, saved with the
-scene.** `Common.cs` already holds `[SerializeField] protected bool
-_CAN_HOLD`; a mark of this kind sits in the same place, in the same
-shape.
+| Tried                      | Why it was dropped                                                                                                                                         |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The object name            | Not one to a piece. Counted: `stemic`'s own `Level_1` holds 24 pieces, and three names are used twice over.                                                |
+| A mark added to each piece | It would take a `MonoBehaviour`, and `Common` runs three `FixedUpdate` chains. On 24 pieces that is 72 chains, every step of the motion work, for nothing. |
+| Where it stands            | Two ways of doing one job — one for things that move, one for things that do not. **One way, no exceptions.**                                              |
 
-`briko` can fill it in while a level is being laid out.
+`GetInstanceID()` is made new when a scene is read again, and that is
+right: a scene read again is a world built new, and the old pieces are
+gone with it. `modio` holds the memory of a **place** apart from the
+memory of a **thing**, so what is worth keeping is kept (see `modio`'s
+own `docs/modio_spec.md` §4.5).
 
 ### TASK-016
 
