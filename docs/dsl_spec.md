@@ -178,16 +178,25 @@ To turn this on, pass a `History` object as the third argument to
 > no matching `record_event` rule that writes a `kind=node_enter` entry,
 > the count stays at `0` forever.
 >
-> **A limit — only works at the top level.** A `history.*` call works when
-> it stands alone, or sits right inside a comparison (such as
-> `history.count(...) >= 3`). It **does not** work correctly when nested
-> inside `&&`, `||`, or `!`: the part of the evaluator that handles this
-> case falls back to a path that only reads plain state, which throws an
-> `InvalidOperationException` for any history node — this is caught, and
-> `false` is given back instead. To check more than one history condition
-> at once, write them as separate rules with their own, distinct
-> triggers, or work the result out ahead of time into a plain `flag`,
-> through an earlier rule.
+> **Works anywhere, since 2026-08-22.** A `history.*` call works
+> wherever it stands: alone, inside a comparison, or nested inside `&&`,
+> `||` or `!`, however deep.
+>
+> **It did not before.** Measured that day: `true && true` gave back
+> `false`, and so did `false || true` and `!false` — no history call
+> worked inside any of the three at all. The cause was plain once
+> looked for: `AndNode` held its two sides private, so the evaluator
+> could not reach them and fell back to reading plain state alone,
+> where a history node throws. The throw was caught, and turned into
+> `false`.
+>
+> The two sides are now held open (`AndNode.Left`, `AndNode.Right`,
+> `NotNode.Operand`), and history is carried down through every one of
+> the three. 13 tests hold it there.
+>
+> **The older way round is no longer needed.** A rule asking two things
+> of history at once may now be written as one, rather than split in
+> two with distinct triggers or worked out ahead into a flag.
 
 ### 6.1 history.count
 
