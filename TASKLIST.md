@@ -21,9 +21,36 @@ the change in as a commit.
 + [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 + [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
 + [xx] TASK-015 [P-XX]: Give every level piece a mark — dropped, nothing is needed
-+ [ ] TASK-016 [P-XX]: Add actor to Rule, so a rule may belong to one character
-+ [ ] TASK-017 [P-XX]: Add request_deed to Command, for work that takes time
-+ [ ] TASK-018 [P-XX]: Add update_need to Command, the one way to reach Animo
++ [ ] TASK-016 [P-XX]: Read actor off a Rule, out of the JSON
++ [ ] TASK-017 [P-XX]: Take an actor on DispatchTrigger, and on Bus Publish
++ [ ] TASK-018 [P-XX]: Fire a rule with no actor, whoever calls
++ [ ] TASK-019 [P-XX]: Fire a rule with an actor only for that one
++ [ ] TASK-020 [P-XX]: Read update_need as a list, out of the JSON
++ [ ] TASK-021 [P-XX]: Fire a need out of the Store, one call to a list entry
++ [ ] TASK-022 [P-XX]: V028 — an empty need key is an error
++ [ ] TASK-023 [P-XX]: V029 — a delta of zero is a warning
++ [ ] TASK-024 [P-XX]: Read request_deed, all five parts, out of the JSON
++ [ ] TASK-025 [P-XX]: Read the Command held inside a request_deed
++ [ ] TASK-026 [P-XX]: Let a request_deed stand with no target at all
++ [ ] TASK-027 [P-XX]: Fire a deed out of the Store, once
++ [ ] TASK-028 [P-XX]: V030 — a motion outside the seven is an error
++ [ ] TASK-029 [P-XX]: V031 — an until with no key, or two, is an error
++ [ ] TASK-030 [P-XX]: V032 — a request_deed inside a request_deed is an error
++ [ ] TASK-031 [P-XX]: V033 — a kind outside the six type marks is an error
++ [ ] TASK-032 [P-XX]: Put a found id in place of the $target mark
++ [ ] TASK-033 [P-XX]: Leave text with no $target mark just as it stands
++ [ ] TASK-034 [P-XX]: Run a put-in-place condition through the Evaluator
++ [ ] TASK-035 [P-XX]: Read a whole deed, end to end, off a real JSON file
++ [ ] TASK-036 [P-XX]: Hold every Executor test already there, still green
++ [ ] TASK-037 [P-XX]: Read act off a request_deed, and let it be left out
++ [ ] TASK-038 [P-XX]: V034 — an act outside the three is an error
++ [xx] TASK-039 [P-XX]: V035 — an until on a tie moving — dropped, no such until
++ [ ] TASK-040 [P-XX]: Add a NeedRequested event to the Store, and fire it
++ [ ] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
++ [ ] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
++ [ ] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
++ [ ] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
++ [ ] TASK-045 [P-XX]: Take like beside target_id, in every history call
 
 ## Detail
 
@@ -672,55 +699,288 @@ gone with it. `modio` holds the memory of a **place** apart from the
 memory of a **thing**, so what is worth keeping is kept (see `modio`'s
 own `docs/modio_spec.md` §4.5).
 
+### The order these run in
+
+TASK-016 to TASK-034 stand on their own, and may be taken in any
+order. **TASK-035 and TASK-036 come last**: TASK-035 reads a whole
+deed, so it cannot go green until every part before it does, and
+TASK-036 holds what already stands.
+
+Within each group, the first task reads a thing off the JSON, and the
+rest lean on it:
+
+| Group          | First    | Then                 |
+| -------------- | -------- | -------------------- |
+| `actor`        | TASK-016 | TASK-017 to TASK-019 |
+| `update_need`  | TASK-020 | TASK-021 to TASK-023 |
+| `request_deed` | TASK-024 | TASK-025 to TASK-031 |
+| `$target`      | TASK-032 | TASK-033, TASK-034   |
+
 ### TASK-016
 
-`Rule` today holds `id`, `trigger`, `condition`, `command`, `once` —
-and `Store` is one, for the whole game. So a rule cannot say **whose**
-rule it is.
+`Rule` today holds `id`, `trigger`, `condition`, `command`, `once`.
+Add `actor`, a plain name, and read it off the JSON.
 
-With two characters given minds by `animo`, both would answer the same
-rule, and nothing would tell them apart.
-
-Add `actor` (a plain name). Left empty, the rule belongs to the world,
-as every rule does today. Filled in, it belongs to that one character.
+**Test first:** a rule with `"actor": "npc_01"` gives back `npc_01`;
+a rule with none gives back empty.
 
 ### TASK-017
 
-Every `Command` on hand does its work at once: set a flag, add to a
-counter, ask for a change of node. **Nothing takes time.**
+`Store.DispatchTrigger(string trigger_id)` and
+`Bus.Publish(string signal_id)` take no actor today, so no caller can
+say whose rule to fire.
 
-A deed does. Walking to a place takes a long stretch, and may fail part
-way. `modio` holds that stretch of time (see its own
-`docs/modio_spec.md` §5), but something must start it.
+Add an actor to both, able to be left out. Left out, it stands for the
+world.
 
-Add `request_deed`, beside `request_transition` and `request_notify` —
-all three ask for something that does not finish on the spot. It
-holds:
-
-| Field       | Sense                                                         |
-| ----------- | ------------------------------------------------------------- |
-| `target`    | what to look for: kind, reach, spread                         |
-| `condition` | which of the found ones to take (the same Evaluator as today) |
-| `motion`    | how the body moves, from the seven `FixedUpdate` states       |
-| `until`     | when the deed is done                                         |
-| `command`   | **a `Command`, held inside** — what to do once it lands       |
-
-The inner `command` is the same `Command` type, so `record_event`,
-`set_flag`, and `update_need` all work there with nothing new added.
-
-**`$target`** stands for whatever the deed found. It is put in place
-before the Evaluator runs, so `ExprLexer`, `ExprParser` and
-`Evaluator` need no change at all. `$` appears in no token kind today,
-so it runs into nothing else.
+**Test first:** `DispatchTrigger(id, actor: "npc_01")` builds and runs.
 
 ### TASK-018
 
-`animo` is reached by one call alone: `Engine.Affect(need, delta)`.
+A rule with no `actor` belongs to the world, as every rule does today.
+**It must fire whoever calls** — with an actor named or not.
 
-Add `update_need`, in the same shape as `update_counter` and
-`update_inventory`:
+**Test first:** a rule with no actor, called with `actor: "npc_01"`,
+still fires.
 
-    "update_need": { "key": "curiosity", "delta": -25 }
+### TASK-019
 
-**This is the only way anything may write into `animo`.** Everything
-else `modio` does — seeking, remembering, moving — stays on this side.
+A rule with an `actor` belongs to that one character.
+
+**Test first:** a rule with `actor: "npc_01"`, called with
+`actor: "npc_02"`, does **not** fire. Called with `npc_01`, it does.
+
+### TASK-020
+
+Add `update_need` to `Command`, **as a list**:
+
+    "update_need": [ { "key": "loneliness", "delta": -30 },
+                     { "key": "separation", "delta": -40 } ]
+
+A list even where it holds one. `modio`'s own `docs/modio_spec.md`
+§5.4 sets out why: one arrival must be able to quiet two wants, or a
+Need climbs with no way down.
+
+**Test first:** a two-entry list reads back as two.
+
+### TASK-021
+
+`germio` knows nothing of `animo`. So the Executor does not call it;
+it fires an event out of the `Store`, the same way
+`request_notify` fires `NotifyRequested` today.
+
+**Test first:** a two-entry `update_need` fires **twice**, each
+carrying its own key and delta.
+
+### TASK-022
+
+V028: a `update_need` entry with an empty `key` names no Need at all.
+**Error.**
+
+### TASK-023
+
+V029: a `delta` of zero moves nothing. Nothing breaks, but nothing
+happens either, so it is likely a slip. **Warning**, matching V008 and
+V027, which warn rather than stop.
+
+### TASK-024
+
+Add `request_deed` to `Command`, beside `request_transition` and
+`request_notify` — all three ask for what does not finish on the spot.
+
+Five parts: `target`, `condition`, `motion`, `until`, `command`. Full
+shape in `modio`'s own `docs/modio_spec.md` §7.3.
+
+**Test first:** all five read back off the JSON.
+
+### TASK-025
+
+`request_deed.command` is `germio`'s own `Command` type, held inside,
+so every command there is works within a deed with nothing new added.
+
+**Test first:** a `request_deed` holding `update_need` **and**
+`record_event` reads both back.
+
+### TASK-026
+
+A deed that seeks nothing — standing still to rest, or calling out —
+holds no `target` at all.
+
+**Test first:** a `request_deed` with no `target` reads back with
+`target` empty, and throws nothing.
+
+### TASK-027
+
+The Executor fires a deed out of the `Store`, the same way TASK-021
+fires a need.
+
+**Test first:** one `request_deed` fires the event once, carrying all
+five parts.
+
+### TASK-028
+
+V030: `motion` must be one of the seven doing-states — `idle`, `walk`,
+`run`, `backward`, `jump`, `abort_jump`, `stop`. Anything else names
+no motion the body has. **Error.**
+
+### TASK-029
+
+V031: `until` holds exactly one key, out of `near`, `meets`,
+`elapsed`, `while` (see §7.6 there). None, and the deed never ends;
+two, and which one wins is anyone's guess. **Error.**
+
+### TASK-030
+
+V032: a `request_deed` inside a `request_deed` would set one stretch
+of time running inside another, with no way to say which lock holds.
+**Error.**
+
+### TASK-031
+
+V033: `target.kind` must be one of the six type marks in `Env.cs` —
+`Ground`, `Block`, `Wall`, `Human`, `Item`, `Home`. Anything else
+names nothing in the world. **Error.**
+
+### TASK-032
+
+A deed cannot name up front what it has not yet found, so `$target`
+stands for it. Before the Evaluator or the Executor runs, the text is
+put aside for the id the deed found.
+
+**Test first:** `"target_id=$target"` with `g_0041` gives
+`"target_id=g_0041"`.
+
+### TASK-033
+
+**Test first:** text holding no `$target` comes back just as it was.
+
+### TASK-034
+
+**Test first:** `history.time_since(kind=met, target_id=$target) > 60`,
+once put in place, runs through the Evaluator and gives back a true or
+false. `$` belongs to no token kind today, so nothing else is touched.
+
+### TASK-035
+
+**Test first:** the whole deed in `modio`'s own
+`docs/modio_spec.md` §7.10 reads end to end off a real JSON file —
+`actor`, `request_deed`, the `Command` held inside, and `$target` in
+three places.
+
+### TASK-036
+
+**Test first:** every one of the 13 tests already in
+`ExecutorTests.cs` stays green. Nothing added here may break what
+stands.
+
+### TASK-037
+
+Some of them end in a doing that no motion covers: handing a thing
+over, taking one up, putting one down, holding one up to be seen, or
+caring for another. These take an `act`, written beside `motion`
+(`modio`'s own `docs/modio_spec.md` §7.5).
+
+7 of the 10 need none, so it may be left out.
+
+**Test first:** a `request_deed` with `"act": "hand_over"` reads it
+back; one with no `act` reads back empty, and throws nothing.
+
+### TASK-038
+
+V034: `act` must be one of `hand_over`, `take_up`, `put_down`, `show`,
+`tend`. Anything else names nothing that can be done. **Error.**
+
+Counted off against every deed the two given personas hold: `ShowFind`
+takes `show`, `Tend` takes `tend`, `Give` takes `hand_over`. The other
+7 take no act at all.
+
+### TASK-039
+
+**Dropped 2026-08-21.** This asked for a check on
+`{ "reparented": ... }`, an `until` that waited on the parent-child
+tie moving.
+
+**No such `until` stands any more.** Handing a thing over is an `act`,
+and an act ends on its own clock. A deed that hands something over is
+watched to the point of arrival — `{ "near": 1.5 }` — and the handing
+is what follows. See `modio`'s own `docs/modio_spec.md` §7.6.
+
+### TASK-040
+
+`Store` holds two events today: `TransitionRequested` and
+`NotifyRequested`. Add `NeedRequested`, in the same shape, and a
+method that fires it.
+
+`request_notify` shows the whole road: the Executor calls
+`store.RequestNotify(id)`, `Store` fires `NotifyRequested`, and
+`NoticeSystem` hears it. **`update_need` takes the same road**, and
+`modio` is what hears it.
+
+**Test first:** a `update_need` holding two entries fires the event
+twice, each carrying its own key and delta.
+
+### TASK-041
+
+The same again, for `request_deed`: add `DeedRequested`, and a method
+that fires it.
+
+**Test first:** one `request_deed` fires the event once, carrying all
+five of its parts.
+
+### TASK-042
+
+TASK-017 adds an actor to `Bus.Publish`, able to be left out. Every
+caller standing today must go on working with nothing changed.
+
+`Despawn.cs` is one such caller
+(`_game_system.Bus?.Publish("sig_despawn")`). **Find them all before
+changing the shape**, and leave each as it stands.
+
+**Test first:** a call with no actor named still fires every rule with
+no actor of its own.
+
+---
+
+## A note on V numbers
+
+V numbers are never used twice. **V035 was taken and then let go**
+(TASK-039), and its number stays empty — a reader of an older file
+should never find it meaning something new.
+
+### TASK-043
+
+`Store.NotifyRequested` shows a line for the whole screen. There is no
+way to show a line over one character's head.
+
+`super-nekokun`'s own `Enemy.cs` had one (`say()`), and used it to
+show what a character had in mind: "I change direction", "I wait...",
+"I hit the wall...". **A mind that cannot be seen cannot be checked by
+eye**, and with `modio` driving characters, a great deal will need
+checking that way.
+
+### TASK-044
+
+Rules for the world (no `actor`) and rules for each character (an
+`actor` named) sit side by side under one `Node`. With many
+characters, which rule belongs to which character grows hard to see.
+
+The Validator already walks every rule under every node. **Have it
+give back a list by `actor`**, so a reader may take one character's
+rules on their own.
+
+### TASK-045
+
+`history.count(kind=..., target_id=...)` asks after one thing, named.
+**Add `like`, which asks after every row whose thing was of a sort
+with the one named.**
+
+    history.count(kind=met,  target_id=$target)     this one
+    history.count(kind=edge, like=$target)          ones like it
+
+This is how `modio` looks ahead: not by working a Need forward, but by
+asking how it went with things of this sort before (`modio`'s own
+`docs/modio_spec.md` §4.7). **The same table, the same call, one word
+changed.**
+
+`like` takes the same place `target_id` does, and the two are never
+written together.

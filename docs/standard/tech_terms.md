@@ -396,3 +396,6 @@ note, at the right moment, to make music.
 **deed** — One true thing done: a Behavior carried out over time,
 with a start, a middle, and an end. See `modio`'s own
 `docs/modio_spec.md`.
+
+**reparent** — To move the parent-child tie: to make one
+object a child of another, or to free it of a parent.

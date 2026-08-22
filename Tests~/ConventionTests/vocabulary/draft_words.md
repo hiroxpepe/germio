@@ -457,3 +457,7 @@ form — a short form is put right in the code, and not kept here.
 + p seven
 + sensor sensors
 + curiosity
++ loneliness
++ separation
++ reparented
++ persona personas
