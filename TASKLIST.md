@@ -626,11 +626,28 @@ right now.
   existing `.cs` files changes nothing at all — all 513 tests still
   pass.
 
-**Part 3 is not done**: the `.gitmodules` line in `stemic`, `flugi`
-and `tropika` still points at a plain git clone, not a package URL.
-That is real Unity Editor work — opening the Package Manager, adding a
-package from a git URL, taking the submodule out — and cannot be
-checked without a real Unity to check it in.
+**Part 3, for `stemic`: done, 2026-08-23.** `.gitmodules` and
+`Assets/Plugins/Germio/` are both gone there, and
+`game/Packages/manifest.json` names `com.studiomeowtoon.germio` at
+Germio's own git URL instead.
+
+`stemic`'s own `dotnet test` cannot read a real Unity Package Cache —
+that path holds a commit hash Unity gives out only once it truly
+opens. So `IntegrationTests.csproj` reads Germio's own source through
+`GERMIO_PATH`, an environment variable naming a plain clone; where nothing is given, a folder next to `stemic` at the same level is tried instead. Three files
+there once read straight off `Assets/Plugins/Germio/` by a hard-coded
+path, and now go through this instead:
+`Scripts/Core/EnvSceneConstantsTests.cs`,
+`Scripts/Systems/NoticeSystemLevelNameTests.cs`.
+
+`stemic`'s own `Tests~/PackageTests/check_manifest.py` holds it there:
+no `.gitmodules` line for Germio, no `Assets/Plugins/Germio/` folder,
+`manifest.json` naming a git URL. 87 tests plus these checks are
+green, with `GERMIO_PATH` set and without it both.
+
+**`flugi` and `tropika` still hold the old submodule**, on purpose:
+Master's own word was `stemic` alone. Whether the same change is owed
+there is not yet asked.
 
 ### TASK-006
 
