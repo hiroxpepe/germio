@@ -20,8 +20,8 @@ check(pkg_path.exists(), "package.json must exist at the repo root")
 pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
 for field in ["name", "version", "displayName", "unity"]:
     check(field in pkg, f"package.json must hold '{field}'")
-check(pkg.get("name") == "com.studiomeowtoon.germio",
-      "package.json name must be com.studiomeowtoon.germio, to match what animo's own package.json already asks for")
+check(pkg.get("name") == "com.meowtoon.germio",
+      "package.json name must be com.meowtoon.germio, to match what animo's own package.json already asks for")
 
 # 2. Every .asmdef under Scripts/ is well-formed JSON
 asmdefs = list((ROOT / "Scripts").rglob("*.asmdef"))
@@ -79,7 +79,7 @@ for cs in (ROOT / "Scripts").rglob("*.cs"):
 animo_pkg = ROOT.parent / "animo" / "package.json"
 if animo_pkg.exists():
     animo_data = json.loads(animo_pkg.read_text(encoding="utf-8"))
-    wanted = animo_data.get("dependencies", {}).get("com.studiomeowtoon.germio")
+    wanted = animo_data.get("dependencies", {}).get("com.meowtoon.germio")
     check(wanted == pkg["version"],
           f"animo asks for germio {wanted}, but package.json here gives {pkg['version']}")
 

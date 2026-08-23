@@ -1,5 +1,5 @@
 {
-  "name": "com.studiomeowtoon.germio",
+  "name": "com.meowtoon.germio",
   "version": "0.1.0",
   "displayName": "Germio",
   "description": "Data-driven scenario and rule engine for Unity: nodes, rules, a DSL evaluator, and the world's own history.",
