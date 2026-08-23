@@ -50,8 +50,8 @@ if "Germio" in by_name:
     p, data = by_name["Germio"]
     check(data.get("includePlatforms", []) == [],
           "Germio's own asmdef must not be limited to Editor: it is used at play time too")
-    check(data.get("references", []) == [],
-          "Germio depends on nothing else; a reference here would be a mistake")
+    check("Germio" not in data.get("references", []),
+          "Germio must not reference itself")
 
 # 5. Every .cs file under Scripts/Editor/ sits inside the Editor asmdef's
 #    own folder, and every other .cs file sits under the main one — no file

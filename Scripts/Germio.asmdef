@@ -1,7 +1,11 @@
 {
   "name": "Germio",
   "rootNamespace": "Germio",
-  "references": [],
+  "references": [
+    "UniRx",
+    "Unity.InputSystem",
+    "SimpleAnimationComponent"
+  ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

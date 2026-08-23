@@ -90,3 +90,22 @@ TestResults/
 # Markdown files are documentation, never a Unity-referenced asset;
 # no .meta for them is ever needed.
 *.md.meta
+
+# docs/ and tools/ hold plain files Unity never reads (Markdown specs,
+# Node.js scripts for the commit hooks). Unity still writes a .meta for
+# every file it sees on disk, but none of these belong in the repo.
+docs.meta
+docs/**/*.meta
+tools.meta
+tools/**/*.meta
+
+# Editor/ here is a Node.js web tool (package.json, src/), not Unity
+# Editor code. Its own .meta files are Unity noise, not needed.
+Editor.meta
+Editor/eslint.config.js.meta
+Editor/index.html.meta
+Editor/main.js.meta
+Editor/package-lock.json.meta
+Editor/package.json.meta
+Editor/src.meta
+Editor/src/**/*.meta
