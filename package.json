@@ -15,5 +15,6 @@
     "dsl",
     "state-machine",
     "npc"
-  ]
+  ],
+  "type": "module"
 }
