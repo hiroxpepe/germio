@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "initial_state": {
+    "flags": { "gate_b_open": false },
+    "counters": { "turn": 2, "score": 999 },
+    "inventory": { "key_02": 3 },
+    "current_node": "level_b1",
+    "current_team": "",
+    "fired_rules": []
+  },
+  "root": {
+    "id": "root",
+    "name": "Root",
+    "kind": "root",
+    "scene": "",
+    "children": [
+      {
+        "id": "world_02",
+        "name": "World 02",
+        "kind": "world",
+        "scene": "",
+        "children": [
+          {
+            "id": "level_b1",
+            "name": "Level B1",
+            "kind": "level",
+            "scene": "Scene_LevelB1",
+            "next": [ { "id": "level_exit", "condition": "flags.gate_b_open" } ],
+            "rules": [
+              {
+                "id": "evt_vol_gate_b",
+                "trigger": "vol_gate_b",
+                "condition": "",
+                "command": { "set_flag": { "key": "gate_b_open", "value": true } },
+                "once": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

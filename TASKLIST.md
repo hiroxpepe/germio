@@ -40,7 +40,7 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-002 [P-XX]: Add a timed event step-line to the DSL (play_sequence)
 + [ ] TASK-003 [P-XX]: Add Command.request_notify (built; a real playtest is still open)
 + [x] TASK-004 [P-XX]: Build a germio.json viewer and editor with no Unity (done)
-+ [ ] TASK-005 [P-XX]: Move germio to a Unity Package, off the git submodule
++ [~] TASK-005 [P-XX]: Move germio to a Unity Package, off the git submodule
 + [ ] TASK-006 [P-XX]: Put the rest of the docs into Basic English
 + [ ] TASK-007 [P-XX]: Sync germio_roadmap.md's own state to the real code
 + [ ] TASK-008 [P-03]: Wait on signo's own true SE spec and sound brush-up
@@ -86,6 +86,7 @@ one line of `Scripts/` is enough to need them.
 + [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
 + [x] TASK-061 [P-XX]: Read history inside and, or and not, however deep
 + [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
++ [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -613,7 +614,23 @@ right now.
    `tropika`, and bring `germio` back in through `Add package
    from git URL` in each.
 
-**Where this stands**: not started, agreed on in chat only.
+**Where this stands, 2026-08-23**: parts 1 and 2 are done. `Tests~/PackageTests/check_package.py` holds it there, since no real Unity stands here to check it itself:
+
++ `package.json` sits at the root, named `com.studiomeowtoon.germio`
+  at version `0.1.0` — the very version `animo`'s own `package.json`
+  already asked for, months back.
++ `Scripts/Germio.asmdef` covers the whole of `Scripts/`, and
+  `Scripts/Editor/Germio.Editor.asmdef` covers the Editor tools alone,
+  Editor-only, and points at `Germio`.
++ Checked against `stemic`: copying these two files in beside the
+  existing `.cs` files changes nothing at all — all 513 tests still
+  pass.
+
+**Part 3 is not done**: the `.gitmodules` line in `stemic`, `flugi`
+and `tropika` still points at a plain git clone, not a package URL.
+That is real Unity Editor work — opening the Package Manager, adding a
+package from a git URL, taking the submodule out — and cannot be
+checked without a real Unity to check it in.
 
 ### TASK-006
 
@@ -1330,3 +1347,29 @@ to its own past, and they are written on the target rather than in a
 
 `condition` stands as it was, for what it was always for: gating a
 deed on plain state.
+
+### TASK-063
+
+**Done 2026-08-23.** `germio`'s own logic had been tested from inside
+`stemic` all along — `Executor`, `Evaluator`, `Store`, `Validator`, and
+34 more test files, none of them named after anything `stemic` itself
+wrote. **Brought home.**
+
+| Moved to `germio`    | Count    |
+| -------------------- | -------- |
+| `Tests~/ModelTests/` | 6 files  |
+| `Tests~/CoreTests/`  | 30 files |
+
+`stemic`'s own `IntegrationTests` went from 513 tests to 87 — what is
+truly its own: `SceneClassHierarchyTests`, `NoticeSystemLevelNameTests`,
+`EnvSceneConstantsTests`, and the one static-file check
+(`RegenerateStaticSchemaFile`) that writes to `stemic`'s own
+`schemas/` folder.
+
+`germio` itself now holds 744 tests of its own — `115` + `523` + `106`
+— checking itself, rather than leaning on a game to do it.
+
+Two small fixes came with the move: `SceneLoader.cs` and three test
+files were missing `using System.Collections.Generic;`, since
+`stemic`'s own project turns every using on by default, and
+`germio`'s own does not.

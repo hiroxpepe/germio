@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "initial_state": {
+    "flags": { "zone_a_cleared": false },
+    "counters": { "turn": 1, "score": 0 },
+    "inventory": { "key_01": 1 },
+    "current_node": "level_01",
+    "current_team": "",
+    "fired_rules": []
+  },
+  "root": {
+    "id": "root",
+    "name": "Root",
+    "kind": "root",
+    "scene": "",
+    "children": [
+      {
+        "id": "world_01",
+        "name": "World 01",
+        "kind": "world",
+        "scene": "",
+        "children": [
+          {
+            "id": "level_01",
+            "name": "Level 01",
+            "kind": "level",
+            "scene": "Scene_Level01",
+            "next": [ { "id": "level_02", "condition": "flags.zone_a_cleared" } ],
+            "rules": [
+              {
+                "id": "evt_enter_zone_a",
+                "trigger": "vol_zone_a",
+                "condition": "",
+                "command": { "set_flag": { "key": "zone_a_cleared", "value": true } },
+                "once": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
