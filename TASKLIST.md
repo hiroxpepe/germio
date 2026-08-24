@@ -87,6 +87,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-061 [P-XX]: Read history inside and, or and not, however deep
 + [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
++ [ ] TASK-064 [P-XX]: Check the local package path form on Windows
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1390,3 +1391,50 @@ Two small fixes came with the move: `SceneLoader.cs` and three test
 files were missing `using System.Collections.Generic;`, since
 `stemic`'s own project turns every using on by default, and
 `germio`'s own does not.
+
+### TASK-064
+
+**Not done yet.** `germio` is read by `stemic`, `tropika` and `flugi`
+as a local package, through a line in each game's own
+`Packages/manifest.json`, naming the path to `germio`'s own folder on
+disk after the words `"file:"`.
+
+**This line may be wrong on a Windows machine.** The Unity Manual's
+own page on local paths gives the Windows form with the drive letter
+(`C:`) right after `"file:"`. The line in use here has no drive
+letter at all — it reads as a form made for Mac or Linux, copied over
+from `briko`'s own line without a check for the machine it would run
+on.
+
+**What went wrong today, and why this line is a real suspect:**
+
++ `Home.cs`'s own `guid` changed on its own, more than once, breaking
+  the scene's own link to it (a "Missing script" state) in `stemic`,
+  `tropika` and `flugi` all three.
++ Each time, a fresh Unity open of one game seemed to change what
+  another game read, as if the one `germio` folder on disk was being
+  read in a way that did not hold still.
++ A `Unity Discussions` post found today names this exact symptom:
+  opening a package whose files carry a different `guid` than a
+  scene already expects can make Unity give the newly-read file a new
+  `guid` of its own, breaking every scene that held the old one.
++ The Unity Manual's own page on `Upgrading Packages` says the same
+  thing in its own words: a name match with a `guid` that does not agree is
+  flagged, and taking the new file over the old one can break links
+  between the package and the project.
+
+**What to check, once back at a Windows machine with Unity open:**
+
++ [ ] Read the three `manifest.json` files (`stemic`, `tropika`,
+      `flugi`) and look at the exact `file:` line for `germio`.
++ [ ] Try the drive-letter form (adding `C:` right after
+      `"file:"`) in one game first, open it, and watch whether
+      `Home.cs`'s own `guid` still moves.
++ [ ] If it holds steady across a few opens and closes, carry the
+      same drive-letter form to the other two games.
++ [ ] If it still moves, the true cause sits elsewhere (an old
+      `Library` folder still holding past state, or a piece of the
+      submodule folder not fully gone),
+      and each game's own `Library` folder should be cleared and
+      Unity opened fresh, one game at a time, checking `Home.cs`'s
+      `guid` after each.
