@@ -461,3 +461,12 @@ form — a short form is put right in the code, and not kept here.
 + separation
 + reparented
 + persona personas
++ precedent
++ drafted draft
++ adapter
++ mismatch
++ gameplay
++ outright
++ optional
++ unaware
++ internals

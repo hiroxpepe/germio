@@ -88,6 +88,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
 + [ ] TASK-064 [P-XX]: Check the local package path form on Windows
++ [ ] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1438,3 +1439,50 @@ on.
       and each game's own `Library` folder should be cleared and
       Unity opened fresh, one game at a time, checking `Home.cs`'s
       `guid` after each.
+
+### TASK-065
+
+**Found true, checked live, this same session — a real, given gap
+found while designing an `animo`/`Modio` bridge (see `modio`'s own
+`TASKLIST.md`, TASK-021): `germio`'s own `Rule` shape lets a
+`command.update_need` name any given `Need` key at all, with no
+real check at all that the named `Need` truly exists in the
+`Persona` the `Rule`'s own `actor` points to.**
+
+**How this was found, kept whole as a true record:** a first, given
+design drafted this whole check *inside* a new `animo`-side adapter
+class, throwing loud at construction once a mismatch was found.
+**This was itself caught as a real, given wrong turn, this same
+session**: `animo.Engine`'s own true `Need` set is never fixed in
+real code — it comes whole from a real, given `Persona.needs.values`
+(`Dictionary<string, float>`), built once at construction and never
+changed after. A check buried inside one running adapter instance
+only ever fires once real gameplay has already begun — far too
+late, the same true mistake TASK-053 already named and fixed, in
+reverse.
+
+**The one, true, correct home for this whole check: build-time,
+across every real `Rule` file and every real `Persona` file a given
+game ships together, all at once** — the same true way
+`validate_tasklist.js`/`validate_score_format.js` already run,
+family-wide. `germio`'s own `Validator.cs` already holds the one,
+true, matching precedent: `V036` ("an actor no persona answers to"),
+fed a real, given `known_actors` collection from outside, checked
+against every real `Rule.actor` found, only run at all where names
+are truly given.
+
+**Real, given design for `V037`, following `V036`'s own true shape
+outright:**
+
+| Piece | What it holds |
+| --- | --- |
+| New, given input | `known_needs`, a real map: `agent_id -> its own true set of Need names` |
+| Checked against | every real `command.update_need[].key` a `Rule` holds, matched to that `Rule`'s own `actor` |
+| Fires only where | `known_needs` is truly given at all (`null` by default — the same true, optional-check shape `V036` already holds, never a forced check where a caller gives nothing) |
+| Level | `Error`, matching `V036`'s own true level |
+
+**Real, given scope, settled**: `V037` checks `Need` names alone,
+never `Persona` structure itself, never `animo`'s own real engine
+code — `germio` stays whole, unaware of `animo`'s own true internals,
+the same real independence `V036` already holds toward `Persona`
+structure itself.
