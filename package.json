@@ -16,5 +16,5 @@
     "state-machine",
     "npc"
   ],
-  "type": "module"
+  "type": "library"
 }
