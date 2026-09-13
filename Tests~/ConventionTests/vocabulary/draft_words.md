@@ -470,3 +470,16 @@ form — a short form is put right in the code, and not kept here.
 + optional
 + unaware
 + internals
++ rewritten rewrite
++ guids guid
++ shader
++ macos
++ shaders
++ checkout
++ py
++ manifest
++ doc docs
++ python
++ js
++ subshaders subshader
++ proven prove

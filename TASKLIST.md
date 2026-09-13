@@ -89,6 +89,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
 + [ ] TASK-064 [P-XX]: Check the local package path form on Windows
 + [ ] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
++ [ ] TASK-066 [P-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -618,7 +619,7 @@ right now.
 
 **Where this stands, 2026-08-23**: parts 1 and 2 are done. `Tests~/PackageTests/check_package.py` holds it there, since no real Unity stands here to check it itself:
 
-+ `package.json` sits at the root, named `com.studiomeowtoon.germio`
++ `package.json` sits at the root, named `com.meowtoon.germio`
   at version `0.1.0` — the very version `animo`'s own `package.json`
   already asked for, months back.
 + `Scripts/Germio.asmdef` covers the whole of `Scripts/`, and
@@ -630,8 +631,9 @@ right now.
 
 **Part 3, for `stemic`: done, 2026-08-23.** `.gitmodules` and
 `Assets/Plugins/Germio/` are both gone there, and
-`game/Packages/manifest.json` names `com.studiomeowtoon.germio` at
-Germio's own git URL instead.
+`game/Packages/manifest.json` names `com.meowtoon.germio` at
+a real, given local disk path instead (a Windows-form `file:`
+line, found true and fixed in TASK-064).
 
 `stemic`'s own `dotnet test` cannot read a real Unity Package Cache —
 that path holds a commit hash Unity gives out only once it truly
@@ -644,7 +646,8 @@ path, and now go through this instead:
 
 `stemic`'s own `Tests~/PackageTests/check_manifest.py` holds it there:
 no `.gitmodules` line for Germio, no `Assets/Plugins/Germio/` folder,
-`manifest.json` naming a git URL. 87 tests plus these checks are
+`manifest.json` naming a real, given local disk path (never a
+git URL, this whole time). 87 tests plus these checks are
 green, with `GERMIO_PATH` set and without it both.
 
 **`flugi` and `tropika` still hold the old submodule**, on purpose:
@@ -1395,50 +1398,65 @@ files were missing `using System.Collections.Generic;`, since
 
 ### TASK-064
 
-**Not done yet.** `germio` is read by `stemic`, `tropika` and `flugi`
-as a local package, through a line in each game's own
-`Packages/manifest.json`, naming the path to `germio`'s own folder on
-disk after the words `"file:"`.
+**`stemic`'s own real part: done, checked live, 2026-09-13. `tropika`
+and `flugi` still hold the same real gap, not yet fixed.**
 
-**This line may be wrong on a Windows machine.** The Unity Manual's
-own page on local paths gives the Windows form with the drive letter
-(`C:`) right after `"file:"`. The line in use here has no drive
-letter at all — it reads as a form made for Mac or Linux, copied over
-from `briko`'s own line without a check for the machine it would run
-on.
+**The true root cause, found live, checked against a real Windows
+Unity open:** the Windows-side `.meta` files under `germio`'s own
+folder had drifted well away from the ones this whole repo's own git
+history holds — a real Unity open there had rewritten almost every
+one of them, giving fresh guids of its own. `stemic`'s own
+`Scene`/`Material` files still named the old ones, giving the
+"Missing script"/pink-shader state seen across `stemic`, `tropika`,
+and `flugi` all three. The macOS-form `file:` line (no drive letter)
+was a real, given bug too, fixed alongside this, but never the whole
+true cause on its own.
 
-**What went wrong today, and why this line is a real suspect:**
+**The one, true rule found: Unity's own real, given guids — the ones
+truly at work on the local Windows machine — stand as the record.
+Never git's own older guids.** Where the two disagree, the fix reads
+Unity's own current `.meta` files, commits those from the Windows
+side itself, and updates every dependent repo (here, `stemic`) to
+match — never the other way round.
 
-+ `Home.cs`'s own `guid` changed on its own, more than once, breaking
-  the scene's own link to it (a "Missing script" state) in `stemic`,
-  `tropika` and `flugi` all three.
-+ Each time, a fresh Unity open of one game seemed to change what
-  another game read, as if the one `germio` folder on disk was being
-  read in a way that did not hold still.
-+ A `Unity Discussions` post found today names this exact symptom:
-  opening a package whose files carry a different `guid` than a
-  scene already expects can make Unity give the newly-read file a new
-  `guid` of its own, breaking every scene that held the old one.
-+ The Unity Manual's own page on `Upgrading Packages` says the same
-  thing in its own words: a name match with a `guid` that does not agree is
-  flagged, and taking the new file over the old one can break links
-  between the package and the project.
+**`stemic`'s own real, given fix, done and checked live:**
 
-**What to check, once back at a Windows machine with Unity open:**
++ [x] `manifest.json`'s own `file:` line for `germio`/`briko`, given
+      the true Windows drive-letter form (`file:C:/...`).
++ [x] Every one of `germio`'s own `.meta` files, re-committed from
+      the Windows side, holding whatever fresh guid Unity itself now
+      truly gives each one.
++ [x] Every `stemic` `Scene`/`Material` naming one of `germio`'s own
+      shaders or scripts, updated to match those same, given guids.
++ [x] `germio`'s own new `ShaderSetUp` (an Editor tool,
+      `[InitializeOnLoad]`) keeps every one of `germio`'s own
+      shaders in `GraphicsSettings`' own Always Included Shaders
+      list — closing a real gap where a shader reached only through
+      `UsePass` could fail to import in the right order inside a
+      Package.
 
-+ [ ] Read the three `manifest.json` files (`stemic`, `tropika`,
-      `flugi`) and look at the exact `file:` line for `germio`.
-+ [ ] Try the drive-letter form (adding `C:` right after
-      `"file:"`) in one game first, open it, and watch whether
-      `Home.cs`'s own `guid` still moves.
-+ [ ] If it holds steady across a few opens and closes, carry the
-      same drive-letter form to the other two games.
-+ [ ] If it still moves, the true cause sits elsewhere (an old
-      `Library` folder still holding past state, or a piece of the
-      submodule folder not fully gone),
-      and each game's own `Library` folder should be cleared and
-      Unity opened fresh, one game at a time, checking `Home.cs`'s
-      `guid` after each.
+**A real, given doubt, never settled: was `ShaderSetUp` truly owed
+at all?** It was built and fixed alongside the true guid fix, given
+a real, given `UsePass` failure ("All subshaders removed") seen once
+in a real Console log — but that same failure was never once
+checked against the true guid fix *alone*, with `ShaderSetUp` held
+back. The `UsePass` failure may have been nothing but one more real
+symptom of the same guid drift, closed the moment the guids
+themselves were fixed — never a real, given problem of its own.
+`ShaderSetUp` stays in, given it does no real harm either way, but
+its own true worth here is not truly proven.
+
+**Still real, given open work, `tropika` and `flugi` both:**
+
++ [ ] Fix each game's own `manifest.json` `file:` line to the true
+      Windows drive-letter form.
++ [ ] Open each game once in a real Windows Unity, letting it
+      re-resolve `germio`'s own shaders/scripts against whatever
+      guids Unity itself now holds.
++ [ ] Update every `Scene`/`Material` in that game to match those
+      same, given guids, the same true way `stemic` was fixed.
++ [ ] Commit each game's own real, given fix from its own true
+      Windows checkout.
 
 ### TASK-065
 
@@ -1486,3 +1504,24 @@ never `Persona` structure itself, never `animo`'s own real engine
 code — `germio` stays whole, unaware of `animo`'s own true internals,
 the same real independence `V036` already holds toward `Persona`
 structure itself.
+
+### TASK-066
+
+**Found true, checked live, this same session: `Tests~/PackageTests/check_package.py`
+and `stemic`'s own `Tests~/PackageTests/check_manifest.py` are both
+written in Python — a real, given break from this whole family's
+own true language rule.**
+
+`docs/standard/coding_standard.md` names exactly two languages for
+every repo in this family: "C# in one repository, JavaScript in the
+next." No line anywhere names Python as a true, given third option.
+Checked live: no record at all, in `TASKLIST.md` or any doc, of why
+Python was picked for these two files, or of anyone's own true
+sign-off for it — every other tool here (`validate_tasklist.js`,
+`basic_english_check.js`, and the rest) follows the true rule; these
+two stand alone as the one, given break.
+
+**Real, given fix owed:** rewrite both files in JavaScript (Node.js,
+matching every other tool under `tools/`), holding the exact same
+real checks each already runs — no check dropped, no check added,
+this whole task is a language swap alone.

@@ -24,7 +24,7 @@ namespace Germio.Editor {
     /// new ones included, with no manual GraphicsSettings edit again.
     /// </summary>
     [InitializeOnLoad]
-    public static class ShaderRegistrar {
+    public static class ShaderSetUp {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Const [nouns]
 
@@ -33,8 +33,8 @@ namespace Germio.Editor {
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // static Constructor
 
-        static ShaderRegistrar() {
-            registerAllShaders();
+        static ShaderSetUp() {
+            setUpAllShaders();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ namespace Germio.Editor {
         /// Shaders/ folder, and adds any not yet held in
         /// GraphicsSettings' own Always Included Shaders list.
         /// </summary>
-        static void registerAllShaders() {
+        static void setUpAllShaders() {
             var found_shaders = AssetDatabase.FindAssets(filter: "t:Shader", searchInFolders: new[] { SHADER_SEARCH_FOLDER })
                 .Select(guid => AssetDatabase.LoadAssetAtPath<Shader>(AssetDatabase.GUIDToAssetPath(guid)))
                 .Where(shader => shader != null)
