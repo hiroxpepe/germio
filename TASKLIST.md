@@ -1519,8 +1519,31 @@ reads the file, turns it into a `Scenario` object, and calls
 `Validator.Validate` on it — the exact three real, given pieces this
 whole plan needs, proven live.
 
-`Dashboard.cs` fires this only from a `[MenuItem]` — a real, given
-manual step. **Real, given work owed:** wire the same read +
+**Done, checked live, this same session — three real, given pieces,
+each proven true by its own real `dotnet test` run:**
+
++ [x] `V037` itself, wired into `Validator.cs` beside `V036`, carried
+      through Red then Green: a Need name is checked only where a given
+      `known_needs` map is truly handed in, matching `V036`'s own
+      shape outright. 9 own tests, all green.
++ [x] `Validator.ValidateJSON`, holding the same three-step shape
+      `Dashboard.cs` already had (read the whole file, deserialize,
+      call `Validate`), held Unity-free this time so it runs with no
+      Unity open at all — `Dashboard.cs`'s own shape had never once
+      been tested until now. Carried through Red then Green, 3 own
+      tests, one
+      round of Refactor (`ValidateJson` renamed `ValidateJSON`,
+      `germio`'s own naming check caught the slip). All green.
++ [x] Real, given regression checked live, both sides: `germio`'s own
+      whole `CoreTests` (535 tests) and its own Convention tests (106
+      tests) both green; `stemic`'s own `IntegrationTests` (104
+      tests) green too.
+
+**Real, given work still owed — the part `dotnet test` cannot ever
+truly check, a real Windows Unity open the only way:**
+
+`Dashboard.cs` fires its own real work only from a `[MenuItem]` — a
+real, given manual step. **Real, given work owed:** wire the same read +
 deserialize + `Validator.Validate` call into an
 `AssetPostprocessor`, given `known_actors`/`known_needs` built from
 whatever real `Persona` file sits beside `germio.json` (a

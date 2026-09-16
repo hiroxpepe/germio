@@ -111,6 +111,7 @@
     <Compile Include="ValidatorDeedConditionTests.cs" />
     <Compile Include="ValidatorDeedExemptTests.cs" />
     <Compile Include="ValidatorDeedTests.cs" />
+    <Compile Include="ValidatorJsonTests.cs" />
     <Compile Include="ValidatorLlmFormatTests.cs" />
     <Compile Include="ValidatorNeedKnowledgeTests.cs" />
     <Compile Include="ValidatorNeedTests.cs" />

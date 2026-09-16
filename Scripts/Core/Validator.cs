@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Germio.Model;
 
 namespace Germio.Core {
@@ -228,8 +229,14 @@ namespace Germio.Core {
         /// own, so these are handed in from outside: modio reads them off
         /// animo.json. Given none (the default), V036 does not run at all.
         /// </param>
+        /// <param name="known_needs">
+        /// Every Need name each persona truly holds, keyed by agent_id.
+        /// germio holds no Need name of its own, so these are handed in from
+        /// outside too. Given none (the default), V037 does not run at all.
+        /// </param>
         public static List<ValidationResult> Validate(
-            Scenario scenario, IReadOnlyCollection<string>? known_actors = null) {
+            Scenario scenario, IReadOnlyCollection<string>? known_actors = null,
+            IReadOnlyDictionary<string, IReadOnlyCollection<string>>? known_needs = null) {
             var results = new List<ValidationResult>();
 
             // Early-exit rule: root must not be null.
@@ -312,12 +319,32 @@ namespace Germio.Core {
             // Traverse tree and validate each node.
             validateNodeRecursive(
                 known_actors: known_actors,
+                known_needs: known_needs,
                 node: scenario.root,
                 node_map: node_map,
                 state: scenario.initial_state,
                 results: results);
 
             return results;
+        }
+
+        /// <summary>
+        /// Reads a germio.json string whole, turns it into a Scenario, and
+        /// runs Validate on it — the exact three-step shape Editor/Dashboard.cs
+        /// already holds, held Unity-free so an AssetPostprocessor (or any
+        /// other real caller) can run it with no Unity call at all.
+        /// </summary>
+        /// <param name="json">A germio.json file's own real text.</param>
+        /// <param name="known_actors">See Validate's own true meaning.</param>
+        /// <param name="known_needs">See Validate's own true meaning.</param>
+        /// <exception cref="JsonException">The given text is not real JSON at all.</exception>
+        /// <exception cref="InvalidOperationException">The given text deserializes to null.</exception>
+        public static List<ValidationResult> ValidateJSON(
+            string json, IReadOnlyCollection<string>? known_actors = null,
+            IReadOnlyDictionary<string, IReadOnlyCollection<string>>? known_needs = null) {
+            var scenario = JsonConvert.DeserializeObject<Scenario>(json)
+                ?? throw new InvalidOperationException("Deserialized Scenario is null.");
+            return Validate(scenario: scenario, known_actors: known_actors, known_needs: known_needs);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +368,8 @@ namespace Germio.Core {
         static void validateNodeRecursive(
             Node node, Map<string, Node> node_map, State state,
             List<ValidationResult> results,
-            IReadOnlyCollection<string>? known_actors = null) {
+            IReadOnlyCollection<string>? known_actors = null,
+            IReadOnlyDictionary<string, IReadOnlyCollection<string>>? known_needs = null) {
 
             // V011: dead end — no rules and no next
             if ((node.rules == null || node.rules.Count == 0) &&
@@ -431,6 +459,28 @@ namespace Germio.Core {
                             cause_detail:   "An actor names a persona. A rule naming one that does not stand fires for nobody, and nothing else would say so.",
                             fix_suggestion: "Check the name against the agent_id every persona holds; a slip of one letter is enough to break it.",
                             location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].actor" }));
+                    }
+
+                    // V037: a Need no persona answers to
+                    // Only where names were handed in for this rule's own
+                    // actor: with none, germio has nothing to check against
+                    // and says nothing at all — the same shape V036 holds.
+                    if (known_needs != null
+                        && !string.IsNullOrEmpty(value: rule.actor)
+                        && known_needs.TryGetValue(key: rule.actor, out var needs_for_actor)
+                        && rule.command?.update_need != null) {
+                        foreach (var need in rule.command.update_need) {
+                            if (string.IsNullOrEmpty(value: need.key)) { continue; } // V028 already names this
+                            if (!System.Linq.Enumerable.Contains(source: needs_for_actor, value: need.key)) {
+                                results.Add(new ValidationResult(
+                                    level:          ValidationLevel.Error,
+                                    rule_id:        "V037",
+                                    message:        $"Rule '{rule.id}' in node '{node.id}' names a Need '{need.key}' no persona answers to.",
+                                    cause_detail:   "An update_need key names which Need to move. A key naming one the actor's own persona does not hold moves nothing at all, and nothing else would say so.",
+                                    fix_suggestion: "Check the name against the Need keys the actor's own persona holds; a slip of one letter is enough to break it.",
+                                    location:       new Location { JSONPath = $"$.root..[?(@.id='{node.id}')].rules[{rule.id}].command.update_need" }));
+                            }
+                        }
                     }
 
                     // V008: once=false with set_flag
@@ -602,7 +652,8 @@ namespace Germio.Core {
                         node_map: node_map,
                         state: state,
                         results: results,
-                        known_actors: known_actors);
+                        known_actors: known_actors,
+                        known_needs: known_needs);
                 }
             }
         }
