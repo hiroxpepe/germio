@@ -1479,31 +1479,61 @@ only ever fires once real gameplay has already begun — far too
 late, the same true mistake TASK-053 already named and fixed, in
 reverse.
 
-**The one, true, correct home for this whole check: build-time,
-across every real `Rule` file and every real `Persona` file a given
-game ships together, all at once** — the same true way
-`validate_tasklist.js`/`validate_score_format.js` already run,
-family-wide. `germio`'s own `Validator.cs` already holds the one,
-true, matching precedent: `V036` ("an actor no persona answers to"),
-fed a real, given `known_actors` collection from outside, checked
-against every real `Rule.actor` found, only run at all where names
-are truly given.
-
-**Real, given design for `V037`, following `V036`'s own true shape
-outright:**
+**Real, given `V037` design, following `V036`'s own true shape:**
+`germio`'s own `Validator.cs` already holds the one, true, matching
+precedent: `V036` ("an actor no persona answers to"), fed a real,
+given `known_actors` collection from outside, checked against every
+real `Rule.actor` found, only run at all where names are truly
+given.
 
 | Piece | What it holds |
 | --- | --- |
 | New, given input | `known_needs`, a real map: `agent_id -> its own true set of Need names` |
 | Checked against | every real `command.update_need[].key` a `Rule` holds, matched to that `Rule`'s own `actor` |
-| Fires only where | `known_needs` is truly given at all (`null` by default — the same true, optional-check shape `V036` already holds, never a forced check where a caller gives nothing) |
+| Fires only where | `known_needs` is truly given at all (`null` by default) |
 | Level | `Error`, matching `V036`'s own true level |
 
-**Real, given scope, settled**: `V037` checks `Need` names alone,
-never `Persona` structure itself, never `animo`'s own real engine
-code — `germio` stays whole, unaware of `animo`'s own true internals,
-the same real independence `V036` already holds toward `Persona`
-structure itself.
+**Two real, given holes found in this whole plan, this same
+session — neither one closed by `V037` itself:**
+
+1. `known_actors` is fed today only from `Tests~/CoreTests/ValidatorActorTests.cs`.
+   No real, given caller — no build-time `CLI`, no `stemic`-side test
+   — ever passes it in outside a test. `V036` stands true in code,
+   never once run against a real game's own `Rule` file. Adding
+   `V037` beside it, unwired the same way, would only double the
+   count of checks nobody truly calls.
+2. Even a wired, given `dotnet test` check asks a real, given thing
+   of whoever writes `Rule`/`Persona` `JSON` for a game: remember to
+   run it. A `git` hook (the family's own true `pre-commit` shape)
+   asks one thing more: `core.hooksPath` truly set, and `--no-verify`
+   always stands as a real, given way round it. Neither guarantees
+   a thing for anyone outside this family's own true discipline.
+
+**The one, true home found, this same session, that asks nothing at
+all of whoever writes the `JSON`:** `Unity`'s own
+`AssetPostprocessor.OnPostprocessAllAssets`, firing the moment a
+changed `germio.json` (or a paired `Persona` file, once one truly
+exists) is saved and reimported — no command run, no hook set up, no
+step remembered. `germio`'s own `Scripts/Editor/Dashboard.cs` already
+reads the file, turns it into a `Scenario` object, and calls
+`Validator.Validate` on it — the exact three real, given pieces this
+whole plan needs, proven live.
+
+`Dashboard.cs` fires this only from a `[MenuItem]` — a real, given
+manual step. **Real, given work owed:** wire the same read +
+deserialize + `Validator.Validate` call into an
+`AssetPostprocessor`, given `known_actors`/`known_needs` built from
+whatever real `Persona` file sits beside `germio.json` (a
+`Persona` file's own real path/shape is not yet settled — no game
+ships one today, see `modio`'s own TASK-021), and print every real
+finding straight to `Unity`'s own Console the moment the file is
+saved — the same real, given feedback a `C#` compile error already
+gives, asking nothing extra of anyone.
+
+**Once checked live and truly found to work, this whole shape (an
+`AssetPostprocessor` running each `DSL`'s own true validator on
+every save) is to be carried, side by side, into every other `DSL`
+this family holds — never `germio` alone.**
 
 ### TASK-066
 

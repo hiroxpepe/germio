@@ -1,0 +1,122 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Runs germio's own CoreTests (44 files) against germio's own core
+    logic, with no downstream game (stemic and the rest) truly
+    needed at all — letting an LLM (or any developer) verify a
+    change to germio itself right here, in germio's own repo.
+
+    Unity itself never reads this file: Unity's own real compile of
+    germio runs through Scripts/Germio.asmdef instead, a wholly
+    separate pipeline. Both read the same .cs files, but neither
+    writes into the other's own build output.
+
+    The real Germio.GermioLog depends on UnityEngine, unreachable
+    here; Stubs/GermioLogStub.cs stands in its place, a no-op.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <DefineConstants>$(DefineConstants);UNITY_EDITOR</DefineConstants>
+    <RestoreSources>/root/.nuget/packages</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NJsonSchema" Version="11.0.2" />
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Scripts\Core\TestData\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- germio's own core logic, Unity-free -->
+  <ItemGroup>
+    <Compile Include="..\..\Scripts\Model\Data.cs" />
+    <Compile Include="..\..\Scripts\Core\Storage.cs" />
+    <Compile Include="..\..\Scripts\Core\Evaluator.cs" />
+    <Compile Include="..\..\Scripts\Core\ExprAST.cs" />
+    <Compile Include="..\..\Scripts\Core\ExprLexer.cs" />
+    <Compile Include="..\..\Scripts\Core\ExprParser.cs" />
+    <Compile Include="..\..\Scripts\Core\Executor.cs" />
+    <Compile Include="..\..\Scripts\Core\MermaidParser.cs" />
+    <Compile Include="..\..\Scripts\Core\ScenarioNavigator.cs" />
+    <Compile Include="..\..\Scripts\Core\Store.cs" />
+    <Compile Include="..\..\Scripts\Core\Vault.cs" />
+    <Compile Include="..\..\Scripts\Core\TargetMark.cs" />
+    <Compile Include="..\..\Scripts\Core\Validator.cs" />
+    <Compile Include="..\..\Scripts\Core\Grapher.cs" />
+    <Compile Include="..\..\Scripts\SpeechSize.cs" />
+    <Compile Include="..\..\Scripts\Env.cs" />
+    <Compile Include="..\..\Scripts\Utils.cs" />
+    <Compile Include="..\..\Scripts\Schema\SchemaExporter.cs" />
+    <Compile Include="..\..\Scripts\Systems\Bus.cs" />
+    <Compile Include="..\..\Scripts\Systems\SceneLoader.cs" />
+    <Compile Include="..\..\Scripts\Editor\SceneCodeSyncer.cs" Condition="Exists('..\..\Scripts\Editor\SceneCodeSyncer.cs')" />
+  </ItemGroup>
+
+  <!-- the stub replacing Unity-bound GermioLog -->
+  <ItemGroup>
+    <Compile Include="Stubs\GermioLogStub.cs" />
+  </ItemGroup>
+
+  <!-- every one of germio's own CoreTests -->
+  <ItemGroup>
+    <Compile Include="BusActorTests.cs" />
+    <Compile Include="BusClearTests.cs" />
+    <Compile Include="BusTests.cs" />
+    <Compile Include="CallerCompatTests.cs" />
+    <Compile Include="CookbookDebugTests.cs" />
+    <Compile Include="CookbookExamplesTests.cs" />
+    <Compile Include="DeedRequestedTests.cs" />
+    <Compile Include="EdgeCaseTests.cs" />
+    <Compile Include="EvaluatorAdvancedTests.cs" />
+    <Compile Include="EvaluatorHistoryTests.cs" />
+    <Compile Include="EvaluatorTests.cs" />
+    <Compile Include="ExecutorTests.cs" />
+    <Compile Include="ExprAstTests.cs" />
+    <Compile Include="ExprLexerTests.cs" />
+    <Compile Include="ExprParserTests.cs" />
+    <Compile Include="GrapherActorTests.cs" />
+    <Compile Include="GrapherTests.cs" />
+    <Compile Include="MermaidParserTests.cs" />
+    <Compile Include="NeedRequestedTests.cs" />
+    <Compile Include="PersistenceTests.cs" />
+    <Compile Include="Phase2EdgeCaseTests.cs" />
+    <Compile Include="ScenarioNavigatorTests.cs" />
+    <Compile Include="SceneCodeSyncerTests.cs" />
+    <Compile Include="SceneLoaderTests.cs" />
+    <Compile Include="SchemaDeedTests.cs" />
+    <Compile Include="SchemaExporterTests.cs" />
+    <Compile Include="SetSnapshotMirrorTests.cs" />
+    <Compile Include="SpeechSizeTests.cs" />
+    <Compile Include="StorageEncryptionTests.cs" />
+    <Compile Include="StorageIntegrationTests.cs" />
+    <Compile Include="StorageTests.cs" />
+    <Compile Include="StoreActorTests.cs" />
+    <Compile Include="StoreTests.cs" />
+    <Compile Include="TargetMarkTests.cs" />
+    <Compile Include="ValidatorActorTests.cs" />
+    <Compile Include="ValidatorDeedConditionTests.cs" />
+    <Compile Include="ValidatorDeedExemptTests.cs" />
+    <Compile Include="ValidatorDeedTests.cs" />
+    <Compile Include="ValidatorLlmFormatTests.cs" />
+    <Compile Include="ValidatorNeedKnowledgeTests.cs" />
+    <Compile Include="ValidatorNeedTests.cs" />
+    <Compile Include="ValidatorTests.cs" />
+    <Compile Include="VaultSecureStoreTests.cs" />
+    <Compile Include="VaultTests.cs" />
+  </ItemGroup>
+
+</Project>
