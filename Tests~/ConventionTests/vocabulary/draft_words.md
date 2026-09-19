@@ -488,3 +488,11 @@ form — a short form is put right in the code, and not kept here.
 + deserialize
 + feedback
 + regression regress
++ collider colliders
++ dictionary
++ buffer buffers
++ debris
++ pooled pool
++ inactive
++ cache
++ allocates allocate

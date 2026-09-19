@@ -90,6 +90,8 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-064 [P-XX]: Check the local package path form on Windows
 + [ ] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
 + [ ] TASK-066 [P-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
++ [ ] TASK-067 [P-XX]: Add a world table of kind and id, built once at scene load
++ [ ] TASK-068 [P-XX]: Add a pool for anything made or gone while a game runs
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1578,3 +1580,76 @@ two stand alone as the one, given break.
 matching every other tool under `tools/`), holding the exact same
 real checks each already runs — no check dropped, no check added,
 this whole task is a language swap alone.
+
+### TASK-067
+
+**Why this is `germio`'s own:** `germio` names the world (`Env.cs`, the
+11 type marks, read through `Like()`), and `modio` reads the world
+the way `germio` names it (`modio`'s `docs/modio_spec.md` §3.4). So the
+table that says *this collider is a `Ground`, and its id string is
+`g_1042`* belongs here, written once, and read by whoever asks — `modio`'s
+own `Runtime/` (its TASK-024) first.
+
+**Why a table at all — found 2026-09-19, checked against Unity's own
+docs:** `GameObject.name` makes a new string every time it is read, and
+Unity gives no way to cache it. `Like()` reads `name`. One seeking, calling
+`Like()` on 16 colliders, for 64 characters, 50 times a second, would
+make over 50,000 strings a second — garbage on the hot path, the one
+thing `modio` may never do (its TASK-009). So `name` is read **once per
+thing, at scene load**, and never on a tick.
+
+**What to build:**
+
+| Piece     | Holds                                                                                                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the table | `Dictionary<int, (string kind, string id)>`, keyed by `GetInstanceID()` — an `int` key makes no garbage on lookup                                                                           |
+| the fill  | at scene load, walk every collider once, read `name` once, match a type mark, make `g_<id>` once                                                                                            |
+| the scope | **one table per scene**, made again on each scene load — `GetInstanceID()` is made new when a scene is read again (`modio` spec §3.3.1), so the old table is thrown away with the old scene |
+| the size  | size the dictionary at load to the count found plus room, so no growth during play                                                                                                          |
+
+**Nothing is added or removed while the game runs.** This holds only
+because the world is closed at scene load — true today (`germio` and
+`stemic` call neither `Instantiate` nor `Destroy` anywhere), and kept
+true by TASK-068 once things start to be made and gone mid-play.
+
+**Things not yet settled:** where the table lives (`GameSystem`, which
+already holds the `Bus` and runs at scene start, is the natural home);
+whether inactive pooled things (TASK-068) are walked at load too (they
+should be — Physics will not return them while inactive, so a table row
+for them costs nothing).
+
+### TASK-068
+
+**Not needed today; needed before the first thing is made mid-play.**
+`germio` and `stemic` call neither `Instantiate` nor `Destroy` at all
+right now, so the world is closed at scene load and TASK-067's own table
+holds. But the first game's own plan (`documents`,
+`X_ファーストゲーム企画.md`) makes block-breaking with flying debris the
+heart of play, and its own model `super-nekokun` makes 8 debris pieces a
+block and drops them after 5 seconds — made and gone, mid-play, by the
+dozen.
+
+**`Instantiate` and `Destroy` mid-play are themselves garbage.** Every
+`Instantiate` allocates and every `Destroy` leaves work for the
+collector; done by the dozen, that is a frame stop. Unity's own
+answer, and its own class since 2021 (`UnityEngine.Pool.ObjectPool<T>`),
+is the pool: make every piece that will ever be needed at load, hidden
+(`SetActive(false)`); show one when needed; hide it again when done.
+Nothing made, nothing gone, no garbage.
+
+**The pool is not enough on its own — the sizing is.** Unity's own
+reference: a pool past its `maxSize` lets returned things go to the
+collector, and `ObjectPool.Get()` with an empty pool calls `Instantiate`
+on the spot. So the rule is the one `modio` already lives by: **measure
+the peak, make that many at load, never go past it in play.** This is
+the same rule as `modio`'s buffer of 16 and TASK-067's own sizing at load.
+
+**What to build:** one pool type, given a prefab and a peak count,
+that fills at load and hands out / takes back by `SetActive`. Debris
+first (when block-breaking lands, `briko`'s own work), then anything
+else found to be made mid-play.
+
+**Ties to TASK-067:** pooled things exist from load, so they are in the
+table from load. While hidden, Physics does not return them, so no
+one seeking sees them; when shown, they are seen with a `kind` and `id`
+already in place, no read of `name` needed.
