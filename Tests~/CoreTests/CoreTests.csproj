@@ -57,6 +57,7 @@
     <Compile Include="..\..\Scripts\Core\TargetMark.cs" />
     <Compile Include="..\..\Scripts\Core\Validator.cs" />
     <Compile Include="..\..\Scripts\Core\Grapher.cs" />
+    <Compile Include="..\..\Scripts\Core\WorldNames.cs" />
     <Compile Include="..\..\Scripts\SpeechSize.cs" />
     <Compile Include="..\..\Scripts\Env.cs" />
     <Compile Include="..\..\Scripts\Utils.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="ValidatorTests.cs" />
     <Compile Include="VaultSecureStoreTests.cs" />
     <Compile Include="VaultTests.cs" />
+    <Compile Include="WorldNamesTests.cs" />
   </ItemGroup>
 
 </Project>

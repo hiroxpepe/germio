@@ -15,6 +15,5 @@
     "dsl",
     "state-machine",
     "npc"
-  ],
-  "type": "library"
+  ]
 }
