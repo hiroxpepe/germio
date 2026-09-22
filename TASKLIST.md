@@ -1599,25 +1599,57 @@ make over 50,000 strings a second — garbage on the hot path, the one
 thing `modio` may never do (its TASK-009). So `name` is read **once per
 thing, at scene load**, and never on a tick.
 
-**What to build:**
+**Held, 2026-09-21 — the shape this table must answer to, without a
+tie to `modio` at all.** `modio`'s own `Runtime` reads a name through
+its own `INameSource` (`(string Kind, string ID) NameOf(int
+instance_id)`, `modio`'s own `TASK-029`). `germio` holds nothing to
+depend on at all (`package.json`, checked again — `{}`), so `germio`
+itself never names `Modio.Core.INameSource`, nor implements it
+outright. **`germio`'s own table matches that same shape, in its own
+words, on its own type** — a plain method with the same true input
+and the same true output, ready for a thin, given piece (not built
+here, `modio`'s own true side of the line) to wrap it later, the same
+way `EngineMind` wraps `animo`'s own `Engine` without `Modio` ever
+naming `Animo`.
 
-| Piece     | Holds                                                                                                                                                                                       |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the table | `Dictionary<int, (string kind, string id)>`, keyed by `GetInstanceID()` — an `int` key makes no garbage on lookup                                                                           |
-| the fill  | at scene load, walk every collider once, read `name` once, match a type mark, make `g_<id>` once                                                                                            |
-| the scope | **one table per scene**, made again on each scene load — `GetInstanceID()` is made new when a scene is read again (`modio` spec §3.3.1), so the old table is thrown away with the old scene |
-| the size  | size the dictionary at load to the count found plus room, so no growth during play                                                                                                          |
+**What to build, split thin edge from logic, the same shape TASK-024
+through TASK-036 already hold:**
 
-**Nothing is added or removed while the game runs.** This holds only
-because the world is closed at scene load — true today (`germio` and
-`stemic` call neither `Instantiate` nor `Destroy` anywhere), and kept
-true by TASK-068 once things start to be made and gone mid-play.
+| Piece | Holds |
+| --- | --- |
+| `WorldNames` (logic, no Unity at all) | a plain `Dictionary<int, (string Kind, string ID)>`. `Fill(IReadOnlyList<(int InstanceId, string Kind)> found)` builds it whole, once — held true against a repeated `InstanceId` (one `GameObject`, more than one `Collider`), by the indexer (`dict[id] = value`), never `.Add()`, so the last kind matched for that id holds, and nothing throws. `NameOf(int instance_id)` reads it — the same true shape as `modio`'s own `INameSource`, `(string, string)`, `("", "")` where the id is not held, never thrown |
+| the thin edge (Unity, not built here) | walks every collider once, at scene load; for each, calls `Like()` against the 11 type marks, in a fixed, given order; hands `(GetInstanceID(), matched Kind)` to `WorldNames.Fill` for every collider that truly matched one mark |
 
-**Things not yet settled:** where the table lives (`GameSystem`, which
-already holds the `Bus` and runs at scene start, is the natural home);
-whether inactive pooled things (TASK-068) are walked at load too (they
-should be — Physics will not return them while inactive, so a table row
-for them costs nothing).
+**Held, 2026-09-21 — sizing, held exact, not "plus room."** The
+world is closed at scene load (checked true, below) — **so the
+count found at fill time is the whole, final count, forever, until
+the next scene load throws the table away.** No entry is ever added
+after `Fill` runs. `Dictionary<int, (string, string)>(found.Count)`
+holds the whole true count, once, with no growth ever asked of it —
+the "plus room" this task once called for was never true; a closed
+world needs no margin at all.
+
+**Held, 2026-09-21 — a collider matching no true type mark.** It is
+left out of `found` outright, by the thin edge, before `Fill` ever
+sees it. `NameOf` on such an id, later, reads `("", "")` — the same
+"not held" shape `Choice.None()` already holds in `modio`. No branch
+for this case stands inside `WorldNames` itself; the thin edge's own
+filter is where it is truly settled.
+
+**How to check `WorldNames` — write these Red first, no Unity
+needed at all:**
+
+1. `Fill` with three given entries; `NameOf` on each of the three own ids reads back its own true `Kind` and `ID`, whole
+2. `NameOf` on an id never handed to `Fill` reads `("", "")` — never thrown, never `null`
+3. calling `Fill` a second time (a new scene load) throws away every row the first `Fill` held — `NameOf` on the first scene's own id, after the second `Fill`, reads `("", "")`
+4. `Fill` with the same `InstanceId` given twice (one `GameObject`, two colliders) never throws — the last given `Kind` for that id holds
+5. `NameOf`, called 10,000 times against a table `Fill` has already built — the true hot-path read, matched to §3.7's own worry — shows `GC.GetTotalAllocatedBytes` at **0**, matching `TASK-009`'s own bar. `Fill` itself runs once, at scene load, never on a tick, so its own cost is not this bar's true concern
+
+**Things not yet settled:** where the table lives (`GameSystem`,
+which already holds the `Bus` and runs at scene start, is the
+natural home); whether inactive pooled things (TASK-068) are walked
+at load too (they should be — Physics will not return them while
+inactive, so a table row for them costs nothing).
 
 ### TASK-068
 
