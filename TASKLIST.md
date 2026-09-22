@@ -1657,30 +1657,27 @@ already in place, no read of `name` needed.
 
 ### TASK-069
 
-**Not one line turns a thing toward what it looks at, checked live
-2026-09-19.** `Human.cs`'s own `faceToFace` is written but never
-called; no line in the whole of `germio` ever sets `.Rotation`. This
-was found while `modio`'s own sight design (its `Sight.eyes`, see
-`docs/sight_checklist.md` in that repository) asked who turns a body
-toward a thing at all.
+**Held wrong at first, set right 2026-09-21 — see `modio`'s own
+`docs/sight_checklist.md` §4.8, in that repository, for the full
+turn.** This task first held that `germio` itself would turn a
+thing toward what it looks at, moving `Sight.eyes` (then thought of
+as `modio`'s own name for a `Transform`). That did not hold up, on
+two true counts:
 
-**Real study of a body's own turning splits it two ways** — a fast,
-automatic pull toward something sudden (settled well under one part in five of a second), and a slower turn, held on purpose toward a goal
-(settled well past a third of a second, and kept up). Only the
-second kind is taken up here. The first — a quick pull toward
-something sudden — is left out on purpose, matched to `modio`'s own
-rule that a missed thing reads the same as a gone one; a missed pull
-reads the same way.
++ `Sight` itself moved to `germio` (§4.7), not `modio` — so
+  `Sight.eyes`, if it stood at all, would be `germio`'s own name,
+  never `modio`'s.
++ **The whole turn is dropped from `germio` outright.** `stemic`
+  alone turns a head, through Unity's own Humanoid Look-At IK
+  (`OnAnimatorIK`), since that call is only ever made on the
+  `GameObject` holding the `Animator` — `Pete`, in `stemic`, never a
+  `GameObject` in `germio`. `germio` cannot be the one to call it;
+  there is no such call to make from outside.
 
-**What to build:** when `animo` picks an act, its own target is
-already given (`modio`'s own `Seek`/`Found`, or the act's own held
-place). `germio` turns the thing that looks — `Sight.eyes`
-(`modio`'s own name for it), or the body itself where `Sight.eyes` is
-left empty — toward that target, slow, tick by tick, with
-`Quaternion.Slerp`, the very way `Human.cs` already turns a body
-toward the way it walks.
-
-**Ties to `modio`:** `Sight.eyes` (a `Transform`) is `modio`'s own
-part; this task only turns it. `modio` never learns that the turn
-happened at all — it only reads `Sight.eyes`'s own forward each tick,
-as it does today.
+**`germio`'s own true part, narrowed:** hold `Sight`'s own five
+plain values (`reach`, `halfYaw`, `halfPitch`, `eyeHeight`, `eyes`)
+as a `MonoBehaviour`, for `modio`'s own sight check to read. `germio`
+calls no turn, here or anywhere, for a head. This task is closed —
+no further build owed on `germio`'s own side. `Human.cs`'s own
+`faceToFace`, written but never called, stands as it was; nothing
+here asks for it.
