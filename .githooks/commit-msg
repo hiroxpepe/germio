@@ -48,4 +48,23 @@ if echo "$LINE1" | grep -qiE "\\b($PADDING)\\b"; then
   fail "must not contain a padding word"
 fi
 
+# Basic English check on the free part of the line (after "word: Verb ") —
+# VOCAB_DIR/TECH_TERMS_PATH come from this repo's own .githooks/paths.sh.
+# The BE-checker CLI sits at tools/ in most repos, scripts/ in others.
+. ./.githooks/paths.sh 2>/dev/null || true
+BE_CLI="tools/basic_english_cli.js"
+[ -f "$BE_CLI" ] || BE_CLI="scripts/basic_english_cli.js"
+if [ -f "$BE_CLI" ] && [ -n "$VOCAB_DIR" ] && [ -d "$VOCAB_DIR" ]; then
+  REST=$(echo "$LINE1" | sed -E 's/^(feat|fix|docs|chore|refactor|test|style): (Add|Update) //')
+  TMP_MSG=$(mktemp)
+  echo "$REST" > "$TMP_MSG"
+  BE_OUT=$(node "$BE_CLI" "$TMP_MSG" "$VOCAB_DIR" "$TECH_TERMS_PATH" 2>&1)
+  BE_STATUS=$?
+  rm -f "$TMP_MSG"
+  if [ $BE_STATUS -ne 0 ]; then
+    echo "$BE_OUT" | grep -v "MODULE_TYPELESS_PACKAGE_JSON\|Reparsing as ES module\|eliminate this warning\|trace-warnings"
+    fail "not Basic English — see the word(s) named above"
+  fi
+fi
+
 exit 0
