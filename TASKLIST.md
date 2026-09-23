@@ -93,6 +93,12 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-067 [P-XX]: Add a world table of kind and id, built once at scene load
 + [ ] TASK-068 [P-XX]: Add a pool for anything made or gone while a game runs
 + [ ] TASK-069 [P-XX]: Add a slow turn toward the act's own target, on purpose
++ [ ] TASK-070 [P-XX]: Add IButtonState and its own computed fill-in, for an NPC
++ [ ] TASK-071 [P-XX]: Add a kind-wide rule match, so one true rule set serves every NPC of one kind
++ [ ] TASK-072 [P-XX]: Add UntilLogic, a real check for when a deed is Done or Failed
++ [ ] TASK-073 [P-XX]: Add a whole put-in-place, covering condition and Until.meets too
++ [ ] TASK-074 [P-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
++ [ ] TASK-075 [P-XX]: Add history to a rule's own top-level condition, still given as `null` today
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -1713,3 +1719,354 @@ calls no turn, here or anywhere, for a head. This task is closed —
 no further build owed on `germio`'s own side. `Human.cs`'s own
 `faceToFace`, written but never called, stands as it was; nothing
 here asks for it.
+
+### TASK-070
+
+**Held, 2026-09-22 — the one true piece of `docs/npc_input_compat_checklist.md`
+ready for a real, given test, no Unity needed at all.** The rest of
+that checklist (opening up `mapGamepad()`, the shared UI object, the
+vibration calls, the `Look` field, the `partial class` question, and
+where an NPC's own five true wants first come from) still needs a
+real Windows Unity open, or is not yet worked out at all — held
+there, not here.
+
+**`IButtonState`** — the one true grain `Human` itself already asks
+for, and no more: a true `bool` property named `isPressed`, one
+named `wasPressedThisFrame`, and one named `wasReleasedThisFrame` —
+the same three true names `ButtonControl` itself already holds.
+
+**`ComputedButtonState`** — turns one plain, given "is this held down
+right now" signal into all three true answers above, checked once a
+frame against its own last-held value. No Unity type stands behind
+it at all. Its own true shape: `void Tick(bool held)`, called once,
+and only once, every frame — reading the three properties before
+`Tick` runs, or twice in one frame, both read wrong.
+
+**Held true, found on this closer look — two real, given limits, not
+yet settled:**
+
++ **Order matters.** `Tick` must run before `Human`'s own
+  `UpdateAsObservable()` chain reads these three properties that same
+  frame, or the whole frame reads one tick behind. Unity's own Script
+  Execution Order must be set by hand for whatever calls `Tick` — not
+  yet decided where that call itself belongs.
++ **One held value a frame, never two.** A real `ButtonControl` can,
+  in principle, read both `wasPressedThisFrame` and
+  `wasReleasedThisFrame` true at once (pressed and let go within one
+  frame, on a real device). `ComputedButtonState` cannot — it reads
+  one plain `held` value a frame, so a press and a release can never
+  both read true on the same tick. Held as a known, accepted limit,
+  not a bug to close.
+
+**How to check it — write these Red first, no Unity needed at all:**
+
+1. given `false` held, then `true` held (first true frame):
+   `isPressed` true, `wasPressedThisFrame` true, `wasReleasedThisFrame` false
+2. given `true` held, held again `true` a second time running:
+   `isPressed` true, `wasPressedThisFrame` false (only the first true
+   frame reads true)
+3. given `true` held, then `false` held: `wasReleasedThisFrame` true
+   that one frame, `isPressed` false
+4. given `false` held, held again `false`: every one of the three
+   reads false
+5. `Tick` called a second time in one frame, given the same held
+   value both times: the second call's own `wasPressedThisFrame`/
+   `wasReleasedThisFrame` read false, even where the first call's own
+   true edge just fired — held true as the known, given shape, not
+   fixed as a bug
+6. checked across 10,000 given frames, `GC.GetTotalAllocatedBytes`
+   shows **0** — matching `TASK-009`'s own bar; a plain bool check
+   against a held field makes nothing new, ever
+
+### TASK-071
+
+**Found true, checked live 2026-09-22 — a rule can never truly serve
+more than one NPC at once today, and beyond that, no NPC's own rule fires
+at all yet, given by which name.**
+
+`Store.DispatchTrigger(string trigger_id, string actor = "")`
+(checked against `Store.cs` line 172) skips a rule outright the
+moment `rule.actor` is set and does not match the given `actor`,
+letter for letter (line 188). **Checked against `animo`'s own
+`Agent.cs` line 135: `_bus?.Publish(signal_id)` is called with no
+`actor` at all — every signal any `Agent` has ever fired reads as
+the empty, "world's own" actor.** So a rule naming
+`"place_curious_01"` has never once truly matched a real `Agent`'s
+own call — not for one NPC, and surely not for many, all at once.
+
+**Held true even once that one-line miss is closed:** `rule.actor`
+still asks for one, single, given id, letter for letter. Many
+`place_curious`-kind bodies, each its own true `agent_id`
+(`place_curious_02`, `place_curious_03`, ...), would still need one
+true copy of every rule for each one — a way of building a real game
+that never truly holds up.
+
+**What to build — held across both repository builds:**
+
+| Change | Where |
+| --- | --- |
+| `public string kind_id => _composed_persona?.kind_id ?? "";` (the same true, `null`-safe shape `agent_id` already holds) | `animo`, `Agent.cs` |
+| `_bus?.Publish(signal_id: signal_id, actor: agent_id, actor_kind: kind_id);` — closes the found miss above | `animo`, `Agent.cs` |
+| `Bus.Publish` and `Store.DispatchTrigger` both take a new, given `actor_kind = ""` | `germio`, `Bus.cs` / `Store.cs` |
+| `Rule` holds a new `actor_kind` field, the same true shape as `actor` | `germio`, `Data.cs` |
+| Matching order, in `Store`: `rule.actor` set → match it alone, letter for letter, the same true way as today; `rule.actor` empty and `rule.actor_kind` set → match the given `actor_kind` instead; both empty → matches whoever calls, the same true way as today | `germio`, `Store.cs` |
+| A new Validator check: a rule holding both `actor` and `actor_kind` at once is a real, given error — never let through | `germio`, `Validator.cs` |
+
+**Held true, found on a closer look — `Validator.cs` already checks
+`rule.actor` against `known_actors` (its own `V036`) and against
+`known_needs` (its own `V037`), keyed by exact `agent_id`.** A rule
+holding `actor_kind` instead deserves the same true care: a new
+check (`V038`) naming a `kind_id` no persona truly answers to, the
+same true shape `V036` already holds — held apart from this task's
+own core (`SeekResolver`-shaped work is `Modio`'s; this whole table
+is `germio`'s), but real, given work still owed within it.
+
+**How to check it — write these Red first:**
+
+1. a rule holding `actor_kind` (`actor` left empty) fires true when
+   `DispatchTrigger`'s own `actor_kind` argument matches, whatever the
+   given `actor` string itself reads
+2. two given agents, different `actor` strings, the same
+   `actor_kind`, both fire the one true, shared rule — the real proof
+   this closes the found gap
+3. a rule holding `actor` alone still fires only for that one given
+   id, letter for letter — unchanged from today, checked again so
+   this task never breaks it
+4. a rule holding neither `actor` nor `actor_kind` still fires for
+   whoever calls — unchanged from today, checked again the same true
+   way
+5. a rule holding both `actor` and `actor_kind` at once is caught by
+   the new Validator check, and by that check alone
+6. a rule holding `actor_kind` naming a `kind_id` no known persona
+   answers to is caught by the new `V038`, the same true shape `V036`
+   already holds for `actor`
+
+### TASK-072
+
+**Found true, checked live 2026-09-22 — `Until` is checked for shape
+alone (`Validator.cs` line 557 on), never for whether it truly holds.
+No line anywhere in this family reads a running deed's own
+`Until` against the real world and says Done, Failed, or still
+running.** Given `TASK-038` and `TASK-071` both land, an NPC would
+truly start toward a real target — and then walk on forever, its
+own `Until` never once asked.
+
+**`UntilLogic`** — one real check, held apart from Unity outright
+(no `Time.time`, no `Transform`, no `Collider` read inside it at
+all; every real-world number it needs is handed in, not read by
+itself). **Held true, matched on purpose to `Modio`'s own `DeedEnd`
+(`Modio.Core.Deed.cs`, its own four true words: `Running`, `Done`,
+`Failed`, `Dropped`) — `germio` holds no tie to `Modio` at all
+(`package.json`, checked again — `{}`), so `UntilLogic` reads back
+its own true words alone, never `Modio`'s own type. `Dropped` is
+never this piece's own word to give — that word belongs to whatever
+calls `UntilLogic`, given a Behavior or a Node truly changed, not to
+a check against `Until` at all.** Given this, `UntilLogic` reads
+back one of three true words alone: `Running`, `Done`, `Failed`.
+
++ given `Until.elapsed` is set: Done once how far `now` sits past the deed's own
+  given start time reads at or past it
++ given `Until.near` is set: Done once a given real distance to the
+  target reads at or under it
++ given `Until.meets` is set: Done once a given real touch flag
+  reads true
++ given `Until.@while` is set: **Failed**, never Done, once a given
+  real state flag reads false (its own written words: "a deed ending
+  this way ends Failed, never Done")
++ exactly one of the four is ever true at once (`Validator`'s own
+  V-check already holds this true); `UntilLogic` itself trusts that,
+  and reads whichever one is truly given
+
+**What still stands apart, not built here, needs a real Windows
+Unity open:** the thin edge that measures a real distance, a real
+touch, and hands `now` in each tick — and, once `UntilLogic` reads
+Done, calls the true, whole put-in-place (`TASK-038`'s own still-open
+question) and fires the deed's own inner `command`.
+
+**How to check it — write these Red first, no Unity needed at all:**
+
+1. `Until.elapsed` set to `5`; given `now` at `4` reads `Running`;
+   given `now` at `5` reads Done
+2. `Until.near` set to `1.5`; given a distance of `2.0` reads still
+   running; given `1.5` itself, or under it, reads Done
+3. `Until.meets` set (holds `$target`); given the touch flag `false`
+   reads `Running`; given `true` reads Done
+4. `Until.@while` set; given the state flag `true` reads still
+   running; given `false` reads **Failed**, never Done
+5. checked across 10,000 given ticks, `GC.GetTotalAllocatedBytes`
+   shows **0** — matching `TASK-009`'s own bar; a plain number and
+   flag check makes nothing new, ever
+
+### TASK-073
+
+**Found true, checked live 2026-09-22 — `TargetMark.PutInPlaceOn`
+covers a `Command`'s own fields alone.** `RequestDeed`'s own
+`condition` and `Until.meets` can hold `$target` too (`RequestDeed`'s
+own written words say so outright), yet `PutInPlaceOn` never touches
+either. `TargetMark.PutInPlace` (the plain, one-string form) can put
+either right, but the only true caller of it at all, in this whole
+family, is `Validator.cs` line 613 — on `condition` alone, at design
+time, never a real run.
+
+**`PutInPlaceOnDeed`** — one plain, static method, held beside
+`PutInPlaceOn` in the same file, its own true shape:
+`static void PutInPlaceOnDeed(RequestDeed? deed, string id)`.
+
+Given a `RequestDeed`, puts the given id in place through its own
+`condition`, its own `Until.meets` (where `Until` itself is not
+`null`), and its own `command` (through the already-built
+`PutInPlaceOn`) — all three, in one true call. A `null` deed does
+nothing at all, the same true shape `PutInPlaceOn` itself already
+holds.
+
+**How to check it — write these Red first:**
+
+1. a `RequestDeed` holding `$target` in its own `condition` alone:
+   `PutInPlaceOnDeed` puts the given id in place there, true
+2. a `RequestDeed` holding `$target` in its own `Until.meets` alone:
+   the same, true, there
+3. a `RequestDeed` holding `$target` in all three places at once
+   (`condition`, `Until.meets`, and inside its own `command`): all
+   three read the given id, true, after one true call
+4. a `RequestDeed` whose own `until` is `null`: nothing thrown, and
+   `condition`/`command` still put in place true
+5. a `null` `RequestDeed`: nothing thrown, nothing done
+
+### TASK-074
+
+**Found true, checked live 2026-09-22 — walking through given plays, one after another,
+turned up a deeper hole than `TASK-071` alone can close.** `Store`
+itself is one single, given whole for a whole level (`GameSystem.cs`
+line 179, `new Store(...)`, called once) — every `Agent` shares the
+one true `_snapshot.history`. **Checked against `Data.cs`:
+`HistoryEntry` holds `kind`, `target_id`, and `timestamp` — never an
+actor at all.**
+
+This breaks two true things, once more than one NPC of a kind stands
+at once (`TASK-071`'s own whole point):
+
++ `rule.once`'s own guard (`Store.cs` line 215,
+  `RecordHistoryEvent(kind: "rule_fire", target_id: rule.id)`) is
+  checked with no actor at all. The first `wanderer`-kind body to
+  fire a shared rule writes the one true entry every other
+  `wanderer` body then reads as already true — the rule never fires
+  for a second one, ever again, in that whole session.
++ `history.time_since(kind=..., target_id=...)` and
+  `history.count(...)` (`Evaluator.cs`, checked against
+  `evaluateHistoryCount`/`evaluateHistoryTimeSince` and the rest)
+  read every true entry in the whole history, with no actor split at
+  all — checked against the real, given `rule_explore` (held in
+  `Tests~/ModelTests/TestData/deed_rule.json`), whose own
+  `request_deed.condition` reads
+  `history.time_since(kind=met, target_id=$target) > 60`. One body's
+  own true meeting would read as every other body's own meeting too.
+
+**What to build — one true field, threaded through what already
+stands, held apart from Unity outright:**
+
++ `HistoryEntry` holds a new `actor` field, the same true shape
+  `Rule.actor` already holds — empty where a "world" event, given
+  where one true `Agent`'s own call made it
++ `RecordHistoryEvent(string kind, string target_id, string actor = "")`
+  — one new, given field, passed straight through to the entry it
+  makes
++ `DispatchTrigger`'s own call to it (`Store.cs` line 215) hands its
+  own `actor` argument straight through
++ **Found true, checked live: a second true path to `RecordHistoryEvent`
+  exists, and drops `actor` outright today.** `DispatchTrigger` calls
+  `Executor.Execute(command: rule.command, store: this)` (`Store.cs`
+  line 212) with no `actor` at all; `Execute` itself
+  (`Executor.cs` line 28) holds no `actor` parameter, yet calls
+  `store.RecordHistoryEvent(...)` on its own (`record_event`
+  commands, line 97) — this call, too, must carry `actor`, or a
+  `record_event` fired once a deed itself is truly Done never
+  tags who it truly belongs to. `Executor.Execute` itself needs a
+  new, given `actor = ""`, threaded from `DispatchTrigger`'s own call
+  straight through to its own inner call
++ the `once`-guard itself: where `rule.actor` or `rule.actor_kind` is
+  given (this rule is one true NPC's own, or one true kind's own),
+  the guard reads true only where a past entry's own `actor` matches
+  too; where both are empty (a true "world" rule), the guard reads
+  the same true way it does today — the same for anyone, once for the whole
+  level, forever
++ `evaluateHistoryCount`/`Has`/`Last`/`TimeSince` each take a new,
+  given `for_actor` (empty by default): given, they read only the
+  entries whose own `actor` matches; empty, they read every entry,
+  the same true way they do today — a true "world" check never
+  breaks
++ **`Store.DeedRequested` itself gains the same true `actor` its own
+  `RequestDeedStart` now truly carries** —
+  `event Action<RequestDeed, string>? DeedRequested;`, so whatever
+  listens (a new task, not built here) may know whose own deed this
+  is, not only what it asks for
+
+**Held true — zero garbage stands as it was.** Every one of these
+reads a `List<HistoryEntry>` already made, and checks a plain string
+against a plain string — no new list, no new string, on any one of
+these calls. Adding the one true field changes nothing about this.
+
+**How to check it — write these Red first:**
+
+1. two given entries, different `actor` strings, the same `kind` and
+   `target_id`: `history.count(kind=..., target_id=...)`, given no
+   `for_actor` at all, still reads `2` — a true "world" count never
+   breaks
+2. the same two entries, `for_actor` given as one of the two: reads
+   `1` — only that one body's own true entry counts
+3. a rule holding `actor_kind` (`TASK-071`), fired true once by one
+   given body: a second given body, the same `actor_kind`, different
+   `agent_id`, still finds the `once`-guard open — the real proof
+   this closes the found hole
+4. a rule holding neither `actor` nor `actor_kind` (a true "world"
+   rule), fired once: fires no more, for anyone at all — unchanged
+   from today, checked again so this task never breaks it
+5. a `command` holding `record_event`, given through
+   `Executor.Execute` with a real, given `actor`: the entry it makes
+   holds that same `actor` — the proof `Execute`'s own new parameter
+   truly reaches all the way through
+6. checked across 10,000 given calls to `evaluateHistoryTimeSince`,
+   against a fixed, given history of 100 entries, `GC.GetTotalAllocatedBytes`
+   shows **0** — matching `TASK-009`'s own bar; reading a given list
+   and comparing given strings makes nothing new, ever
+
+**Held as an idea alone, not a true task — a third true way to
+split memory, beside "world" and "one body's own": a whole kind's
+own shared memory (every `wanderer`-kind body knows what any one of
+them found). Not designed, not given a task number. Held here so it
+is not lost.**
+
+### TASK-075
+
+**Found true, checked live 2026-09-22, while walking through given
+plays for `TASK-039` — a rule's own top-level `condition` cannot
+read `history.*` at all today, given no tie at all to `actor` or
+`actor_kind`.** `Store.cs` line 207 calls
+`Evaluator.Evaluate(condition: rule.condition, state: _scenario.initial_state)`
+— the two-given-argument true form, which itself calls the
+three-given-argument true form with `history: null` (`Evaluator.cs`
+line 32). The history-aware branch never once runs for a rule's own
+top-level `condition` — only `request_deed`'s own `condition`, once
+evaluated per candidate (`TASK-038`'s own split-apart question),
+ever truly sees a real history at all.
+
+**What to build:** `Store.cs` line 207 hands its own true
+`_snapshot?.history` through, the same true way `RecordHistoryEvent`
+already reads it; and where `rule.actor` or `rule.actor_kind` is
+given (this rule is one true NPC's own, or one true kind's own), the
+call hands the firing `actor` through too (`TASK-074`'s own new
+`for_actor`), so a rule's own `history.count`/`time_since` reads only
+that one body's own true entries — the same true way
+`request_deed`'s own `condition` will one day hold too.
+
+**How to check it — write these Red first:**
+
+1. a rule holding `history.count(...)` in its own top-level
+   `condition`, given a real, matching history entry: reads true —
+   unchanged from being unable to read it at all today
+2. the same rule, given `rule.actor` set, and two given history
+   entries — one this rule's own actor made, one another body's own
+   — reads true only where the one true entry made by this rule's
+   own actor is counted, the other left out
+3. a rule holding neither `actor` nor `actor_kind` (a true "world"
+   rule): its own `history.count(...)` reads every true entry, the
+   same true way it would with no actor scope at all

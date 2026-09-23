@@ -83,5 +83,22 @@ behind a line spoken over a character's head.
 leaning on a game to do it. `animo` has held its own tests all along;
 this brings the same to a build made to be handed out as a package.
 
+**A third body of work landed 2026-09-21: `WorldNames`, the world's
+own name table** (a plain `Dictionary`, built once at scene load,
+read by `modio`'s own `INameSource` through a thin joining piece —
+5 tests, all green).
+
+**A fourth body of work opened 2026-09-22, not yet built at all: can
+an NPC (an enemy or a friend, run by `animo`'s own Engine) move,
+jump, and climb through the very same `Human` code a player does?**
+No repository here has tried this before.
+`docs/npc_input_compat_checklist.md` holds the full design;
+`TASK-070` through `TASK-075` (below) hold six real, given pieces
+ready for real tests — none yet built. Beside `Human` itself:
+matching a rule to a whole kind, not one given body alone; a real
+check for when a deed is Done or Failed; a whole put-in-place for a
+found target's own id; and one body's own memory, never crossed with
+another's.
+
 See `TASKLIST.md` for the open work
 under this phase.

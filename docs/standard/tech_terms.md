@@ -399,3 +399,9 @@ with a start, a middle, and an end. See `modio`'s own
 
 **reparent** — To move the parent-child tie: to make one
 object a child of another, or to free it of a parent.
+
+**NPC** — A body in the game moved by animo's own Engine, never by a
+person's own real input (an enemy or a friend, either one).
+
+**Script Execution Order** — Unity's own setting for which script's Update
+runs first, when more than one script needs a fixed, given order.
