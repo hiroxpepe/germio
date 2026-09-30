@@ -15,6 +15,10 @@
   Check it is truly set, with `git config core.hooksPath`, which must
   answer `.githooks`. Running a hook by hand, on a file, is **not**
   proof the hook itself is live; only a true `git commit` proves that.
++ Set the git account to the one in the history of this repository
+  (check it with `git log -3 --format="%an <%ae>"`), and do not make
+  up another. Set both `user.name` and `user.email`, once for each
+  clone.
 
 ## Documents
 
@@ -25,7 +29,7 @@
   If a word is not there, add it to `docs/standard/tech_terms.md`
   before you use it.
 
-## Three files, three jobs
+## Four files, four jobs
 
 + `CLAUDE.md` (this file) — the rules and the word given: how the
   agent works here, checked every time, not tied to any one act of
@@ -33,6 +37,8 @@
 + `TASKLIST.md` — the full list of open work, with a plan for when.
   A short checkbox line up top for each item, a full write-up below
   it.
++ `ROADMAP.md` — the larger plan, in phases. A short line up top for
+  each phase, the detail below it.
 + `HANDOFF.md` — the hand-off to the next chat: where things stand
   right now, and the next move. Kept short; the full list lives in
   `TASKLIST.md`.
@@ -42,9 +48,10 @@
 + Before you commit any markdown file, run the check and get no
   errors at all. Do not commit a markdown file that still has errors.
 + This check is two things in one: a form check that runs on every
-  markdown file, and a word check for plain English that runs only
-  on `CLAUDE.md`, `TASKLIST.md`, and `HANDOFF.md`. A word failed in
-  the word check goes into `draft_words.md` if it is a plain word
+  markdown file, and a word check for plain English that runs on
+  every markdown file too, except the `_JP.md` files, which are not
+  in English. `TASKLIST.md` and `ROADMAP.md` get a check of their own
+  form as well. A word failed in the word check goes into `draft_words.md` if it is a plain word
   many people would use, or into `docs/standard/tech_terms.md` if it
   is a real, needed hard word with its own sense given in one line.
   Never put a new word into `basic_words.md`; that file holds only
@@ -63,12 +70,19 @@ npx --yes markdownlint-cli -c .markdownlint.json <file>
 ## Commits
 
 + The commit message is one line, with no body under it.
-+ The form is `type: Verb subject`. The verb is one of Add, Update,
-  or Delete. The type is one of `feat`, `fix`, `refactor`, `docs`,
-  `chore`, or `test`.
-+ Keep the first line between 57 and 61 letters long.
++ The form is `type: Verb subject`. The verb is Add or Update, and
+  nothing else; the hook turns down Delete. The type is one of
+  `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, or `style`.
++ Keep the first line between 57 and 61 letters long. Count it with
+  a command, never by eye.
 + Do not put square marks or forward lines in the message; keep it
   plain.
++ The hook also turns down the mark `-`, the name of this repository,
+  and a list of padding words (`now`, `just`, `own`, `work`, `here`,
+  `one`, and more; the list is in `.githooks/commit-msg`). The words
+  after the verb must be Basic English.
++ Read the master's own word before every commit and push. A clear
+  GO is owed each time.
 
 ## History
 

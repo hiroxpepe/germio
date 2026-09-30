@@ -56,9 +56,10 @@ Real, day-to-day work on `flugi`'s own level-clear bug turned up
 gaps the older plan never named: `Command.request_notify` (a way
 for a Rule to ask for a message on screen, with no need to touch
 C#), and a browser-based `germio.json` editor tool, built with no
-Unity needed at all. Both are done and in use. The older plan's own
-phase numbers do not cover this kind of work; it is tracked here,
-and in `TASKLIST.md`, instead.
+Unity needed at all. Both are built, and the editor is in use. A real
+playtest of `request_notify` is still open (TASK-003). The older
+plan's own phase numbers do not cover this kind of work; it is
+tracked here, and in `TASKLIST.md`, instead.
 
 **A second body of work of this kind landed 2026-08-22: what `modio`
 needs.** `modio` is the HOW layer, standing between `animo` (WHY) and
@@ -86,7 +87,13 @@ this brings the same to a build made to be handed out as a package.
 **A third body of work landed 2026-09-21: `WorldNames`, the world's
 own name table** (a plain `Dictionary`, built once at scene load,
 read by `modio`'s own `INameSource` through a thin joining piece —
-5 tests, all green).
+5 tests, all green). The thin Unity edge that fills it at scene load
+is not built yet (TASK-067).
+
+**Beside it, on 2026-09-22, `Sight` (`Scripts/Sight.cs`) landed:** a
+plain data holder for how far, and how wide, one character sees.
+`modio` reads it through a thin edge of its own; `germio` turns
+nothing toward anything.
 
 **A fourth body of work opened 2026-09-22, not yet built at all: can
 an NPC (an enemy or a friend, run by `animo`'s own Engine) move,

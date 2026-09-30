@@ -1,5 +1,19 @@
 # Change Log
 
+## [Next]
+
+### New
+
++ `WorldNames` (`Scripts/Core/WorldNames.cs`), a table of the kind and id of each thing in the world, built once at scene load, with 5 tests.
++ `Sight` (`Scripts/Sight.cs`), a plain data holder for how far, and how wide, one character sees.
++ `V037`, a check on each Need name, that runs only where the names each persona holds are handed in from outside.
++ A function that reads a whole `germio.json` string, turns it into a `Scenario`, and runs `Validate` on it, with no Unity call at all.
++ `ShaderSetUp` (`Scripts/Editor/ShaderSetUp.cs`), which keeps every shader under `Shaders/` in the list of shaders always included.
+
+### Changed
+
++ `ShaderRegistrar` is now `ShaderSetUp`. The package type now includes runtime shader assets, and the `.meta` files of the whole package were made new at one time.
+
 ## [0.1.0] - 2026-08-23
 
 ### Added

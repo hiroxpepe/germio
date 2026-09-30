@@ -11,9 +11,13 @@ not two.**
 
 | Build             | What it holds | Checks                                   |
 | ----------------- | ------------- | ---------------------------------------- |
-| `ModelTests`      | 39 tests      | the model types, and their JSON          |
-| `CoreTests`       | 130 tests     | the Store, Executor, Validator, and more |
+| `ModelTests`      | 115 tests     | the model types, and their JSON          |
+| `CoreTests`       | 540 tests     | the Store, Executor, Validator, and more |
 | `ConventionTests` | **106 tests** | **how every line of C# here is written** |
+
+One more check stands beside them: `Tests~/PackageTests/check_package.py`
+reads the package files (`package.json` and the `.asmdef` files). Run it
+with `python3`, and it must say every package check passed.
 
 `ConventionTests` is not about documents. **It reads every `.cs` file
 in `Scripts/`** and holds it to the house rules: how names are formed,
@@ -88,9 +92,9 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
 + [ ] TASK-064 [P-XX]: Check the local package path form on Windows
-+ [ ] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
++ [~] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
 + [ ] TASK-066 [P-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
-+ [ ] TASK-067 [P-XX]: Add a world table of kind and id, built once at scene load
++ [~] TASK-067 [P-XX]: Add a world table of kind and id, built once at scene load
 + [ ] TASK-068 [P-XX]: Add a pool for anything made or gone while a game runs
 + [ ] TASK-069 [P-XX]: Add a slow turn toward the act's own target, on purpose
 + [ ] TASK-070 [P-XX]: Add IButtonState and its own computed fill-in, for an NPC
@@ -1469,6 +1473,11 @@ its own true worth here is not truly proven.
 
 ### TASK-065
 
+**Where it stands, 2026-09-30.** `V037` itself is built, in
+`Scripts/Core/Validator.cs`, with tests in
+`Tests~/CoreTests/ValidatorNeedKnowledgeTests.cs`, all green. The two
+holes named below are still open.
+
 **Found true, checked live, this same session — a real, given gap
 found while designing an `animo`/`Modio` bridge (see `modio`'s own
 `TASKLIST.md`, TASK-021): `germio`'s own `Rule` shape lets a
@@ -1589,6 +1598,11 @@ real checks each already runs — no check dropped, no check added,
 this whole task is a language swap alone.
 
 ### TASK-067
+
+**Where it stands, 2026-09-30.** The logic piece, `WorldNames`
+(`Scripts/Core/WorldNames.cs`), is built, with 5 tests in
+`Tests~/CoreTests/WorldNamesTests.cs`, all green. The thin Unity edge,
+that walks the colliders at scene load, is not built.
 
 **Why this is `germio`'s own:** `germio` names the world (`Env.cs`, the
 11 type marks, read through `Like()`), and `modio` reads the world

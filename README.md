@@ -6,7 +6,7 @@
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
 ![Phase](https://img.shields.io/badge/phase-5-blue)
-![Version](https://img.shields.io/badge/version-v0.5.48-orange)
+![Version](https://img.shields.io/badge/version-v0.5.49-orange)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
@@ -49,11 +49,15 @@ mindmap
       condition
       command
       once
+      actor
     Command
       set_flag
       update_counter
       update_inventory
+      update_need
+      request_deed
       request_transition
+      request_notify
       set_persistence
       record_event
     Next
@@ -95,11 +99,11 @@ Six measured traits make Germio LLM-Native:
 | Trait | How it is built |
 | --- | --- |
 | `snake_case` right through every layer | the G17 naming theorem |
-| An open JSON Schema (Draft 2020-12) | `schemas/germio.schema.json` |
+| An open JSON Schema (Draft 2020-12) | `SchemaExporter`, in `Scripts/Schema/SchemaExporter.cs` |
 | Errors that check themselves and say why | `Validator` → `ToLlmReadable()`, in G12 form |
 | A small, closed DSL for conditions | `ExprLexer` + `ExprParser` + `Evaluator` |
 | Change both ways, between code and Mermaid | `Grapher.Export()` + `MermaidParser.Parse()` |
-| A design that plays no favorites among LLMs | prompt packs for Claude, GPT-4, and Gemini, all included |
+| A design that plays no favorites among LLMs | prompt packs for Claude, GPT-4, and Gemini (a game keeps them, for example `stemic/prompts/system/`) |
 
 ---
 
@@ -195,14 +199,45 @@ classDiagram
         +string condition
         +Command command
         +bool once
+        +string actor
     }
     class Command {
         +SetFlag set_flag
         +UpdateCounter update_counter
         +UpdateInventory update_inventory
+        +List~UpdateNeed~ update_need
+        +RequestDeed request_deed
         +string request_transition
+        +string request_notify
         +SetPersistence set_persistence
         +RecordEvent record_event
+    }
+    class UpdateNeed {
+        +string key
+        +float delta
+    }
+    class RequestDeed {
+        +Target target
+        +string condition
+        +string motion
+        +string act
+        +Until until
+        +Command command
+    }
+    class Target {
+        +string kind
+        +float reach
+        +float spread
+        +string not_in_memory
+        +string not_given_to
+        +string keep_from
+        +float new_again_after
+    }
+    class Until {
+        +float near
+        +string meets
+        +float elapsed
+        +string while
     }
     class Next {
         +string id
@@ -220,6 +255,11 @@ classDiagram
     Node --> Next
     Node --> Rule
     Rule --> Command
+    Command --> UpdateNeed
+    Command --> RequestDeed
+    RequestDeed --> Target
+    RequestDeed --> Until
+    RequestDeed --> Command : held command
     Snapshot --> State
     Snapshot --> History
 ```
@@ -230,11 +270,11 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    MODEL[Germio.Model\nScenario · Node · Rule · Command\nState · Snapshot · History]
-    CORE[Germio.Core\nStorage · Vault · Store\nValidator · Evaluator · Executor\nGrapher · MermaidParser\nExprLexer · ExprParser · ExprAst\nScenarioNavigator]
+    MODEL[Germio.Model\nScenario · Node · Rule · Command\nTarget · Until · State · Snapshot · History]
+    CORE[Germio.Core\nStorage · Vault · Store\nValidator · Evaluator · Executor\nGrapher · MermaidParser\nExprLexer · ExprParser · ExprAst\nScenarioNavigator · TargetMark · WorldNames]
     SCHEMA[Germio.Schema\nSchemaExporter]
-    EDITOR[Germio.Editor\nDashboard · McpServerMenu\nSceneCodeSyncer · SceneCodeSyncMenu\nSchemaExportMenu]
-    SYSTEMS[Germio.Systems\nGameSystem · SceneLoader · Bus\nZone · SoundSystem · CameraSystem]
+    EDITOR[Germio.Editor\nDashboard · McpServerMenu\nSceneCodeSyncer · SceneCodeSyncMenu\nSchemaExportMenu · ShaderSetUp]
+    SYSTEMS[Germio.Systems\nGameSystem · SceneLoader · Bus\nZone · SoundSystem · CameraSystem · NoticeSystem]
     GAMEDEV[GameDev\nscripts made for one game alone]
 
     MODEL --> CORE
@@ -262,7 +302,7 @@ flowchart TB
 | `StreamingAssets/snapshot_{slot}.json` | a runtime snapshot, per save slot (plain text) | No |
 | `StreamingAssets/snapshot_{slot}.dat` | a runtime snapshot, per save slot (coded) | No |
 | `StreamingAssets/germio_key.bin` | the AES-256 key (48 bytes) | No |
-| `schemas/germio.schema.json` | the JSON Schema, Draft 2020-12 | as a guide only |
+| `schemas/germio.schema.json`, in a game repo (for example `stemic`) | the JSON Schema, Draft 2020-12, made by `SchemaExporter` | as a guide only |
 
 ---
 
@@ -278,16 +318,40 @@ flowchart TB
 
 ---
 
-## Getting started
+## The browser editor
+
+`Editor/` holds a plain browser page for `germio.json`. It needs no
+Unity at all. It opens a `germio.json`, shows the nodes as a tree,
+lets you edit the rules, the nodes, and the state, checks the
+scenario as you go, and saves it back. Every change can be taken back.
 
 ```sh
-# Use it as a submodule
+cd Editor
+npm install
+npm run dev
+```
+
+---
+
+## Getting started
+
+Germio is a Unity Package (`com.meowtoon.germio`). Add it to
+`Packages/manifest.json` of your own Unity project, with a local path
+to your clone:
+
+```json
+"com.meowtoon.germio": "file:<path to your germio clone>"
+```
+
+The older way, a git submodule, is being put away (see `TASKLIST.md`,
+TASK-005):
+
+```sh
 git submodule add https://github.com/hiroxpepe/germio.git \
     game/Assets/Plugins/Germio
-
-# Or copy the folder straight into your own Unity project
-# Needs: Unity 6 LTS + Newtonsoft.Json (com.unity.nuget.newtonsoft-json)
 ```
+
+Needs: Unity 6 LTS + Newtonsoft.Json (`com.unity.nuget.newtonsoft-json`)
 
 1. Put your own scenario at `Assets/StreamingAssets/germio.json`
 2. Open `Germio > Dashboard`, in the Unity Editor, to check it
@@ -299,14 +363,17 @@ git submodule add https://github.com/hiroxpepe/germio.git \
 
 | Paper | What it is for |
 | --- | --- |
-| [LLM Workflow Guide](../../docs/llm_workflow_guide.md) | a start-to-end guide for writing with an LLM |
-| [Pattern Library Cookbook](../../docs/germio_cookbook.md) | 32 ready-to-use patterns |
-| [DSL Specification](../../docs/germio_dsl_spec.md) | the EBNF grammar for conditions |
-| [LLM-First Design](../../docs/llm_first_design.md) | design rules G9-G21 |
-| [Naming Convention](../../docs/naming_convention.md) | the G16-G18 naming theorem |
-| [Security Model](../../docs/germio_security_model.md) | AES key handling |
-| [Save Data Format](../../docs/germio_save_data_format.md) | the snapshot's own form and schema |
-| [MCP Design](../../docs/mcp_design.md) | a future MCP server design (Phase 7) |
+| [LLM Workflow Guide](docs/llm_workflow_guide.md) | a start-to-end guide for writing with an LLM |
+| [Pattern Library Cookbook](docs/dsl_cookbook.md) | 32 ready-to-use patterns |
+| [DSL Specification](docs/dsl_spec.md) | the EBNF grammar for conditions |
+| [LLM-First Design](docs/llm_design_spec.md) | design rules G9-G21 |
+| [Naming Convention](docs/naming_spec.md) | the G16-G18 naming theorem |
+| [Security Model](docs/security_spec.md) | AES key handling |
+| [Save Data Format](docs/save_data_spec.md) | the snapshot's own form and schema |
+| [Scene Code Sync](docs/scene_code_sync_spec.md) | how the C# Scene classes are kept in step with `germio.json` |
+| [MCP Design](docs/mcp_spec.md) | a future MCP server design (Phase 7) |
+| [NPC Input Checklist](docs/npc_input_compat_checklist.md) | a design for an NPC to run through the same `Human` code as a player (not built yet) |
+| [Detailed Plan](docs/germio_roadmap.md) | the older, detailed plan, in phases |
 
 **A game built to show this working**:
 [Stemic](https://github.com/hiroxpepe/stemic) — a full Unity 3D
