@@ -103,7 +103,7 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-073 [P-XX]: Add a whole put-in-place, covering condition and Until.meets too
 + [ ] TASK-074 [P-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
 + [ ] TASK-075 [P-XX]: Add history to a rule's own top-level condition, still given as `null` today
-+ [ ] TASK-076 [P-03]: Settle which sound effect entry each SfxClip plays
++ [x] TASK-076 [P-03]: Settled — taken in by TASK-011
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -708,6 +708,11 @@ whole phase — a real check already found `SEType.Jump` not yet
 game-ready. A plain, given wait/check gate, marked done once that
 true work lands.
 
+**2026-10-03:** the spec is settled in `signo`'s main record, Part 0.19, and the
+table and its entries are built by `signo`'s TASK-279; TASK-027 then does the
+sound itself, by ear, on that table. This gate waits on TASK-027, after
+TASK-279.
+
 ### TASK-009
 
 `quyno`'s own P-06 (joining `Quyno` to a real `germio` game) is a
@@ -733,6 +738,24 @@ Work out a true mapping between the two sets (`Push`, say, has no
 plain `Signo` match today; `Explosion`/`Powerup`/`Hit`/`Blip`/
 `Alarm` have no plain `SfxClip` match), given TASK-008/009 land
 first.
+
+**Given 2026-10-03, on the master's word, in `signo`'s own main record
+(`docs/appendix/appendix_system_spec.md`, Part 0.19):** a bank holds a game's
+sound effects in a table of their own, each entry found by its name, and which
+`SfxClip` plays which entry is this game's own choice. So the mapping is made
+against that table, not against the eight `SEType` values alone. Do this after
+`signo`'s TASK-279 (the table and its entries); the sound of the eight effect sounds is
+`signo`'s TASK-027, worked on top of it. (`TASK-076` held the same work, and was
+taken in here.)
+
+**How to check it:**
+
+1. Each `SfxClip` names one entry of the table, written down in one place in
+   this repository
+2. Each entry's form is written with it: a one-shot or a loop (walking and
+   running may be loops), the pitch or note it plays at, and its priority
+3. A `SfxClip` that names no entry is found at load time and named in the
+   fault, never silent
 
 ### TASK-012
 
@@ -2087,6 +2110,8 @@ that one body's own true entries — the same true way
    same true way it would with no actor scope at all
 
 ### TASK-076
+
+**Settled 2026-10-03: taken in by `TASK-011`, which held the same work (the mapping of `SfxClip` to the sound effect entries); its text now carries the checks written here. Held below as history.**
 
 **Given 2026-10-03, on the master's word, in `signo`'s own main record
 (`docs/appendix/appendix_system_spec.md`, Part 0.19):** a bank holds a game's

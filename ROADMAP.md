@@ -44,8 +44,9 @@ to at least six, to match `stemic`'s own true song set (`Title`,
 `Level1..3`, `Ending`, `BeatLevel`). `SfxClip` (seven true values:
 `Item`/`Jump`/`Climb`/`Walk`/`Run`/`Grounded`/`Push`) does not map
 one-to-one onto `Signo`'s own `SEType` (eight true values) — this
-mapping is still open. **This whole phase is held on `signo`'s own
-TASK-027 (a true SE spec and sound-quality pass) landing first** —
+mapping is `TASK-011`, made against the sound effect table of `signo`'s main
+record (Part 0.19, built by `signo`'s TASK-279). **This whole phase is held on `signo`'s own
+TASK-027 (the sound-quality pass of the effect sounds, after TASK-279) landing first** —
 a real check found `Signo`'s own SE sound not yet game-ready, the
 true root gate behind every later step here. See `TASKLIST.md` for
 the open work under this phase.
