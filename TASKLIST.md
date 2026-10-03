@@ -103,6 +103,7 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-073 [P-XX]: Add a whole put-in-place, covering condition and Until.meets too
 + [ ] TASK-074 [P-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
 + [ ] TASK-075 [P-XX]: Add history to a rule's own top-level condition, still given as `null` today
++ [ ] TASK-076 [P-03]: Settle which sound effect entry each SfxClip plays
 + [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
 + [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
@@ -2084,3 +2085,23 @@ that one body's own true entries — the same true way
 3. a rule holding neither `actor` nor `actor_kind` (a true "world"
    rule): its own `history.count(...)` reads every true entry, the
    same true way it would with no actor scope at all
+
+### TASK-076
+
+**Given 2026-10-03, on the master's word, in `signo`'s own main record
+(`docs/appendix/appendix_system_spec.md`, Part 0.19):** a bank holds a game's
+sound effects in a table of their own, each entry found by its name, and which
+`SfxClip` plays which entry is this game's own choice. Today `SoundSystem` holds
+seven `SfxClip` values (`Item`, `Jump`, `Climb`, `Walk`, `Run`, `Grounded`,
+`Push`; `Scripts/Systems/SoundSystem.cs`), and `signo` holds eight `SEType`
+sounds made ready; how they match is not yet settled. Do this after `signo`'s TASK-279
+(the table and its entries).
+
+**How to check it:**
+
+1. Each `SfxClip` names one entry of the table, written down in one place in
+   this repository
+2. Each entry's form is written with it: a one-shot or a loop (walking and
+   running may be loops), the pitch or note it plays at, and its priority
+3. A `SfxClip` that names no entry is found at load time and named in the
+   fault, never silent
