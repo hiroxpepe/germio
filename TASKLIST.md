@@ -664,21 +664,17 @@ no `.gitmodules` line for Germio, no `Assets/Plugins/Germio/` folder,
 git URL, this whole time). 87 tests plus these checks are
 green, with `GERMIO_PATH` set and without it both.
 
-**`flugi` and `tropika` still hold the old submodule**, on purpose:
-Master's own word was `stemic` alone. Whether the same change is owed
-there is not yet asked.
+**Checked on GitHub, 2026-11-07.** `stemic` holds no `.gitmodules` line for `germio`, and its `manifest.json` names `com.meowtoon.germio`, `com.meowtoon.animo`, and
+`com.meowtoon.modio`, each by a local disk path (`file:C:/Users/hiroxpepe/Projects/...`). `flugi` holds no `.gitmodules` line for `germio` either, and its `manifest.json`
+names `com.meowtoon.germio` by the path `file:/Users/hiroxpepe/Projects/germio` (the form that `TASK-064` is to check on Windows). `tropika` names `com.meowtoon.germio`
+in its `manifest.json` and still holds the `germio` line of `.gitmodules`; whether it is moved the same way is not yet asked.
 
 ### TASK-006
 
-`CLAUDE.md`, `TASKLIST.md`, `HANDOFF.md`, `writing_standard.md`,
-`coding_standard.md`, and `tech_terms.md` are all in Basic English now,
-in this repository and in `stemic`, `flugi`, `tropika`, `briko`, `animo`,
-and `opinio`. The rest of the docs are not: `README.md`, `overview_EN.md`,
-and every file under `docs/` (`dsl_spec.md`, `mcp_spec.md`,
-`security_spec.md`, `naming_spec.md`, `llm_design_spec.md`,
-`llm_workflow_guide.md`, `germio_roadmap.md`, `save_data_spec.md`,
-`dsl_cookbook.md`, `scene_code_sync_spec.md`) still fail the check, from
-tens of words to as many as 234 in one file.
+**State 2026-11-07, by the Basic English check.** `README.md`, `CHANGELOG.md`, `docs/dsl_spec.md`, and `docs/npc_input_compat_checklist.md` pass. These fail (the lines with a word
+not allowed, of the lines of the file): `docs/germio_roadmap.md` (102 of 2,325), `docs/scene_code_sync_spec.md` (48 of 1,055), `docs/dsl_cookbook.md` (42 of 3,293),
+`overview_EN.md` (37 of 303), `docs/security_spec.md` (36 of 253), `docs/llm_design_spec.md` (30 of 469), `docs/llm_workflow_guide.md` (28 of 429), `docs/save_data_spec.md`
+(19 of 542), `docs/mcp_spec.md` (14 of 506), and `docs/naming_spec.md` (12 of 230). `overview_JP.md` is a `_JP.md` file, which the check passes over by rule.
 
 Also still open: words put into `draft_words.md` tonight, in a hurry, to
 get `coding_standard.md` and `tech_terms.md` to pass. Some of these are
@@ -1416,8 +1412,8 @@ wrote. **Brought home.**
 
 | Moved to `germio`    | Count    |
 | -------------------- | -------- |
-| `Tests~/ModelTests/` | 6 files  |
-| `Tests~/CoreTests/`  | 30 files |
+| `Tests~/ModelTests/` | 11 files |
+| `Tests~/CoreTests/`  | 50 files |
 
 `stemic`'s own `IntegrationTests` went from 513 tests to 87 — what is
 truly its own: `SceneClassHierarchyTests`, `NoticeSystemLevelNameTests`,
@@ -1425,8 +1421,10 @@ truly its own: `SceneClassHierarchyTests`, `NoticeSystemLevelNameTests`,
 (`RegenerateStaticSchemaFile`) that writes to `stemic`'s own
 `schemas/` folder.
 
-`germio` itself now holds 744 tests of its own — `115` + `523` + `106`
-— checking itself, rather than leaning on a game to do it.
+`germio` itself runs 646 tests of its own (checked 2026-11-07): 540 in `Tests~/CoreTests` and 106 in `Tests~/ConventionTests`. **The 11 files of `Tests~/ModelTests/`
+(108 tests) are in no project:** `CoreTests.csproj` names its files one by one and none of them is a `ModelTests` file, and the folder holds no `.csproj`. A copy of
+`CoreTests.csproj` with those files added (run in a folder of its own; the repository was not changed) built them, and all 108 passed. Putting them into `CoreTests.csproj`
+is a change of the project, and waits for the word of the master.
 
 Two small fixes came with the move: `SceneLoader.cs` and three test
 files were missing `using System.Collections.Generic;`, since
