@@ -1798,6 +1798,8 @@ yet settled:**
    shows **0** — matching `TASK-009`'s own bar; a plain bool check
    against a held field makes nothing new, ever
 
+**Written on 2026-11-14, not kept.** `IButtonState` and `ComputedButtonState` (`Scripts/Core/`) and the 6 tests of `Tests~/CoreTests/ComputedButtonStateTests.cs` were written as this task says, and all 6 pass (the whole `CoreTests` run: 546 pass). They are not committed: `Sources_FollowNamingConventions` in `Tests~/ConventionTests` fails on them, on the three names (the rule wants PascalCase) and on `Tick` (a word the rule does not know). The three names are what `Human.cs` reads now (`Up_Button.isPressed` and the rest) and are the same as `ButtonControl`, so `Human` stays as it is. The master decides how the names and `Tick` meet the rule. The files are in the working copy of the box only. Test 6 makes 64 frames, not 10,000 (the master rule: a new test is short).
+
 ### TASK-071
 
 **Found true, checked live 2026-09-22 — a rule can never truly serve
@@ -2054,6 +2056,8 @@ split memory, beside "world" and "one body's own": a whole kind's
 own shared memory (every `wanderer`-kind body knows what any one of
 them found). Not designed, not given a task number. Held here so it
 is not lost.**
+
+**Read on 2026-11-14.** It cannot start yet. Test 3 needs `actor_kind` of `TASK-071`, and the `actor` of `DeedRequested` needs `RequestDeedStart` of `TASK-073`: neither is in the code. The task also does not say who gives `for_actor` to the history functions of `Evaluator`. The master decides that before the tests are written.
 
 ### TASK-075
 
