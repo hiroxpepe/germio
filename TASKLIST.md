@@ -45,10 +45,8 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-003 [P-XX]: Add Command.request_notify (built; a real playtest is still open)
 + [x] TASK-004 [P-XX]: Build a germio.json viewer and editor with no Unity (done)
 + [~] TASK-005 [P-XX]: Move germio to a Unity Package, off the git submodule
-+ [ ] TASK-006 [P-XX]: Put the rest of the docs into Basic English
++ [ ] TASK-006 [P-XX]: Put the long roadmap into Basic English
 + [ ] TASK-007 [P-XX]: Sync germio_roadmap.md's own state to the real code
-+ [ ] TASK-008 [P-03]: Wait on signo's own true SE spec and sound brush-up
-+ [ ] TASK-009 [P-03]: Wait on quyno's own true Germio-bridge entry point
 + [ ] TASK-010 [P-03]: Grow MusicClip from one true value to six, for stemic's own songs
 + [ ] TASK-011 [P-03]: Map SfxClip's own seven values against Signo's own eight SEType values
 + [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
@@ -116,6 +114,10 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
 + [x] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
 + [x] TASK-058 [P-XX]: V036 — an actor no persona holds is an error
++ [ ] TASK-077 [P-XX]: Put the papers on the scene sync and the book of examples into Basic English
++ [ ] TASK-078 [P-XX]: Put the short English account and the safety paper into Basic English
++ [ ] TASK-079 [P-XX]: Put the two papers on the language model into Basic English
++ [ ] TASK-080 [P-XX]: Put the papers on saving, the server, and names into Basic English
 
 ## Detail
 
@@ -671,18 +673,7 @@ in its `manifest.json` and still holds the `germio` line of `.gitmodules`; wheth
 
 ### TASK-006
 
-**State 2026-11-07, by the Basic English check.** `README.md`, `CHANGELOG.md`, `docs/dsl_spec.md`, and `docs/npc_input_compat_checklist.md` pass. These fail (the lines with a word
-not allowed, of the lines of the file): `docs/germio_roadmap.md` (102 of 2,325), `docs/scene_code_sync_spec.md` (48 of 1,055), `docs/dsl_cookbook.md` (42 of 3,293),
-`overview_EN.md` (37 of 303), `docs/security_spec.md` (36 of 253), `docs/llm_design_spec.md` (30 of 469), `docs/llm_workflow_guide.md` (28 of 429), `docs/save_data_spec.md`
-(19 of 542), `docs/mcp_spec.md` (14 of 506), and `docs/naming_spec.md` (12 of 230). `overview_JP.md` is a `_JP.md` file, which the check passes over by rule.
-
-Also still open: words put into `draft_words.md` tonight, in a hurry, to
-get `coding_standard.md` and `tech_terms.md` to pass. Some of these are
-real technical words (`Constructor`, `Destructor`, `Indexer`, `Operator`,
-`alias`, `directive`, `algorithm`, `keyword`, and more) that should move
-to `tech_terms.md`, each with its own short sense, and not sit in
-`draft_words.md` with no sense given at all. This move needs the
-master's own GO first, word by word.
+Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/germio_roadmap.md` (102) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
 
 ### TASK-007
 
@@ -696,33 +687,16 @@ each part done, still open, or no longer wanted, the way
 up to date. Given the size of this document, split the work itself
 into a few smaller passes rather than one long one.
 
-### TASK-008
-
-`signo`'s own TASK-027 (a true spec and a real, by-ear sound-quality
-pass for its own SE engine) is a true, needed step before this
-whole phase — a real check already found `SEType.Jump` not yet
-game-ready. A plain, given wait/check gate, marked done once that
-true work lands.
-
-**2026-10-03:** the spec is settled in `signo`'s main record, Part 0.19, and the
-table and its entries are built by `signo`'s TASK-279; TASK-027 then does the
-sound itself, by ear, on that table. This gate waits on TASK-027, after
-TASK-279.
-
-### TASK-009
-
-`quyno`'s own P-06 (joining `Quyno` to a real `germio` game) is a
-true, needed step before this whole phase — `Quyno.Bridge` must
-give this repository a true, given call-in point (its own exact
-shape still open, held on `signo`'s own TASK-027 first). A plain,
-given wait/check gate, marked done once that true work lands.
-
 ### TASK-010
 
 `SoundSystem.cs`'s own `MusicClip` enum holds one true value
 (`BeatLevel`) today. Grow it to at least six, to match `stemic`'s
 own true song set (`Title`, `Level1..3`, `Ending`, `BeatLevel`),
 given TASK-008/009 land first.
+
+**Waits for** (from TASK-008, taken out on 2026-11-14, as waiting is not a piece of work): Wait on signo's own true SE spec and sound brush-up. `signo`'s own TASK-027 (a true spec and a real, by-ear sound-quality pass for its own SE engine) is a true, needed step before this whole phase — a real check already found `SEType.Jump` not yet game-ready. A plain, given wait/check gate, marked done once that true work lands. **2026-10-03:** the spec is settled in `signo`'s main record, Part 0.19, and the table and its entries are built by `signo`'s TASK-279; TASK-027 then does the sound itself, by ear, on that table. This gate waits on TASK-027, after TASK-279.
+
+**Waits for** (from TASK-009, taken out on 2026-11-14, as waiting is not a piece of work): Wait on quyno's own true Germio-bridge entry point. `quyno`'s own P-06 (joining `Quyno` to a real `germio` game) is a true, needed step before this whole phase — `Quyno.Bridge` must give this repository a true, given call-in point (its own exact shape still open, held on `signo`'s own TASK-027 first). A plain, given wait/check gate, marked done once that true work lands.
 
 ### TASK-011
 
@@ -2128,3 +2102,19 @@ sounds made ready; how they match is not yet settled. Do this after `signo`'s TA
    running may be loops), the pitch or note it plays at, and its priority
 3. A `SfxClip` that names no entry is found at load time and named in the
    fault, never silent
+
+### TASK-077
+
+Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/scene_code_sync_spec.md` (48), `docs/dsl_cookbook.md` (42) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
+
+### TASK-078
+
+Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `overview_EN.md` (37), `docs/security_spec.md` (36) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
+
+### TASK-079
+
+Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/llm_design_spec.md` (30), `docs/llm_workflow_guide.md` (28) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
+
+### TASK-080
+
+Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/save_data_spec.md` (19), `docs/mcp_spec.md` (14), `docs/naming_spec.md` (12) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
