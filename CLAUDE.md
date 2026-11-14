@@ -29,6 +29,18 @@
   If a word is not there, add it to `docs/standard/tech_terms.md`
   before you use it.
 
+## Work record
+
++ When the master asks you to write the work record, in any words, that one request is the whole order. Do the steps below, and nothing more.
++ Keep one work record file for one topic. Never put two topics in one file.
++ The steps and the manners are in the documents repository (`hiroxpepe/documents`). Read the section on the personal work record in its `CLAUDE.md` first. It names the procedure file. That file is the one true source. This section only points to it.
++ This repository keeps its work records in the documents repository, in the folder `05_X_*/06_Germio_*/X_*/2026/` (use the pattern to find it). The file name is `X_MM-DD_N.md`.
++ Write the record in Japanese. The hours are always in the table, never empty. If the master gives no hours, work them out from the commit times, and write the basis line under the table.
++ Use the tools in the documents repository, in the folder `05_X_*/*/Claude_Tools/app/`. `worklog_new_cli.js` makes the file. `worklog_hours_cli.js` works out the hours. `task_ops_cli.js` adds the row to the task sheet. `repo_sync_cli.js` pulls and pushes.
++ Pull the documents repository before you write. Push it after. The commit message there is `update`.
++ Never show a token. Never put a secret, such as a key, in a record.
++ When it is done, tell the master what you wrote, as a short list.
+
 ## Four files, four jobs
 
 + `CLAUDE.md` (this file) — the rules and the word given: how the
