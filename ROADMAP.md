@@ -58,7 +58,7 @@ gaps the older plan never named: `Command.request_notify` (a way
 for a Rule to ask for a message on screen, with no need to touch
 C#), and a browser-based `germio.json` editor tool, built with no
 Unity needed at all. Both are built, and the editor is in use. A real
-playtest of `request_notify` is still open (TASK-003). The older
+playtest of `request_notify` is still open (TASK-081). The older
 plan's own phase numbers do not cover this kind of work; it is
 tracked here, and in `TASKLIST.md`, instead.
 

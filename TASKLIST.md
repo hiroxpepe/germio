@@ -42,9 +42,9 @@ one line of `Scripts/` is enough to need them.
 
 + [ ] TASK-001 [P-XX]: Build a Scene wiring checker and auto-fixer
 + [ ] TASK-002 [P-XX]: Add a timed event step-line to the DSL (play_sequence)
-+ [ ] TASK-003 [P-XX]: Add Command.request_notify (built; a real playtest is still open)
++ [x] TASK-003 [P-XX]: Add Command.request_notify
 + [x] TASK-004 [P-XX]: Build a germio.json viewer and editor with no Unity (done)
-+ [~] TASK-005 [P-XX]: Move germio to a Unity Package, off the git submodule
++ [~] TASK-005 [P-XX]: Move `tropika` off the git submodule of germio (`stemic` and `flugi` are done)
 + [ ] TASK-006 [P-XX]: Put the long roadmap into Basic English
 + [ ] TASK-007 [P-XX]: Sync germio_roadmap.md's own state to the real code
 + [ ] TASK-010 [P-03]: Grow MusicClip from one true value to six, for stemic's own songs
@@ -90,9 +90,9 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
 + [ ] TASK-064 [P-XX]: Check the local package path form on Windows
-+ [~] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
++ [x] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
 + [ ] TASK-066 [P-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
-+ [~] TASK-067 [P-XX]: Add a world table of kind and id, built once at scene load
++ [~] TASK-067 [P-XX]: Add the thin Unity edge that fills the world table at scene load
 + [ ] TASK-068 [P-XX]: Add a pool for anything made or gone while a game runs
 + [ ] TASK-069 [P-XX]: Add a slow turn toward the act's own target, on purpose
 + [ ] TASK-070 [P-XX]: Add IButtonState and its own computed fill-in, for an NPC
@@ -118,6 +118,10 @@ one line of `Scripts/` is enough to need them.
 + [ ] TASK-078 [P-XX]: Put the short English account and the safety paper into Basic English
 + [ ] TASK-079 [P-XX]: Put the two papers on the language model into Basic English
 + [ ] TASK-080 [P-XX]: Put the papers on saving, the server, and names into Basic English
++ [ ] TASK-081 [P-XX]: Play the `flugi` fix for `request_notify` in a real Unity build
++ [ ] TASK-082 [P-XX]: Look into `request_notify` and `record_event` saying the same thing twice
++ [ ] TASK-083 [P-XX]: Run the `DSL` validator in an `AssetPostprocessor` on every save
++ [ ] TASK-084 [P-XX]: Carry the `AssetPostprocessor` check into every other `DSL` of the family
 
 ## Detail
 
@@ -439,6 +443,8 @@ real Unity playtest of the `flugi` fix this was all built for
 (the master's own next step, on the real Windows 11 build) —
 everything above was checked by test code alone, never inside
 Unity itself.
+
+**Closed 2026-11-14.** It is built and was checked by test code, as written above. The two points that were left open are now their own tasks: `TASK-081` and `TASK-082`.
 
 ### TASK-004
 
@@ -1572,6 +1578,8 @@ gives, asking nothing extra of anyone.
 every save) is to be carried, side by side, into every other `DSL`
 this family holds — never `germio` alone.**
 
+**Closed 2026-11-14.** `V037` itself is built and checked (see above). The work that was still owed is cut out into `TASK-083` and `TASK-084`.
+
 ### TASK-066
 
 **Found true, checked live, this same session: `Tests~/PackageTests/check_package.py`
@@ -1666,6 +1674,8 @@ which already holds the `Bus` and runs at scene start, is the
 natural home); whether inactive pooled things (TASK-068) are walked
 at load too (they should be — Physics will not return them while
 inactive, so a table row for them costs nothing).
+
+**The title was changed on 2026-11-14.** The logic piece, `WorldNames` (`Scripts/Core/WorldNames.cs`), is built and green (5 tests, found in the code). This task now holds the thin Unity edge only.
 
 ### TASK-068
 
@@ -2118,3 +2128,19 @@ Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less.
 ### TASK-080
 
 Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/save_data_spec.md` (19), `docs/mcp_spec.md` (14), `docs/naming_spec.md` (12) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
+
+### TASK-081
+
+Cut out of TASK-003 on 2026-11-14, so that each task is 8 hours or less. Everything in TASK-003 was checked by test code alone, never inside Unity. This is the master own next step, on the real Windows 11 build. **Done, once**: the master has run the `flugi` fix in a real Unity build on Windows 11, and the level-clear words show in it as TASK-003 describes.
+
+### TASK-082
+
+Cut out of TASK-003 on 2026-11-14. Nothing stops a `Rule` from using `request_notify` and `record_event` to say the same thing twice, in two spots. **Done, once**: either a `Validator` check refuses the second use (its own `V` number, with a Red test first), or the master decides to hold the risk as it is, and the answer is written here.
+
+### TASK-083
+
+Cut out of TASK-065 on 2026-11-14. Today `Dashboard.cs` runs the check only from a `[MenuItem]`, a manual step. Wire the same read, deserialize, and `Validator.Validate` call into an `AssetPostprocessor`, with `known_actors` and `known_needs` built from the `Persona` file beside `germio.json` (that file path and shape are not yet settled; no game ships one today, see `modio` TASK-021), and show every problem it finds in the Unity Console when the file is saved. A real Windows Unity open is the only way to check it. **Done, once**: saving `germio.json` in a real Unity open shows the problems it finds in the Console.
+
+### TASK-084
+
+Cut out of TASK-065 on 2026-11-14. It starts only after `TASK-083` is checked live and works. **Done, once**: each other `DSL` of the family runs its own validator on every save, by the same shape.
