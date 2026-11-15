@@ -1401,10 +1401,7 @@ truly its own: `SceneClassHierarchyTests`, `NoticeSystemLevelNameTests`,
 (`RegenerateStaticSchemaFile`) that writes to `stemic`'s own
 `schemas/` folder.
 
-`germio` itself runs 646 tests of its own (checked 2026-11-07): 540 in `Tests~/CoreTests` and 106 in `Tests~/ConventionTests`. **The 11 files of `Tests~/ModelTests/`
-(108 tests) are in no project:** `CoreTests.csproj` names its files one by one and none of them is a `ModelTests` file, and the folder holds no `.csproj`. A copy of
-`CoreTests.csproj` with those files added (run in a folder of its own; the repository was not changed) built them, and all 108 passed. Putting them into `CoreTests.csproj`
-is a change of the project, and waits for the word of the master.
+`germio` itself runs 646 tests of its own (checked 2026-11-07): 540 in `Tests~/CoreTests` and 106 in `Tests~/ConventionTests`. The 11 files of `Tests~/ModelTests/` (115 tests) are in `CoreTests.csproj` (done 2026-11-15, all pass; the test data is copied under `TestData`).
 
 Two small fixes came with the move: `SceneLoader.cs` and three test
 files were missing `using System.Collections.Generic;`, since
