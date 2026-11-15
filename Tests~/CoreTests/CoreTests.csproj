@@ -122,4 +122,26 @@
     <Compile Include="WorldNamesTests.cs" />
   </ItemGroup>
 
+  <!-- germio's own ModelTests (the model types and their JSON); their TestData is copied beside the tests -->
+  <ItemGroup>
+    <None Include="..\ModelTests\TestData\**\*.*">
+      <Link>TestData\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\ModelTests\CommandTests.cs" />
+    <Compile Include="..\ModelTests\DeepCopyTests.cs" />
+    <Compile Include="..\ModelTests\HistoryTests.cs" />
+    <Compile Include="..\ModelTests\NodeTests.cs" />
+    <Compile Include="..\ModelTests\RequestDeedTests.cs" />
+    <Compile Include="..\ModelTests\RuleTests.cs" />
+    <Compile Include="..\ModelTests\ScenarioTests.cs" />
+    <Compile Include="..\ModelTests\SnapshotTests.cs" />
+    <Compile Include="..\ModelTests\StateTests.cs" />
+    <Compile Include="..\ModelTests\UpdateNeedTests.cs" />
+    <Compile Include="..\ModelTests\WholeDeedTests.cs" />
+  </ItemGroup>
+
 </Project>
