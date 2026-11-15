@@ -15,6 +15,13 @@ namespace Germio.Tests.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [TestFixture]
     public class CommandTests {
+        [OneTimeSetUp]
+        public void WarmUpTheJsonSerializer() {
+            // The first JSON serialization of a list of Commands in a process compiles the serializer:
+            // about 100 ms, once. It is paid here, so the polymorphic test times only its own work.
+            JsonConvert.SerializeObject(value: new List<Command> { new Command { set_flag = new SetFlag { key = "warm", value = true } } });
+        }
+
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////
