@@ -11,7 +11,6 @@ form — a short form is put right in the code, and not kept here.
 + alias
 + align
 + alignafterhold
-+ alignment
 + an
 + anchored
 + audio
@@ -60,7 +59,6 @@ form — a short form is put right in the code, and not kept here.
 + dragon
 + drift
 + eaten
-+ ecosystem
 + encrypted
 + encrypting
 + encryption
@@ -92,7 +90,6 @@ form — a short form is put right in the code, and not kept here.
 + initialization
 + instant
 + interfaces
-+ interleave
 + inventory
 + inward
 + its
@@ -127,7 +124,6 @@ form — a short form is put right in the code, and not kept here.
 + our
 + ours
 + outer
-+ outward
 + pac
 + pad
 + parameter
@@ -136,7 +132,6 @@ form — a short form is put right in the code, and not kept here.
 + parser
 + participle
 + password
-+ payload
 + persistence
 + pkcs
 + plainly
@@ -159,7 +154,6 @@ form — a short form is put right in the code, and not kept here.
 + reset
 + resetlookaround
 + resetrotateview
-+ restyle
 + reworked
 + rotate
 + rotateview
@@ -195,7 +189,6 @@ form — a short form is put right in the code, and not kept here.
 + tabstate
 + tag
 + template
-+ tens
 + tense
 + their
 + them
@@ -211,7 +204,6 @@ form — a short form is put right in the code, and not kept here.
 + two
 + typing
 + unchanged
-+ unchecked
 + unlabeled
 + untouched
 + updateinventory
@@ -269,7 +261,6 @@ form — a short form is put right in the code, and not kept here.
 + fireresumed
 + fps
 + func
-+ idol
 + initialize
 + ld
 + leftparen
@@ -468,8 +459,6 @@ form — a short form is put right in the code, and not kept here.
 + gameplay
 + outright
 + optional
-+ unaware
-+ internals
 + rewritten rewrite
 + guids guid
 + shader
