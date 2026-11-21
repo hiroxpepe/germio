@@ -12,6 +12,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { validate_tasklist } from './validate_tasklist.js';
+import { read_roadmap_plans } from './validate_roadmap.js';
 import { load_vocabulary } from './load_vocabulary.js';
 import { check_basic_english } from './basic_english_check.js';
 
@@ -26,13 +27,15 @@ if (!path) {
 const text = readFileSync(path, 'utf-8');
 
 let roadmap_phase_ids = null;
+let roadmap_plans = null;
 const roadmap_path = join(dirname(path), 'ROADMAP.md');
 if (existsSync(roadmap_path)) {
   const roadmap_text = readFileSync(roadmap_path, 'utf-8');
   roadmap_phase_ids = [...roadmap_text.matchAll(/^\+ \[[ x~]\] (PHASE-(?:\d{2}|XX)):/gm)].map(m => m[1]);
+  roadmap_plans = read_roadmap_plans(roadmap_text);
 }
 
-let errors = validate_tasklist(text, roadmap_phase_ids);
+let errors = validate_tasklist(text, roadmap_phase_ids, roadmap_plans);
 
 if (vocab_dir && existsSync(vocab_dir)) {
   const vocab_files = readdirSync(vocab_dir)
