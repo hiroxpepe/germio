@@ -38,19 +38,19 @@ properties named `width` and `font` where neither word is allowed.
 Run all three, every time, before calling anything done. A change to
 one line of `Scripts/` is enough to need them.
 
-<!-- format: v1 | fields: status, id, title, phase -->
+<!-- format: v2 | fields: status, id, title, phase, plan -->
 
-+ [ ] TASK-001 [PHASE-XX]: Build a Scene wiring checker and auto-fixer
-+ [ ] TASK-002 [PHASE-XX]: Add a timed event step-line to the DSL (play_sequence)
++ [ ] TASK-001 [PHASE-XX] [PLAN-01]: Check that every scene holds the objects it needs, by name
++ [ ] TASK-002 [PHASE-XX] [PLAN-02]: Settle the open points of `play_sequence`, on the master's word
 + [x] TASK-003 [PHASE-XX]: Add Command.request_notify
 + [x] TASK-004 [PHASE-XX]: Build a germio.json viewer and editor with no Unity (done)
-+ [~] TASK-005 [PHASE-XX]: Move `tropika` off the git submodule of germio (`stemic` and `flugi` are done)
-+ [ ] TASK-006 [PHASE-XX]: Put the long roadmap into Basic English
-+ [ ] TASK-007 [PHASE-XX]: Sync germio_roadmap.md's own state to the real code
-+ [ ] TASK-010 [PHASE-03]: Grow MusicClip from one true value to six, for stemic's own songs
-+ [ ] TASK-011 [PHASE-03]: Map SfxClip's own seven values against Signo's own eight SEType values
-+ [ ] TASK-012 [PHASE-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
-+ [ ] TASK-013 [PHASE-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
++ [~] TASK-005 [PHASE-XX] [PLAN-XX]: Move `tropika` off the git submodule of germio (`stemic` and `flugi` are done)
++ [ ] TASK-006 [PHASE-XX] [PLAN-XX]: Put the long roadmap into Basic English
++ [ ] TASK-007 [PHASE-XX] [PLAN-03]: Bring `germio_roadmap.md` sections 0 to 4 up to the real code
++ [ ] TASK-010 [PHASE-03] [PLAN-XX]: Grow MusicClip from one true value to six, for stemic's own songs
++ [ ] TASK-011 [PHASE-03] [PLAN-XX]: Map SfxClip's own seven values against Signo's own eight SEType values
++ [ ] TASK-012 [PHASE-03] [PLAN-XX]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
++ [ ] TASK-013 [PHASE-03] [PLAN-XX]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
 + [xx] TASK-014 [PHASE-XX]: Build one shared sensor — moved out, to modio
 + [xx] TASK-015 [PHASE-XX]: Give every level piece a mark — dropped, nothing is needed
 + [x] TASK-016 [PHASE-XX]: Read actor off a Rule, out of the JSON
@@ -85,25 +85,25 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-040 [PHASE-XX]: Add a NeedRequested event to the Store, and fire it
 + [x] TASK-041 [PHASE-XX]: Add a DeedRequested event to the Store, and fire it
 + [x] TASK-042 [PHASE-XX]: Find every caller of Bus Publish, and keep each one working
-+ [~] TASK-043 [PHASE-XX]: Show a line over a character's head, for what it has in mind
++ [~] TASK-043 [PHASE-XX] [PLAN-XX]: Show a line over a character's head, for what it has in mind
 + [x] TASK-061 [PHASE-XX]: Read history inside and, or and not, however deep
 + [x] TASK-062 [PHASE-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [PHASE-XX]: Bring germio own tests home, out of stemic
-+ [ ] TASK-064 [PHASE-XX]: Check the local package path form on Windows
++ [ ] TASK-064 [PHASE-XX] [PLAN-04]: Put right the guid drift in `flugi`, on a real Windows Unity
 + [x] TASK-065 [PHASE-XX]: Add V037, a Need name check beside V036's own true precedent
-+ [ ] TASK-066 [PHASE-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
-+ [~] TASK-067 [PHASE-XX]: Add the thin Unity edge that fills the world table at scene load
-+ [ ] TASK-068 [PHASE-XX]: Add a pool for anything made or gone while a game runs
-+ [ ] TASK-069 [PHASE-XX]: Add a slow turn toward the act's own target, on purpose
-+ [ ] TASK-070 [PHASE-XX]: Add IButtonState and its own computed fill-in, for an NPC
-+ [ ] TASK-071 [PHASE-XX]: Add a kind-wide rule match, so one true rule set serves every NPC of one kind
-+ [ ] TASK-072 [PHASE-XX]: Add UntilLogic, a real check for when a deed is Done or Failed
-+ [ ] TASK-073 [PHASE-XX]: Add a whole put-in-place, covering condition and Until.meets too
-+ [ ] TASK-074 [PHASE-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
-+ [ ] TASK-075 [PHASE-XX]: Add history to a rule's own top-level condition, still given as `null` today
++ [ ] TASK-066 [PHASE-XX] [PLAN-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
++ [~] TASK-067 [PHASE-XX] [PLAN-XX]: Add the thin Unity edge that fills the world table at scene load
++ [ ] TASK-068 [PHASE-XX] [PLAN-XX]: Add a pool for anything made or gone while a game runs
++ [ ] TASK-069 [PHASE-XX] [PLAN-XX]: Add a slow turn toward the act's own target, on purpose
++ [ ] TASK-070 [PHASE-XX] [PLAN-XX]: Add IButtonState and its own computed fill-in, for an NPC
++ [ ] TASK-071 [PHASE-XX] [PLAN-XX]: Add a kind-wide rule match, so one true rule set serves every NPC of one kind
++ [ ] TASK-072 [PHASE-XX] [PLAN-XX]: Add UntilLogic, a real check for when a deed is Done or Failed
++ [ ] TASK-073 [PHASE-XX] [PLAN-XX]: Add a whole put-in-place, covering condition and Until.meets too
++ [ ] TASK-074 [PHASE-XX] [PLAN-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
++ [ ] TASK-075 [PHASE-XX] [PLAN-XX]: Add history to a rule's own top-level condition, still given as `null` today
 + [x] TASK-076 [PHASE-03]: Settled — taken in by TASK-011
-+ [ ] TASK-059 [PHASE-XX]: Draw the line itself, on the Unity side
-+ [ ] TASK-060 [PHASE-XX]: Tell every game holding this build about the two new files
++ [ ] TASK-059 [PHASE-XX] [PLAN-XX]: Draw the line itself, on the Unity side
++ [ ] TASK-060 [PHASE-XX] [PLAN-XX]: Tell every game holding this build about the two new files
 + [x] TASK-044 [PHASE-XX]: List a node's own rules by actor, so each may be read apart
 + [xx] TASK-045 [PHASE-XX]: Take like beside target_id — dropped, wrong build
 + [x] TASK-051 [PHASE-XX]: Hold V007 back where a rule names an actor
@@ -114,18 +114,35 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-056 [PHASE-XX]: Check a deed condition after the mark is put in place
 + [x] TASK-057 [PHASE-XX]: Leave actor empty where a Zone fires the rule
 + [x] TASK-058 [PHASE-XX]: V036 — an actor no persona holds is an error
-+ [ ] TASK-077 [PHASE-XX]: Put the papers on the scene sync and the book of examples into Basic English
-+ [ ] TASK-078 [PHASE-XX]: Put the short English account and the safety paper into Basic English
-+ [ ] TASK-079 [PHASE-XX]: Put the two papers on the language model into Basic English
-+ [ ] TASK-080 [PHASE-XX]: Put the papers on saving, the server, and names into Basic English
-+ [ ] TASK-081 [PHASE-XX]: Play the `flugi` fix for `request_notify` in a real Unity build
-+ [ ] TASK-082 [PHASE-XX]: Look into `request_notify` and `record_event` saying the same thing twice
-+ [ ] TASK-083 [PHASE-XX]: Run the `DSL` validator in an `AssetPostprocessor` on every save
-+ [ ] TASK-084 [PHASE-XX]: Carry the `AssetPostprocessor` check into every other `DSL` of the family
++ [ ] TASK-077 [PHASE-XX] [PLAN-XX]: Put the papers on the scene sync and the book of examples into Basic English
++ [ ] TASK-078 [PHASE-XX] [PLAN-XX]: Put the short English account and the safety paper into Basic English
++ [ ] TASK-079 [PHASE-XX] [PLAN-XX]: Put the two papers on the language model into Basic English
++ [ ] TASK-080 [PHASE-XX] [PLAN-XX]: Put the papers on saving, the server, and names into Basic English
++ [ ] TASK-081 [PHASE-XX] [PLAN-XX]: Play the `flugi` fix for `request_notify` in a real Unity build
++ [ ] TASK-082 [PHASE-XX] [PLAN-XX]: Look into `request_notify` and `record_event` saying the same thing twice
++ [ ] TASK-083 [PHASE-XX] [PLAN-XX]: Run the `DSL` validator in an `AssetPostprocessor` on every save
++ [ ] TASK-084 [PHASE-XX] [PLAN-05]: Find which other `DSL` of the family needs the check on save
++ [ ] TASK-085 [PHASE-XX] [PLAN-01]: Check that each scene node has its Scene part, with the same id
++ [ ] TASK-086 [PHASE-XX] [PLAN-01]: Check each scene name against its file and the build list
++ [ ] TASK-087 [PHASE-XX] [PLAN-01]: Give one clear report of every scene set-up error found
++ [ ] TASK-088 [PHASE-XX] [PLAN-01]: Put right the scene set-up errors found, when asked
++ [ ] TASK-089 [PHASE-XX] [PLAN-02]: Let the Executor hold a step waiting across frames
++ [ ] TASK-090 [PHASE-XX] [PLAN-02]: Add a Store event for each step of a timed line
++ [ ] TASK-091 [PHASE-XX] [PLAN-02]: Add Validator rules for a timed line of steps
++ [ ] TASK-092 [PHASE-XX] [PLAN-02]: Add the game side part that sends each named step on
++ [ ] TASK-093 [PHASE-XX] [PLAN-03]: Bring `germio_roadmap.md` section 5 up to the real code
++ [ ] TASK-094 [PHASE-XX] [PLAN-03]: Bring `germio_roadmap.md` section 6 up to the real code
++ [ ] TASK-095 [PHASE-XX] [PLAN-03]: Bring `germio_roadmap.md` sections 7 and 8 up to the real code
++ [ ] TASK-096 [PHASE-XX] [PLAN-03]: Bring `germio_roadmap.md` sections 9 to 14 up to the real code
++ [ ] TASK-097 [PHASE-XX] [PLAN-04]: Put right the guid drift in `tropika`, on a real Windows Unity
++ [ ] TASK-098 [PHASE-XX] [PLAN-04]: Check whether `ShaderSetUp` is truly needed, with the guids right
++ [ ] TASK-099 [PHASE-XX] [PLAN-XX]: Settle how the line over a head is drawn, on the master's word
 
 ## Detail
 
 ### TASK-001
+
+**Cut into PLAN-01 on 2026-11-21, so that each task is 8 hours or less.** This task now holds point 1 below (the singleton objects) alone; points 2 and 3, the report, and the fix are TASK-085 to TASK-088. **Done, once**: the tool reports a scene that has no `GameSystem` object, by name.
 
   a `germio.json` Node needs 3 kinds of set-up that no tool checks
   today, so an error breaks the game only while it is running,
@@ -169,6 +186,8 @@ touch `.unity` files; `briko`'s `Exporter` and `Importer` show a
 way to read and write `.unity` files for GameObjects and parts.
 
 ### TASK-002
+
+**Cut into PLAN-02 on 2026-11-21, so that each task is 8 hours or less.** This task now holds the 15 points against it, below, alone: the master settles each one before any code. The four parts to build are TASK-089 to TASK-092. **Done, once**: each of the 15 points has a settled answer written here.
 
   right now, what has to happen after a Rule fires — a paused-game
   message, a level-clear message, a level-start name showing — is
@@ -682,6 +701,8 @@ in its `manifest.json` and still holds the `germio` line of `.gitmodules`; wheth
 Cut out of the old TASK-006 on 2026-11-14, so that each task is 8 hours or less. `docs/germio_roadmap.md` (102) do not pass the Basic English check (the number is of words not allowed, counted 2026-11-14). The rule of the master: a word that has a simple word to take its place is replaced; only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word goes there. The word lists in the `vocabulary` folder are not changed by these tasks. **Done, once**: `tools/basic_english_cli.js` gives no error on each of these files, and the commit hook takes them.
 
 ### TASK-007
+
+**Cut into PLAN-03 on 2026-11-21, so that each task is 8 hours or less.** This task now holds sections 0 to 4 (lines 1 to 429) alone; the rest are TASK-093 to TASK-096. **Done, once**: each part of sections 0 to 4 is marked done, still open, or no longer wanted.
 
 `germio_roadmap.md` (2326 lines) holds both a record of real, done
 work and a plan for work still ahead, but its own last update was
@@ -1409,6 +1430,8 @@ files were missing `using System.Collections.Generic;`, since
 `germio`'s own does not.
 
 ### TASK-064
+
+**Cut into PLAN-04 on 2026-11-21, so that each task is 8 hours or less.** This task now holds `flugi` alone; `tropika` is TASK-097, and the `ShaderSetUp` question is TASK-098. **Done, once**: `flugi` opens in a real Windows Unity with no missing script and no pink shader.
 
 **`stemic`'s own real part: done, checked live, 2026-09-13. `tropika`
 and `flugi` still hold the same real gap, not yet fixed.**
@@ -2144,4 +2167,66 @@ Cut out of TASK-065 on 2026-11-14. Today `Dashboard.cs` runs the check only from
 
 ### TASK-084
 
+**Cut into PLAN-05 on 2026-11-21, so that each task is 8 hours or less.** This task now holds the first look alone: which other `DSL` of the family has a validator to run on save. One task for each `DSL` found is put in after this. **Done, once**: the list of those `DSL` is written here.
+
 Cut out of TASK-065 on 2026-11-14. It starts only after `TASK-083` is checked live and works. **Done, once**: each other `DSL` of the family runs its own validator on every save, by the same shape.
+
+### TASK-085
+
+Cut out of TASK-001 on 2026-11-21, so that each task is 8 hours or less. See TASK-001 for the whole design. Point 2 of the design: each Node with a scene name has a part built from `Scene` in that scene, and its `[GermioSceneHandler]` id is the same as the Node id. **Done, once**: the tool reports a scene Node with no such part, or with an id that is not the same.
+
+### TASK-086
+
+Cut out of TASK-001 on 2026-11-21, so that each task is 8 hours or less. See TASK-001 for the whole design. Point 3 of the design: each scene name in a `Scenario` is the name of a real `.unity` file, letter for letter, and is in the scene list of the Build Profile in use. **Done, once**: the tool reports a scene name with no file of that name, or not in the build list.
+
+### TASK-087
+
+Cut out of TASK-001 on 2026-11-21, so that each task is 8 hours or less. See TASK-001 for the whole design. The report: one clear list of every error that TASK-001, TASK-085, and TASK-086 find. **Done, once**: one run of the tool gives every error found, in one report.
+
+### TASK-088
+
+Cut out of TASK-001 on 2026-11-21, so that each task is 8 hours or less. See TASK-001 for the whole design. The fix, when wanted: put in the objects and parts that are not there, and put the scene in the build list; a name that does not match is pointed out, not changed. **Done, once**: after the fix, a second run of the tool reports no error for what it put right.
+
+### TASK-089
+
+Cut out of TASK-002 on 2026-11-21, so that each task is 8 hours or less. See TASK-002 for the whole design. Point 1 of the 15: `Executor.Execute` runs a `Command` all at one time today, with no way to hold a step waiting across many frames. It starts only after TASK-002 is settled. **Done, once**: a step waits its given time across frames, by the settled shape.
+
+### TASK-090
+
+Cut out of TASK-002 on 2026-11-21, so that each task is 8 hours or less. See TASK-002 for the whole design. A new `Store` event for each step of a line, by the shape TASK-002 settles. **Done, once**: each step of a line gives one `Store` event, at its time.
+
+### TASK-091
+
+Cut out of TASK-002 on 2026-11-21, so that each task is 8 hours or less. See TASK-002 for the whole design. New `Validator` rules for a line (a missing `event`, a broken `params`, and the rest that TASK-002 settles). **Done, once**: each rule has its own `V` number and a Red test first.
+
+### TASK-092
+
+Cut out of TASK-002 on 2026-11-21, so that each task is 8 hours or less. See TASK-002 for the whole design. The game side part that hears each named step and sends it on to real code (point 13 of the 15). **Done, once**: in a game, each named step of a line reaches the code that the game gives it.
+
+### TASK-093
+
+Cut out of TASK-007 on 2026-11-21, so that each task is 8 hours or less. See TASK-007 for the whole design. Section 5 (lines 430 to 933). **Done, once**: each part of section 5 is marked done, still open, or no longer wanted.
+
+### TASK-094
+
+Cut out of TASK-007 on 2026-11-21, so that each task is 8 hours or less. See TASK-007 for the whole design. Section 6 (lines 934 to 1367). **Done, once**: each part of section 6 is marked done, still open, or no longer wanted.
+
+### TASK-095
+
+Cut out of TASK-007 on 2026-11-21, so that each task is 8 hours or less. See TASK-007 for the whole design. Sections 7 and 8 (lines 1368 to 1778). **Done, once**: each part of sections 7 and 8 is marked done, still open, or no longer wanted.
+
+### TASK-096
+
+Cut out of TASK-007 on 2026-11-21, so that each task is 8 hours or less. See TASK-007 for the whole design. Sections 9 to 14 (lines 1779 to 2325). **Done, once**: each part of sections 9 to 14 is marked done, still open, or no longer wanted.
+
+### TASK-097
+
+Cut out of TASK-064 on 2026-11-21, so that each task is 8 hours or less. See TASK-064 for the whole design. The same fix as the one done for `stemic`, in `tropika`. **Done, once**: `tropika` opens in a real Windows Unity with no missing script and no pink shader.
+
+### TASK-098
+
+Cut out of TASK-064 on 2026-11-21, so that each task is 8 hours or less. See TASK-064 for the whole design. The question TASK-064 left open: was `ShaderSetUp` truly needed, or was the `UsePass` failure only one more sign of the guid drift? Check it with the guids right and `ShaderSetUp` taken out. **Done, once**: the answer is written here, and `ShaderSetUp` is kept or taken out by it.
+
+### TASK-099
+
+Put in on 2026-11-21, before TASK-059: the shape of the drawing is not yet fixed (TASK-059 says it may change). The master settles the shape first. **Done, once**: the shape TASK-059 builds to is settled and written in TASK-059.

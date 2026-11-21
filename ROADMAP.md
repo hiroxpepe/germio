@@ -1,11 +1,16 @@
 # ROADMAP
 
-<!-- format: v1 | fields: status, phase, title -->
+<!-- format: v2 | fields: status, phase, title | plans: status, plan, phase, title -->
 
 + [x] PHASE-01: Build the LLM-native DSL and its full test base
 + [ ] PHASE-02: Have an LLM alone finish a real game (dogfood it)
 + [ ] PHASE-03: Play real-time sound through Quyno and Signo
 + [~] PHASE-XX: Work that came up outside the first plan
++ [ ] PLAN-01 [PHASE-XX]: Find and put right the scene set-up errors, at edit time
++ [ ] PLAN-02 [PHASE-XX]: Add a timed line of named steps to the DSL
++ [ ] PLAN-03 [PHASE-XX]: Bring the long roadmap up to the real code
++ [ ] PLAN-04 [PHASE-XX]: Put right the Windows guid drift in every game
++ [ ] PLAN-05 [PHASE-XX]: Run the check on save in every DSL of the family
 
 ## Detail
 
@@ -110,3 +115,23 @@ another's.
 
 See `TASKLIST.md` for the open work
 under this phase.
+
+### PLAN-01
+
+Taken out of TASK-001 on 2026-11-21, as it is more than 8 hours: an Editor tool that checks the 3 kinds of scene set-up, reports, and puts them right. Tasks: TASK-001, TASK-085 to TASK-088.
+
+### PLAN-02
+
+Taken out of TASK-002 on 2026-11-21, as it is more than 8 hours: `play_sequence`, settled first on the master's word, then built in four parts. Tasks: TASK-002, TASK-089 to TASK-092.
+
+### PLAN-03
+
+Taken out of TASK-007 on 2026-11-21, as it is more than 8 hours: `germio_roadmap.md` (2325 lines), read again in five parts. Tasks: TASK-007, TASK-093 to TASK-096.
+
+### PLAN-04
+
+Taken out of TASK-064 on 2026-11-21, as it is more than 8 hours: `flugi` and `tropika`, and the open `ShaderSetUp` question. Each needs a real Windows Unity. Tasks: TASK-064, TASK-097, TASK-098.
+
+### PLAN-05
+
+Taken out of TASK-084 on 2026-11-21, as it is more than 8 hours: first find which other `DSL` needs it, then one task for each. Tasks: TASK-084, and the tasks that come from it.
