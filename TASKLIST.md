@@ -85,7 +85,7 @@ one line of `Scripts/` is enough to need them.
 + [x] TASK-040 [PHASE-XX]: Add a NeedRequested event to the Store, and fire it
 + [x] TASK-041 [PHASE-XX]: Add a DeedRequested event to the Store, and fire it
 + [x] TASK-042 [PHASE-XX]: Find every caller of Bus Publish, and keep each one working
-+ [~] TASK-043 [PHASE-XX] [PLAN-XX]: Show a line over a character's head, for what it has in mind
++ [x] TASK-043 [PHASE-XX] [PLAN-XX]: Show a line over a character's head, for what it has in mind
 + [x] TASK-061 [PHASE-XX]: Read history inside and, or and not, however deep
 + [x] TASK-062 [PHASE-XX]: Take the deed questions on a target, not in a condition
 + [x] TASK-063 [PHASE-XX]: Bring germio own tests home, out of stemic
@@ -1130,6 +1130,8 @@ V numbers are never used twice. **V035 was taken and then let go**
 should never find it meaning something new.
 
 ### TASK-043
+
+**Done 2026-11-21, on the master's word.** The part of this task (the sums, `Scripts/Core/SpeechSize.cs`, 11 tests) is done; the drawing is TASK-059.
 
 `Store.NotifyRequested` shows a line for the whole screen. There is no
 way to show a line over one character's head.
