@@ -40,88 +40,88 @@ one line of `Scripts/` is enough to need them.
 
 <!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001 [P-XX]: Build a Scene wiring checker and auto-fixer
-+ [ ] TASK-002 [P-XX]: Add a timed event step-line to the DSL (play_sequence)
-+ [x] TASK-003 [P-XX]: Add Command.request_notify
-+ [x] TASK-004 [P-XX]: Build a germio.json viewer and editor with no Unity (done)
-+ [~] TASK-005 [P-XX]: Move `tropika` off the git submodule of germio (`stemic` and `flugi` are done)
-+ [ ] TASK-006 [P-XX]: Put the long roadmap into Basic English
-+ [ ] TASK-007 [P-XX]: Sync germio_roadmap.md's own state to the real code
-+ [ ] TASK-010 [P-03]: Grow MusicClip from one true value to six, for stemic's own songs
-+ [ ] TASK-011 [P-03]: Map SfxClip's own seven values against Signo's own eight SEType values
-+ [ ] TASK-012 [P-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
-+ [ ] TASK-013 [P-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
-+ [xx] TASK-014 [P-XX]: Build one shared sensor — moved out, to modio
-+ [xx] TASK-015 [P-XX]: Give every level piece a mark — dropped, nothing is needed
-+ [x] TASK-016 [P-XX]: Read actor off a Rule, out of the JSON
-+ [x] TASK-017 [P-XX]: Take an actor on DispatchTrigger, and on Bus Publish
-+ [x] TASK-018 [P-XX]: Fire a rule with no actor, whoever calls
-+ [x] TASK-019 [P-XX]: Fire a rule with an actor only for that one
-+ [x] TASK-020 [P-XX]: Read update_need as a list, out of the JSON
-+ [x] TASK-021 [P-XX]: Fire a need out of the Store, one call to a list entry
-+ [x] TASK-022 [P-XX]: V028 — an empty need key is an error
-+ [x] TASK-023 [P-XX]: V029 — a delta of zero is a warning
-+ [x] TASK-024 [P-XX]: Read request_deed, all five parts, out of the JSON
-+ [x] TASK-025 [P-XX]: Read the Command held inside a request_deed
-+ [x] TASK-026 [P-XX]: Let a request_deed stand with no target at all
-+ [x] TASK-027 [P-XX]: Fire a deed out of the Store, once
-+ [x] TASK-028 [P-XX]: V030 — a motion outside the seven is an error
-+ [x] TASK-029 [P-XX]: V031 — an until with no key, or two, is an error
-+ [x] TASK-030 [P-XX]: V032 — a request_deed inside a request_deed is an error
-+ [x] TASK-031 [P-XX]: V033 — a kind outside the six type marks is an error
-+ [x] TASK-032 [P-XX]: Put a found id in place of the $target mark
-+ [x] TASK-033 [P-XX]: Leave text with no $target mark just as it stands
-+ [x] TASK-034 [P-XX]: Swap every $target in a line, not the first alone
-+ [x] TASK-046 [P-XX]: Leave $targets and $TARGET alone, mark or not
-+ [x] TASK-047 [P-XX]: Swap once, and never look at what was put in
-+ [x] TASK-048 [P-XX]: Reach every text field inside a held Command
-+ [x] TASK-049 [P-XX]: Write out an id with a letter in front of it
-+ [x] TASK-050 [P-XX]: Run a put-in-place condition through the Evaluator
-+ [x] TASK-035 [P-XX]: Read a whole deed, end to end, off a real JSON file
-+ [x] TASK-036 [P-XX]: Hold every Executor test already there, still green
-+ [x] TASK-037 [P-XX]: Read act off a request_deed, and let it be left out
-+ [x] TASK-038 [P-XX]: V034 — an act outside the three is an error
-+ [xx] TASK-039 [P-XX]: V035 — an until on a tie moving — dropped, no such until
-+ [x] TASK-040 [P-XX]: Add a NeedRequested event to the Store, and fire it
-+ [x] TASK-041 [P-XX]: Add a DeedRequested event to the Store, and fire it
-+ [x] TASK-042 [P-XX]: Find every caller of Bus Publish, and keep each one working
-+ [~] TASK-043 [P-XX]: Show a line over a character's head, for what it has in mind
-+ [x] TASK-061 [P-XX]: Read history inside and, or and not, however deep
-+ [x] TASK-062 [P-XX]: Take the deed questions on a target, not in a condition
-+ [x] TASK-063 [P-XX]: Bring germio own tests home, out of stemic
-+ [ ] TASK-064 [P-XX]: Check the local package path form on Windows
-+ [x] TASK-065 [P-XX]: Add V037, a Need name check beside V036's own true precedent
-+ [ ] TASK-066 [P-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
-+ [~] TASK-067 [P-XX]: Add the thin Unity edge that fills the world table at scene load
-+ [ ] TASK-068 [P-XX]: Add a pool for anything made or gone while a game runs
-+ [ ] TASK-069 [P-XX]: Add a slow turn toward the act's own target, on purpose
-+ [ ] TASK-070 [P-XX]: Add IButtonState and its own computed fill-in, for an NPC
-+ [ ] TASK-071 [P-XX]: Add a kind-wide rule match, so one true rule set serves every NPC of one kind
-+ [ ] TASK-072 [P-XX]: Add UntilLogic, a real check for when a deed is Done or Failed
-+ [ ] TASK-073 [P-XX]: Add a whole put-in-place, covering condition and Until.meets too
-+ [ ] TASK-074 [P-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
-+ [ ] TASK-075 [P-XX]: Add history to a rule's own top-level condition, still given as `null` today
-+ [x] TASK-076 [P-03]: Settled — taken in by TASK-011
-+ [ ] TASK-059 [P-XX]: Draw the line itself, on the Unity side
-+ [ ] TASK-060 [P-XX]: Tell every game holding this build about the two new files
-+ [x] TASK-044 [P-XX]: List a node's own rules by actor, so each may be read apart
-+ [xx] TASK-045 [P-XX]: Take like beside target_id — dropped, wrong build
-+ [x] TASK-051 [P-XX]: Hold V007 back where a rule names an actor
-+ [x] TASK-052 [P-XX]: Hold V008 back where a set_flag sits inside a deed
-+ [x] TASK-053 [P-XX]: Let V010 know the two new commands
-+ [x] TASK-054 [P-XX]: Put the three new words into the exported schema
-+ [x] TASK-055 [P-XX]: Give Rule and Command a deep copy of their own
-+ [x] TASK-056 [P-XX]: Check a deed condition after the mark is put in place
-+ [x] TASK-057 [P-XX]: Leave actor empty where a Zone fires the rule
-+ [x] TASK-058 [P-XX]: V036 — an actor no persona holds is an error
-+ [ ] TASK-077 [P-XX]: Put the papers on the scene sync and the book of examples into Basic English
-+ [ ] TASK-078 [P-XX]: Put the short English account and the safety paper into Basic English
-+ [ ] TASK-079 [P-XX]: Put the two papers on the language model into Basic English
-+ [ ] TASK-080 [P-XX]: Put the papers on saving, the server, and names into Basic English
-+ [ ] TASK-081 [P-XX]: Play the `flugi` fix for `request_notify` in a real Unity build
-+ [ ] TASK-082 [P-XX]: Look into `request_notify` and `record_event` saying the same thing twice
-+ [ ] TASK-083 [P-XX]: Run the `DSL` validator in an `AssetPostprocessor` on every save
-+ [ ] TASK-084 [P-XX]: Carry the `AssetPostprocessor` check into every other `DSL` of the family
++ [ ] TASK-001 [PHASE-XX]: Build a Scene wiring checker and auto-fixer
++ [ ] TASK-002 [PHASE-XX]: Add a timed event step-line to the DSL (play_sequence)
++ [x] TASK-003 [PHASE-XX]: Add Command.request_notify
++ [x] TASK-004 [PHASE-XX]: Build a germio.json viewer and editor with no Unity (done)
++ [~] TASK-005 [PHASE-XX]: Move `tropika` off the git submodule of germio (`stemic` and `flugi` are done)
++ [ ] TASK-006 [PHASE-XX]: Put the long roadmap into Basic English
++ [ ] TASK-007 [PHASE-XX]: Sync germio_roadmap.md's own state to the real code
++ [ ] TASK-010 [PHASE-03]: Grow MusicClip from one true value to six, for stemic's own songs
++ [ ] TASK-011 [PHASE-03]: Map SfxClip's own seven values against Signo's own eight SEType values
++ [ ] TASK-012 [PHASE-03]: Replace SoundSystem's own inner true work with a Quyno.Bridge call
++ [ ] TASK-013 [PHASE-03]: Play it for real, in stemic, and check every SfxClip/MusicClip still sounds
++ [xx] TASK-014 [PHASE-XX]: Build one shared sensor — moved out, to modio
++ [xx] TASK-015 [PHASE-XX]: Give every level piece a mark — dropped, nothing is needed
++ [x] TASK-016 [PHASE-XX]: Read actor off a Rule, out of the JSON
++ [x] TASK-017 [PHASE-XX]: Take an actor on DispatchTrigger, and on Bus Publish
++ [x] TASK-018 [PHASE-XX]: Fire a rule with no actor, whoever calls
++ [x] TASK-019 [PHASE-XX]: Fire a rule with an actor only for that one
++ [x] TASK-020 [PHASE-XX]: Read update_need as a list, out of the JSON
++ [x] TASK-021 [PHASE-XX]: Fire a need out of the Store, one call to a list entry
++ [x] TASK-022 [PHASE-XX]: V028 — an empty need key is an error
++ [x] TASK-023 [PHASE-XX]: V029 — a delta of zero is a warning
++ [x] TASK-024 [PHASE-XX]: Read request_deed, all five parts, out of the JSON
++ [x] TASK-025 [PHASE-XX]: Read the Command held inside a request_deed
++ [x] TASK-026 [PHASE-XX]: Let a request_deed stand with no target at all
++ [x] TASK-027 [PHASE-XX]: Fire a deed out of the Store, once
++ [x] TASK-028 [PHASE-XX]: V030 — a motion outside the seven is an error
++ [x] TASK-029 [PHASE-XX]: V031 — an until with no key, or two, is an error
++ [x] TASK-030 [PHASE-XX]: V032 — a request_deed inside a request_deed is an error
++ [x] TASK-031 [PHASE-XX]: V033 — a kind outside the six type marks is an error
++ [x] TASK-032 [PHASE-XX]: Put a found id in place of the $target mark
++ [x] TASK-033 [PHASE-XX]: Leave text with no $target mark just as it stands
++ [x] TASK-034 [PHASE-XX]: Swap every $target in a line, not the first alone
++ [x] TASK-046 [PHASE-XX]: Leave $targets and $TARGET alone, mark or not
++ [x] TASK-047 [PHASE-XX]: Swap once, and never look at what was put in
++ [x] TASK-048 [PHASE-XX]: Reach every text field inside a held Command
++ [x] TASK-049 [PHASE-XX]: Write out an id with a letter in front of it
++ [x] TASK-050 [PHASE-XX]: Run a put-in-place condition through the Evaluator
++ [x] TASK-035 [PHASE-XX]: Read a whole deed, end to end, off a real JSON file
++ [x] TASK-036 [PHASE-XX]: Hold every Executor test already there, still green
++ [x] TASK-037 [PHASE-XX]: Read act off a request_deed, and let it be left out
++ [x] TASK-038 [PHASE-XX]: V034 — an act outside the three is an error
++ [xx] TASK-039 [PHASE-XX]: V035 — an until on a tie moving — dropped, no such until
++ [x] TASK-040 [PHASE-XX]: Add a NeedRequested event to the Store, and fire it
++ [x] TASK-041 [PHASE-XX]: Add a DeedRequested event to the Store, and fire it
++ [x] TASK-042 [PHASE-XX]: Find every caller of Bus Publish, and keep each one working
++ [~] TASK-043 [PHASE-XX]: Show a line over a character's head, for what it has in mind
++ [x] TASK-061 [PHASE-XX]: Read history inside and, or and not, however deep
++ [x] TASK-062 [PHASE-XX]: Take the deed questions on a target, not in a condition
++ [x] TASK-063 [PHASE-XX]: Bring germio own tests home, out of stemic
++ [ ] TASK-064 [PHASE-XX]: Check the local package path form on Windows
++ [x] TASK-065 [PHASE-XX]: Add V037, a Need name check beside V036's own true precedent
++ [ ] TASK-066 [PHASE-XX]: Rewrite check_package.py/check_manifest.py in JavaScript
++ [~] TASK-067 [PHASE-XX]: Add the thin Unity edge that fills the world table at scene load
++ [ ] TASK-068 [PHASE-XX]: Add a pool for anything made or gone while a game runs
++ [ ] TASK-069 [PHASE-XX]: Add a slow turn toward the act's own target, on purpose
++ [ ] TASK-070 [PHASE-XX]: Add IButtonState and its own computed fill-in, for an NPC
++ [ ] TASK-071 [PHASE-XX]: Add a kind-wide rule match, so one true rule set serves every NPC of one kind
++ [ ] TASK-072 [PHASE-XX]: Add UntilLogic, a real check for when a deed is Done or Failed
++ [ ] TASK-073 [PHASE-XX]: Add a whole put-in-place, covering condition and Until.meets too
++ [ ] TASK-074 [PHASE-XX]: Add an actor tag to history, so one NPC's own memory never crosses into another's
++ [ ] TASK-075 [PHASE-XX]: Add history to a rule's own top-level condition, still given as `null` today
++ [x] TASK-076 [PHASE-03]: Settled — taken in by TASK-011
++ [ ] TASK-059 [PHASE-XX]: Draw the line itself, on the Unity side
++ [ ] TASK-060 [PHASE-XX]: Tell every game holding this build about the two new files
++ [x] TASK-044 [PHASE-XX]: List a node's own rules by actor, so each may be read apart
++ [xx] TASK-045 [PHASE-XX]: Take like beside target_id — dropped, wrong build
++ [x] TASK-051 [PHASE-XX]: Hold V007 back where a rule names an actor
++ [x] TASK-052 [PHASE-XX]: Hold V008 back where a set_flag sits inside a deed
++ [x] TASK-053 [PHASE-XX]: Let V010 know the two new commands
++ [x] TASK-054 [PHASE-XX]: Put the three new words into the exported schema
++ [x] TASK-055 [PHASE-XX]: Give Rule and Command a deep copy of their own
++ [x] TASK-056 [PHASE-XX]: Check a deed condition after the mark is put in place
++ [x] TASK-057 [PHASE-XX]: Leave actor empty where a Zone fires the rule
++ [x] TASK-058 [PHASE-XX]: V036 — an actor no persona holds is an error
++ [ ] TASK-077 [PHASE-XX]: Put the papers on the scene sync and the book of examples into Basic English
++ [ ] TASK-078 [PHASE-XX]: Put the short English account and the safety paper into Basic English
++ [ ] TASK-079 [PHASE-XX]: Put the two papers on the language model into Basic English
++ [ ] TASK-080 [PHASE-XX]: Put the papers on saving, the server, and names into Basic English
++ [ ] TASK-081 [PHASE-XX]: Play the `flugi` fix for `request_notify` in a real Unity build
++ [ ] TASK-082 [PHASE-XX]: Look into `request_notify` and `record_event` saying the same thing twice
++ [ ] TASK-083 [PHASE-XX]: Run the `DSL` validator in an `AssetPostprocessor` on every save
++ [ ] TASK-084 [PHASE-XX]: Carry the `AssetPostprocessor` check into every other `DSL` of the family
 
 ## Detail
 
@@ -702,7 +702,7 @@ given TASK-008/009 land first.
 
 **Waits for** (from TASK-008, taken out on 2026-11-14, as waiting is not a piece of work): Wait on signo's own true SE spec and sound brush-up. `signo`'s own TASK-027 (a true spec and a real, by-ear sound-quality pass for its own SE engine) is a true, needed step before this whole phase — a real check already found `SEType.Jump` not yet game-ready. A plain, given wait/check gate, marked done once that true work lands. **2026-10-03:** the spec is settled in `signo`'s main record, Part 0.19, and the table and its entries are built by `signo`'s TASK-279; TASK-027 then does the sound itself, by ear, on that table. This gate waits on TASK-027, after TASK-279.
 
-**Waits for** (from TASK-009, taken out on 2026-11-14, as waiting is not a piece of work): Wait on quyno's own true Germio-bridge entry point. `quyno`'s own P-06 (joining `Quyno` to a real `germio` game) is a true, needed step before this whole phase — `Quyno.Bridge` must give this repository a true, given call-in point (its own exact shape still open, held on `signo`'s own TASK-027 first). A plain, given wait/check gate, marked done once that true work lands.
+**Waits for** (from TASK-009, taken out on 2026-11-14, as waiting is not a piece of work): Wait on quyno's own true Germio-bridge entry point. `quyno`'s own PHASE-06 (joining `Quyno` to a real `germio` game) is a true, needed step before this whole phase — `Quyno.Bridge` must give this repository a true, given call-in point (its own exact shape still open, held on `signo`'s own TASK-027 first). A plain, given wait/check gate, marked done once that true work lands.
 
 ### TASK-011
 
